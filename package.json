@@ -1,5 +1,5 @@
 {
-  "name": "zokrates_remix_plugin",
+  "name": "zokrates.js",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blockchain-it-hr/zokrates_remix_plugin.git"
+    "url": "git+https://github.com/blockchain-it-hr/zokrates.js.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/blockchain-it-hr/zokrates_remix_plugin/issues"
+    "url": "https://github.com/blockchain-it-hr/zokrates.js/issues"
   },
-  "homepage": "https://github.com/blockchain-it-hr/zokrates_remix_plugin#readme"
+  "homepage": "https://github.com/blockchain-it-hr/zokrates.js#readme"
 }
