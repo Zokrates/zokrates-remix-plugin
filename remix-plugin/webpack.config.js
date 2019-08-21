@@ -16,9 +16,9 @@ module.exports = {
                 test: /\.js$/,
                 loader: "source-map-loader"
             },
-            { 
-                test: /\.html$/, 
-                loader: 'html-loader' 
+            {
+                test: /\.html$/,
+                loader: 'html-loader'
             },
         ]
     },
