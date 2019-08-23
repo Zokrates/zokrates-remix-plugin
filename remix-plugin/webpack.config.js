@@ -1,5 +1,6 @@
-var path = require('path');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const CopyPlugin = require("copy-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: './index.tsx',
@@ -19,7 +20,7 @@ module.exports = {
             {
                 test: /\.html$/,
                 loader: 'html-loader'
-            },
+            }
         ]
     },
     resolve: {
@@ -31,6 +32,9 @@ module.exports = {
         publicPath: "/"
     },
     plugins: [
+        new CopyPlugin([
+            path.resolve(__dirname, "public")
+        ]),
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, 'public', 'index.html'),
         })
