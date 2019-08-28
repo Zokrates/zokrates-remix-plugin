@@ -1,36 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { remixClient } from './remix/remix-client'
 import { remixResolver } from './remix/remix-resolver';
-import { ZoKrates } from '../../core/js/library';
+import { init, compile as zokrates_compile } from '../../core';
+import { compilerProfile } from "@remixproject/plugin";
+
 
 interface AppState {
-    zokratesInstance: any;
     compiled: string;
+    loaded: boolean;
 }
 
 const App: React.FC = () => {
 
     const [state, setState] = useState<AppState>({
-        zokratesInstance: null,
-        compiled: 'idle'
+        compiled: 'idle',
+        loaded: false
     });
 
     useEffect(() => {
         const load = async () => {
             await remixClient.createClient();
-            let instance = await new ZoKrates().init((location: string, path: string) => {
+            await init(function (location: string, path: string) {
                 let result = remixResolver.handleImportCalls(path);
-                return { source: result.source, location: result.location };
+                return { ...result };
             });
-            setState({ ...state, zokratesInstance: instance });
+            setState({ ...state, loaded: true });
         }
         load()
     }, [])
 
-    const compile = async (source: string) => {
-        await remixResolver.gatherImports('', "main");
-
-        let compiled = state.zokratesInstance.compile(source);
+    const compile = async (location: string, source: string) => {
+        await remixResolver.gatherImports(location, location);
+        
+        let compiled = zokrates_compile(source);
         setState({ ...state, compiled: compiled });
     }
 
@@ -46,14 +48,16 @@ const App: React.FC = () => {
                         <p>ZoKrates will compile this program to an intermediate representation and run a trusted setup protocol to generate proving and verifying keys.</p>
                         <button type="submit" className="btn btn-success ml-0 mr-2" onClick={() => remixClient.createExample()}>Create main.code</button>
                         <hr />
-                        <button type="button" className="btn btn-primary" onClick={() => {
-                            compile("def main() -> ():\nreturn");
+                        <button type="button" className="btn btn-primary" onClick={async () => {
+                            let current = await remixClient.getCurrentFile();
+                            let source = await remixClient.getFile(current);
+                            compile(current, source);
                         }}>Compile</button>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-lg mt-3">
-                        <p>{!state.zokratesInstance ? "Zokrates is loading..." : "Zokrates instance loaded."}</p>
+                        <p>{!state.loaded ? "Zokrates is loading..." : "Zokrates instance loaded."}</p>
                     </div>
                 </div>
                 <div className="row">

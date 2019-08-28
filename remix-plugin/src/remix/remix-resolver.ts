@@ -5,7 +5,7 @@ import * as path_ from 'path';
 export default class RemixResolver implements Resolver {
 
     private extension: string = '.code';
-    private imports: Map<String, any> = new Map();
+    private imports: Map<String, ResolverResult> = new Map();
 
     gatherImports = async (location: string, path: string) => {
         var regex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"]/g
@@ -14,12 +14,12 @@ export default class RemixResolver implements Resolver {
         this.imports.set(result.location, result);
         var match;
         while ((match = regex.exec(result.source))) {
-            var path = match[1];
+            var path: string = match[1];
             await this.gatherImports(result.location, path);
         }
     }
 
-    handleImportCalls = (path: string): any => {
+    handleImportCalls = (path: string): ResolverResult => {
         return this.imports.get(path);
     }
 

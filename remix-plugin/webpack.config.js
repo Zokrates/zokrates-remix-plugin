@@ -20,7 +20,18 @@ module.exports = {
             {
                 test: /\.html$/,
                 loader: 'html-loader'
-            }
+            },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "babel-loader",
+                options: {
+                    'plugins': [
+                        '@babel/plugin-proposal-class-properties',
+                        '@babel/plugin-syntax-dynamic-import'
+                    ]
+                }
+            },
         ]
     },
     resolve: {
