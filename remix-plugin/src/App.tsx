@@ -29,9 +29,12 @@ const App: React.FC = () => {
         load()
     }, [])
 
-    const compile = async (location: string, source: string) => {
-        await remixResolver.gatherImports(location, location);
-        
+    const compile = async () => {
+        let location = await remixClient.getCurrentFile();
+        let source = await remixClient.getFile(location);
+
+        await remixResolver.gatherImports(location, source);
+
         let compiled = zokrates_compile(source);
         setState({ ...state, compiled: compiled });
     }
@@ -48,11 +51,7 @@ const App: React.FC = () => {
                         <p>ZoKrates will compile this program to an intermediate representation and run a trusted setup protocol to generate proving and verifying keys.</p>
                         <button type="submit" className="btn btn-success ml-0 mr-2" onClick={() => remixClient.createExample()}>Create main.code</button>
                         <hr />
-                        <button type="button" className="btn btn-primary" onClick={async () => {
-                            let current = await remixClient.getCurrentFile();
-                            let source = await remixClient.getFile(current);
-                            compile(current, source);
-                        }}>Compile</button>
+                        <button type="button" className="btn btn-primary" onClick={async () => await compile()}>Compile</button>
                     </div>
                 </div>
                 <div className="row">

@@ -7,16 +7,17 @@ export default class RemixResolver implements Resolver {
     private extension: string = '.code';
     private imports: Map<String, ResolverResult> = new Map();
 
-    gatherImports = async (location: string, path: string) => {
-        var regex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"]/g
-        let result = await this.resolve(location, path);
-
-        this.imports.set(result.location, result);
-        var match;
-        while ((match = regex.exec(result.source))) {
-            var path: string = match[1];
-            await this.gatherImports(result.location, path);
-        }
+    gatherImports = async (location: string, source: string) => {
+        var regex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"]/;
+        var match: any;
+        do {
+            match = regex.exec(source);
+            if (match) {
+                let result = await this.resolve(location, match[1]);
+                this.imports.set(result.location, result);
+                await this.gatherImports(result.location, result.source)
+            }
+        } while (match);
     }
 
     handleImportCalls = (path: string): ResolverResult => {
@@ -40,7 +41,6 @@ export default class RemixResolver implements Resolver {
                 if (!path.endsWith(".code")) {
                     relativePath = relativePath.concat(".code");
                 }
-
                 let response = await fetch(relativePath)
                 let source = await response.text();
                 resolve({ source: source, location: path } as ResolverResult);
@@ -54,7 +54,8 @@ export default class RemixResolver implements Resolver {
         return new Promise<ResolverResult>(async (resolve, reject) => {
             const _path = path.replace('./', '');
             try {
-                let source = await remixClient.getFile(this.getBrowserPath(_path));
+                let browserPath = this.getBrowserPath(_path);
+                let source = await remixClient.getFile(browserPath);
                 resolve({ source, location: _path } as ResolverResult);
             } catch (error) {
                 reject(error);
@@ -63,6 +64,9 @@ export default class RemixResolver implements Resolver {
     }
 
     private getBrowserPath = (path: string) => {
+        if (path.startsWith('browser/')) {
+            return path;
+        }
         let browserPath = `browser/${path}`;
         if (path.endsWith(this.extension)) {
             return browserPath;
