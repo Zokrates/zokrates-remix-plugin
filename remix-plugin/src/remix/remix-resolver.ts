@@ -8,16 +8,16 @@ export default class RemixResolver implements Resolver {
     private imports: Map<String, ResolverResult> = new Map();
 
     gatherImports = async (location: string, source: string) => {
-        var regex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"]/;
+        var regex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"]/g;
         var match: any;
-        do {
-            match = regex.exec(source);
-            if (match) {
-                let result = await this.resolve(location, match[1]);
-                this.imports.set(result.location, result);
-                await this.gatherImports(result.location, result.source)
-            }
-        } while (match);
+
+        while (match = regex.exec(source)) {
+            let path: string = match[1];
+            let result = await this.resolve(location, path);
+
+            this.imports.set(result.location, result);
+            await this.gatherImports(result.location, result.source)
+        }
     }
 
     handleImportCalls = (path: string): ResolverResult => {
@@ -37,6 +37,7 @@ export default class RemixResolver implements Resolver {
     resolveFromStdLib = (path: string): Promise<ResolverResult> => {
         return new Promise<ResolverResult>(async (resolve, reject) => {
             try {
+                console.log(`Resolving '${path}' from stdlib`);
                 let relativePath = path_.join(__dirname, "public/stdlib", path);
                 if (!path.endsWith(".code")) {
                     relativePath = relativePath.concat(".code");
@@ -52,11 +53,12 @@ export default class RemixResolver implements Resolver {
 
     resolveFromRemix = (path: string): Promise<ResolverResult> => {
         return new Promise<ResolverResult>(async (resolve, reject) => {
+            console.log(`Resolving '${path}' from remix`);
             const _path = path.replace('./', '');
             try {
                 let browserPath = this.getBrowserPath(_path);
                 let source = await remixClient.getFile(browserPath);
-                resolve({ source, location: _path } as ResolverResult);
+                resolve({ source: source, location: _path } as ResolverResult);
             } catch (error) {
                 reject(error);
             }
