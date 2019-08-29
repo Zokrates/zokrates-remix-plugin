@@ -56,7 +56,7 @@ const App: React.FC = () => {
                 <div className="row">
                     <div className="col-lg mt-3">
                         <p>Output:</p>
-                        <textarea className="form-control w-100" rows={8} value={state.compiled} />
+                        <textarea className="form-control w-100" rows={8} value={state.compiled} readOnly />
                     </div>
                 </div>
             </section>
