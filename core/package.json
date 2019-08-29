@@ -27,6 +27,5 @@
     "text-encoding": "^0.7.0",
     "gulp-cli": "^2.2.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
