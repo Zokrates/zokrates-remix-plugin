@@ -1,0 +1,32 @@
+{
+  "name": "zokrates-js",
+  "main": "index.js",
+  "author": "Darko Macesic <darem966@gmail.com>, Edi Sinovcic <edi@blockchain-it.hr>",
+  "version": "1.0.0",
+  "keywords": [
+    "zokrates",
+    "wasm-bindgen"
+  ],
+  "files": [
+    "pkg/*",
+    "index.js"
+  ],
+  "scripts": {
+    "gulp:pack-stdlib": "gulp pack-stdlib",
+    "build": "npm run gulp:pack-stdlib && rimraf pkg && wasm-pack build --out-name index"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.5.5",
+    "babel-loader": "^8.0.6",
+    "dree": "^2.1.10",
+    "gulp": "^4.0.2",
+    "rimraf": "^3.0.0",
+    "text-encoding": "^0.7.0",
+    "gulp-cli": "^2.2.0"
+  },
+  "dependencies": {
+  }
+}
