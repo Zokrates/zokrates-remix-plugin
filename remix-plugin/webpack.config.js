@@ -18,8 +18,8 @@ module.exports = {
                 loader: "source-map-loader"
             },
             {
-                test: /\.html$/,
-                loader: 'html-loader'
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
             },
             {
                 test: /\.js$/,
@@ -35,7 +35,7 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js']
+        extensions: ['.ts', '.tsx', '.js', '.css']
     },
     output: {
         filename: '[name].[hash].js',

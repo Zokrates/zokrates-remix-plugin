@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { remixClient } from './remix/remix-client'
 import { remixResolver } from './remix/remix-resolver';
-import { init, compile as zokrates_compile } from '../../core';
+import { initialize, compile as zokrates_compile } from '../../core';
 
+import './App.css';
 
 interface AppState {
     compiled: string;
@@ -12,17 +13,15 @@ interface AppState {
 const App: React.FC = () => {
 
     const [state, setState] = useState<AppState>({
-        compiled: 'idle',
+        compiled: '',
         loaded: false
     });
 
     useEffect(() => {
         const load = async () => {
             await remixClient.createClient();
-            await init(function (location: string, path: string) {
-                let result = remixResolver.handleImportCalls(path);
-                return { ...result };
-            });
+            await initialize(remixResolver.syncResolve);
+    
             setState({ ...state, loaded: true });
         }
         load()
@@ -39,7 +38,8 @@ const App: React.FC = () => {
     }
 
     return (
-        <main id="wrapper">
+        <div id="wrapper">
+        <main>
             <header className="shadow-sm">
                 <h4 className="p-3">ZoKrates Compiler</h4>
             </header>
@@ -55,16 +55,17 @@ const App: React.FC = () => {
                 </div>
                 <div className="row">
                     <div className="col-lg mt-3">
-                        <p>{!state.loaded ? "Zokrates is loading..." : "Zokrates instance loaded."}</p>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-lg mt-3">
-                        <p>{state.compiled}</p>
+                        <p>Output:</p>
+                        <textarea className="form-control w-100" rows={8} value={state.compiled} />
                     </div>
                 </div>
             </section>
         </main>
+        <footer className="footer">
+            <span className="status" style={{ background: state.loaded ? 'var(--success)': 'var(--danger)'}}></span>
+            <span>Zokrates: {state.loaded ? "Loaded" : "loading..."}</span>
+      </footer>
+      </div>
     );
 }
 

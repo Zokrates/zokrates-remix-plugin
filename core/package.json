@@ -12,7 +12,8 @@
     "index.js"
   ],
   "scripts": {
-    "build": "rimraf pkg && wasm-pack build --out-name index"
+    "gulp:pack-stdlib": "gulp pack-stdlib",
+    "build": "npm run gulp:pack-stdlib && rimraf pkg && wasm-pack build --out-name index"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
@@ -20,6 +21,8 @@
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.5.5",
     "babel-loader": "^8.0.6",
+    "dree": "^2.1.10",
+    "gulp": "^4.0.2",
     "rimraf": "^3.0.0",
     "text-encoding": "^0.7.0"
   },
