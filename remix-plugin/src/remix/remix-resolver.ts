@@ -18,7 +18,7 @@ export default class RemixResolver implements Resolver {
             if (!stdlib) {
                 let result = await this.resolve(location, path);
                 this.imports.set(result.location, result);
-
+                
                 await this.gatherImports(result.location, result.source)
             }
         }
@@ -30,27 +30,14 @@ export default class RemixResolver implements Resolver {
 
     resolve = (location: string, path: string): Promise<ResolverResult> => {
         return new Promise<ResolverResult>(async (resolve, reject) => {
-            console.log(`Resolving '${path}' from remix`);
-            const _path = path.replace('./', '');
             try {
-                let browserPath = this.getBrowserPath(_path);
-                let source = await remixClient.getFile(browserPath);
-                resolve({ source: source, location: _path } as ResolverResult);
+                let path_ = path.endsWith(this.extension) ? path : path.concat(this.extension);
+                let source = await remixClient.getFile(path_);
+                resolve({ source: source, location: path } as ResolverResult);
             } catch (error) {
                 reject(error);
             }
         });
-    }
-
-    private getBrowserPath = (path: string) => {
-        if (path.startsWith('browser/')) {
-            return path;
-        }
-        let browserPath = `browser/${path}`;
-        if (path.endsWith(this.extension)) {
-            return browserPath;
-        }
-        return browserPath.concat(this.extension);
     }
 }
 

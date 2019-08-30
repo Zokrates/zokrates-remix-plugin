@@ -7,6 +7,7 @@ import './App.css';
 
 interface AppState {
     compiled: string;
+    errors: Array<string>;
     loaded: boolean;
 }
 
@@ -14,7 +15,8 @@ const App: React.FC = () => {
 
     const [state, setState] = useState<AppState>({
         compiled: '',
-        loaded: false
+        errors: new Array(),
+        loaded: false, 
     });
 
     useEffect(() => {
@@ -28,13 +30,19 @@ const App: React.FC = () => {
     }, [])
 
     const compile = async () => {
-        let location = await remixClient.getCurrentFile();
-        let source = await remixClient.getFile(location);
+        try {
+            let location = await remixClient.getCurrentFile();
+            let source = await remixClient.getFile(location);
 
-        await remixResolver.gatherImports(location, source);
+            // we have to "preload" imports before compiling since remix plugin api returns promises
+            await remixResolver.gatherImports(location, source);
 
-        let compiled = zokrates_compile(source);
-        setState({ ...state, compiled: compiled });
+            let compiled = zokrates_compile(source);
+            setState({ ...state, compiled: compiled, errors: [] });
+        } catch (error) {
+            setState({ ...state, compiled: '', errors: Array.of(error.toString()) })
+            return;
+        }
     }
 
     return (
@@ -59,11 +67,18 @@ const App: React.FC = () => {
                         <textarea className="form-control w-100" rows={8} value={state.compiled} readOnly />
                     </div>
                 </div>
+                <div className="row">
+                    <div className="col-lg mt-3">
+                        <ul className="error">
+                            {state.errors && state.errors.map((e, i) => <li key={i}>{e}</li>)}
+                       </ul>
+                    </div>
+                </div>
             </section>
         </main>
         <footer className="footer">
             <span className="status" style={{ background: state.loaded ? 'var(--success)': 'var(--danger)'}}></span>
-            <span>Zokrates: {state.loaded ? "Loaded" : "loading..."}</span>
+            <span>Zokrates: {state.loaded ? "Loaded" : "Loading..."}</span>
       </footer>
       </div>
     );

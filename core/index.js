@@ -20,7 +20,7 @@ function __resolve(location, path, callback) {
   if (__reserved.some(p => path.startsWith(p))) {
     let _path = !path.endsWith('.code') ? path.concat('.code') : path;
     result = { 
-      source: stdlib[_path.replace(/['"]+/g, '')],
+      source: stdlib[_path.replace(/['"]+/g, '')] || '',
       location: path
     };
   } else {

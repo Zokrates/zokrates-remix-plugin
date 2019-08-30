@@ -22,3 +22,13 @@
     display: inline-block;
     vertical-align: middle;
 }
+
+.error {
+    color: white;
+    background-color: var(--danger);
+}
+
+.error > li {
+    padding: 0.5rem;
+    font-weight: bold;
+}
