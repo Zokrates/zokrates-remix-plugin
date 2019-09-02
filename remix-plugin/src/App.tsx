@@ -7,16 +7,16 @@ import './App.css';
 
 interface AppState {
     compiled: string;
-    errors: Array<string>;
     loaded: boolean;
+    error: string;
 }
 
 const App: React.FC = () => {
 
     const [state, setState] = useState<AppState>({
         compiled: '',
-        errors: new Array(),
         loaded: false, 
+        error: '',
     });
 
     useEffect(() => {
@@ -29,36 +29,32 @@ const App: React.FC = () => {
         load()
     }, [])
 
-    const compile = async () => {
+    const compile = async () => {   
         try {
             let location = await remixClient.getCurrentFile();
             let source = await remixClient.getFile(location);
-
+    
             // we have to "preload" imports before compiling since remix plugin api returns promises
             await remixResolver.gatherImports(location, source);
 
             let compiled = zokrates_compile(source);
-            setState({ ...state, compiled: compiled, errors: [] });
+            setState({ ...state, compiled: compiled, error: '' });
         } catch (error) {
-            setState({ ...state, compiled: '', errors: Array.of(error.toString()) })
+            setState({ ...state, compiled: '', error: error.toString() })
             return;
         }
     }
 
     return (
         <div id="wrapper">
-        <main>
-            <header className="shadow-sm">
-                <h4 className="p-3">ZoKrates Compiler</h4>
-            </header>
-
+        <main role="main">
             <section className="container-fluid">
                 <div className="row">
                     <div className="col-lg">
                         <p>ZoKrates will compile this program to an intermediate representation and run a trusted setup protocol to generate proving and verifying keys.</p>
                         <button type="submit" className="btn btn-success ml-0 mr-2" onClick={() => remixClient.createExample()}>Create main.code</button>
                         <hr />
-                        <button type="button" className="btn btn-primary" onClick={compile}>Compile</button>
+                        <button type="button" className="btn btn-primary" onClick={compile}><i className="fa fa-refresh mr-2" aria-hidden="true"></i>Compile</button>
                     </div>
                 </div>
                 <div className="row">
@@ -69,9 +65,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="row">
                     <div className="col-lg mt-3">
-                        <ul className="error">
-                            {state.errors && state.errors.map((e, i) => <li key={i}>{e}</li>)}
-                       </ul>
+                        {state.error && <div className="error"><i className="fa fa-exclamation-circle mr-2" aria-hidden="true"></i>{state.error}</div>}
                     </div>
                 </div>
             </section>

@@ -8,6 +8,8 @@ pub struct ResolverResult {
 
 #[wasm_bindgen]
 impl ResolverResult {
+
+    #[wasm_bindgen]
     pub fn new(source: String, location: String) -> Self {
         ResolverResult { source, location }
     }
@@ -31,7 +33,7 @@ pub fn compile(source: JsValue) -> JsValue {
         l: String,
         p: String,
     ) -> Result<(String, String), zokrates_core::imports::Error> {
-        let res = resolve(l, p.to_string());
+        let res = resolve(l, p);
         Ok((res.source, res.location))
     };
 

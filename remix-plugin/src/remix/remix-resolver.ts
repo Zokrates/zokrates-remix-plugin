@@ -25,7 +25,7 @@ export default class RemixResolver implements Resolver {
     }
 
     syncResolve = (location: string, path: string): ResolverResult => {
-        return this.imports.get(path);
+        return this.imports.get(path) || { source: '', location: path } as ResolverResult;
     }
 
     resolve = (location: string, path: string): Promise<ResolverResult> => {
