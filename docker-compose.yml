@@ -13,14 +13,21 @@ services:
     environment:
       # Forward wordpress.example.com to the WordPress container.
       # You can set up multiple domains at once.
-      DOMAINS: 'zokrates.localhost -> http://zokrates:8080'
+      DOMAINS: 'zokrates.blockchain-it.hr -> http://zokrates:8080'
       STAGE: local
       # Using staging server by default, for there is a rate limit on production.
       # Uncomment to use Let's Encrypt production server.
       # STAGE: production
+    networks:
+      - zokrates
 
   zokrates:
     image: blockchainit/zokrates.js:dev
     ports: 
       - 8080:8080
     container_name: zokrates
+    networks: 
+      - zokrates
+  
+networks:
+  zokrates:
