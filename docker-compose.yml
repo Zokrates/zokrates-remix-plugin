@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - 80:80
+      - 443:443
+    links:
+      - zokrates
+    # Restart https-portal on failure or after Docker host restart.
+    restart: always
+    environment:
+      # Forward wordpress.example.com to the WordPress container.
+      # You can set up multiple domains at once.
+      DOMAINS: 'zokrates.localhost -> http://zokrates:8080'
+      STAGE: local
+      # Using staging server by default, for there is a rate limit on production.
+      # Uncomment to use Let's Encrypt production server.
+      # STAGE: production
+
+  zokrates:
+    image: blockchainit/zokrates.js:dev
+    ports: 
+      - 8080:8080
+    container_name: zokrates
