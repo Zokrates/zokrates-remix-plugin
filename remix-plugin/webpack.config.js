@@ -53,7 +53,7 @@ module.exports = {
     devServer: {
         port: '8080',
         compress: true,
-        public: 'localhost',
+        public: 'zokrates.localhost',
         host: '0.0.0.0'
      }      
 }
