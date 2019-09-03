@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    restart: always
+    environment:
+      DOMAINS: 'zokrates.blockchain-it.hr -> http://zokrates:8080, blockchain-it.hr'
+      STAGE: 'production'
+      FORCE_RENEW: 'true'
+    volumes:
+      - /home/user/website.git/dist:/var/www/vhosts/blockchain-it.hr
+
+  zokrates:
+    image: blockchainit/zokrates.js:dev
+    ports:
+      - 8080:8080
+    container_name: zokrates
+    networks:
+      - zokrates
+
+networks:
+  zokrates:
