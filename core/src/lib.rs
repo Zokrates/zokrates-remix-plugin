@@ -1,4 +1,5 @@
 use wasm_bindgen::prelude::*;
+extern crate serde_derive;
 
 #[wasm_bindgen]
 pub struct ResolverResult {
@@ -24,6 +25,7 @@ extern "C" {
 }
 
 use zokrates_core::compile::compile as compile_core;
+use zokrates_core::ir;
 use zokrates_field::field::FieldPrime;
 
 #[wasm_bindgen]
@@ -37,15 +39,11 @@ pub fn compile(source: JsValue) -> JsValue {
         Ok((res.source, res.location))
     };
 
-    // we call the zokrates compile function with our closure
-    compile_core::<FieldPrime, _>(
-        source.as_string().unwrap(),
-        "main".to_string(),
-        Some(resolve_closure),
-    )
-    .unwrap()
-    .to_string()
-    .into()
+    let program_flattened: ir::Prog<FieldPrime> = compile_core(
+        source.as_string().unwrap(), "main".to_string(), Some(resolve_closure)).unwrap();
+
+    let data = bincode::serialize(&program_flattened).unwrap();
+    JsValue::from_serde(&data).unwrap()
 }
 
 #[wasm_bindgen(start)]

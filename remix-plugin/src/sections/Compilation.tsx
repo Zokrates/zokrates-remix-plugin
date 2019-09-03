@@ -4,12 +4,11 @@ import { remixClient } from '../remix/remix-client'
 import { remixResolver } from '../remix/remix-resolver';
 import { useState } from 'react';
 import { compile } from '../../../core';
-import { storageManager } from '../utils/LocalStorageManager';
 import copy from 'copy-to-clipboard';
 import saveAs from 'file-saver';
 
 interface CompileState {
-    compiled: string,
+    compilationResult: Uint8Array,
     currentFile: string,
     error: string
 }
@@ -26,21 +25,25 @@ export const Compilation: React.FC = () => {
             // we have to "preload" imports before compiling since remix plugin api returns promises
             await remixResolver.gatherImports(location, source);
 
-            let compiled = compile(source);
-            storageManager.setItem(location, compiled);
-
-            setState({ compiled, error: '' });
+            let program = compile(source);
+            setState({ compilationResult: program, error: '' });
         } catch (error) {
-            setState({ compiled: '', error: error.toString() })
+            setState({ compilationResult: null, error: error.toString() })
         }
     }
 
-    const onCopy = () => copy(state.compiled);
+    const toBytecodeString = (input: Uint8Array): string => {
+        return '0x' + Buffer.from(state.compilationResult).toString('hex');
+    }
+
+    const onCopy = () => {
+        copy(toBytecodeString(state.compilationResult));
+    }
 
     const onDownload = () => {
-        if (state.compiled) {
-            var blob = new Blob([state.compiled], { type: "text/plain;charset=utf-8" });
-            saveAs(blob, "out.code");
+        if (state.compilationResult) {
+            var blob = new Blob([state.compilationResult.buffer], { type: 'application/octet-stream' });
+            saveAs(blob, "out");
         }
     }
 
@@ -67,7 +70,8 @@ export const Compilation: React.FC = () => {
         </Row>
         <Row>
             <Col>
-                <textarea className="form-control w-100" rows={8} value={state.compiled} placeholder="Output" readOnly />
+                <p className="mb-1">Bytecode:</p>
+                <textarea className="form-control w-100" rows={8} value={state.compilationResult ? toBytecodeString(state.compilationResult) : ''} placeholder="Output" readOnly />
             </Col>
         </Row>
         <Row>

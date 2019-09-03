@@ -34,5 +34,5 @@ export function getStdLib() {
 }
 
 export function compile(source) {
-  return __state.zokrates.compile(source);
+  return Uint8Array.from(__state.zokrates.compile(source));
 }
