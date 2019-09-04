@@ -1,15 +1,17 @@
-export function getAbsoluteImportPath(locationPath, relativePath) {
-    if (!relativePath.endsWith('.code')) {
-        relativePath += '.code';
+export function getAbsoluteImportPath(basePath, relativePath) {
+    var stack = basePath.split('/');
+    var chunks = relativePath.split('/');
+
+    stack.pop();
+
+    for(var i = 0; i < chunks.length; i++) {
+        if (chunks[i] == ".") {
+            continue;
+        } else if (chunks[i] == "..") {
+            stack.pop();
+        } else {
+            stack.push(chunks[i]);
+        }
     }
-
-    relativePath = relativePath.replace(/^(.\/)*/, '')
-    
-    let locationChunks = locationPath.split('/');
-    let relativeChunks = relativePath.split('/');
-
-    let levelCount = relativeChunks.filter(c => c === '..').length;
-  
-    locationChunks = locationChunks.splice(0, locationChunks.length - levelCount - 1);
-    return locationChunks.concat(relativeChunks.splice(levelCount)).join('/');
+    return stack.join('/');
 }
