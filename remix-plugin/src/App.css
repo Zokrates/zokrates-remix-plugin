@@ -27,12 +27,9 @@
     vertical-align: middle;
 }
 
-.error {
-    color: white;
-    background-color: var(--danger);
+.alert {
     padding: 0.5rem;
     font-weight: bold;
-    border-radius: 0.25rem;
     font-size: 0.8rem;
 }
 

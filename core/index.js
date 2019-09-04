@@ -1,3 +1,4 @@
+import { getAbsoluteImportPath } from './utils';
 const stdlib = require('./stdlib.json');
 
 const __reserved = ['ecc/', 'signature/', 'hashes/', 'utils/'];
@@ -17,11 +18,11 @@ export async function initialize(callback) {
 
 function __resolve(location, path, callback) {
   let result;
-  if (__reserved.some(p => path.startsWith(p))) {
-    let _path = !path.endsWith('.code') ? path.concat('.code') : path;
+  if (__reserved.some(p => location.startsWith(p) || path.startsWith(p))) {
+    let _path = getAbsoluteImportPath(location, path.replace(/['"]+/g, ''));
     result = { 
-      source: stdlib[_path.replace(/['"]+/g, '')] || '', 
-      location: path
+      source: stdlib[_path] || '', 
+      location: _path
     };
   } else {
     result = callback(location, path);
