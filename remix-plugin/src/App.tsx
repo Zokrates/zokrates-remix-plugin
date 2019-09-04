@@ -1,71 +1,91 @@
 import React, { useEffect, useState } from "react";
 import { remixClient } from './remix/remix-client'
 import { remixResolver } from './remix/remix-resolver';
-import { initialize, compile as zokrates_compile } from '../../core';
+import { initialize } from '../../core';
+
+import { Compilation } from './sections/Compilation';
+import { Footer } from './components/Footer';
 
 import './App.css';
-
-interface AppState {
-    compiled: string;
-    loaded: boolean;
-}
+import { Container, Accordion, Card } from "react-bootstrap";
 
 const App: React.FC = () => {
 
-    const [state, setState] = useState<AppState>({
-        compiled: '',
-        loaded: false
-    });
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
         const load = async () => {
-            await remixClient.createClient();
-            await initialize(remixResolver.syncResolve);
-    
-            setState({ ...state, loaded: true });
+            try {
+                initialize(remixResolver.syncResolve).then(() => setLoaded(true))
+                await remixClient.createClient();
+            } catch(err) {
+                console.log(err)
+            }
         }
         load()
     }, [])
 
-    const compile = async () => {
-        let location = await remixClient.getCurrentFile();
-        let source = await remixClient.getFile(location);
-
-        await remixResolver.gatherImports(location, source);
-
-        let compiled = zokrates_compile(source);
-        setState({ ...state, compiled: compiled });
-    }
-
     return (
         <div id="wrapper">
-        <main>
-            <header className="shadow-sm">
-                <h4 className="p-3">ZoKrates Compiler</h4>
-            </header>
+            <main role="main" className="mt-1">
+                <Container>
+                    <img className="mx-auto d-block" src="./zokrates.svg" style={{ maxHeight: "150px" }} />
+                    <p>ZoKrates will compile your program to an intermediate representation and run a trusted setup protocol to generate proving and verifying keys.</p>
+                    <Accordion defaultActiveKey="0">
+                        <Card>
+                            <Accordion.Toggle as={Card.Header} eventKey="0">
+                                <i className="fa fa-refresh mr-2" aria-hidden="true"></i>Compilation
+                            </Accordion.Toggle>
+                            <Accordion.Collapse eventKey="0">
+                                <Card.Body>
+                                    <Compilation />
+                                </Card.Body>
+                            </Accordion.Collapse>
+                        </Card>
 
-            <section className="container-fluid">
-                <div className="row">
-                    <div className="col-lg">
-                        <p>ZoKrates will compile this program to an intermediate representation and run a trusted setup protocol to generate proving and verifying keys.</p>
-                        <button type="submit" className="btn btn-success ml-0 mr-2" onClick={() => remixClient.createExample()}>Create main.code</button>
-                        <hr />
-                        <button type="button" className="btn btn-primary" onClick={compile}>Compile</button>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-lg mt-3">
-                        <p>Output:</p>
-                        <textarea className="form-control w-100" rows={8} value={state.compiled} readOnly />
-                    </div>
-                </div>
-            </section>
-        </main>
-        <footer className="footer">
-            <span className="status" style={{ background: state.loaded ? 'var(--success)': 'var(--danger)'}}></span>
-            <span>Zokrates: {state.loaded ? "Loaded" : "loading..."}</span>
-      </footer>
-      </div>
+                        <Card>
+                            <Accordion.Toggle as={Card.Header} eventKey="1">
+                                <i className="fa fa-cog mr-2" aria-hidden="true"></i>Setup
+                            </Accordion.Toggle>
+                            <Accordion.Collapse eventKey="1">
+                                <Card.Body>TBD</Card.Body>
+                            </Accordion.Collapse>
+                        </Card>
+
+                        <Card>
+                            <Accordion.Toggle as={Card.Header} eventKey="2">
+                                <i className="fa fa-key mr-2" aria-hidden="true"></i>Export Verifier
+                            </Accordion.Toggle>
+                            <Accordion.Collapse eventKey="2">
+                                <Card.Body>TBD</Card.Body>
+                            </Accordion.Collapse>
+                        </Card>
+
+                        <Card>
+                            <Accordion.Toggle as={Card.Header} eventKey="3">
+                                <i className="fa fa-lightbulb-o mr-2" aria-hidden="true"></i>Compute Witness
+                            </Accordion.Toggle>
+                            <Accordion.Collapse eventKey="3">
+                                <Card.Body>TBD</Card.Body>
+                            </Accordion.Collapse>
+                        </Card>
+
+
+                        <Card>
+                            <Accordion.Toggle as={Card.Header} eventKey="4">
+                                <i className="fa fa-check mr-2" aria-hidden="true"></i>Generate Proof
+                            </Accordion.Toggle>
+                            <Accordion.Collapse eventKey="4">
+                                <Card.Body>TBD</Card.Body>
+                            </Accordion.Collapse>
+                        </Card>
+
+                    </Accordion>
+                </Container>
+            </main>
+
+            <Footer isLoading={!loaded}></Footer>
+        </div>
     );
 }
 
