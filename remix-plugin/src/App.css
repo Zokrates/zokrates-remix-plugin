@@ -39,3 +39,7 @@
 .pointer {
     cursor: pointer;
 }
+
+.accordion > .card > .card-header {
+    cursor: pointer;
+}

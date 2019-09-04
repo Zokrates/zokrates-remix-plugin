@@ -15,10 +15,12 @@ const App: React.FC = () => {
 
     useEffect(() => {
         const load = async () => {
-            await remixClient.createClient();
-            await initialize(remixResolver.syncResolve);
-
-            setLoaded(true);
+            try {
+                initialize(remixResolver.syncResolve).then(() => setLoaded(true))
+                await remixClient.createClient();
+            } catch(err) {
+                console.log(err)
+            }
         }
         load()
     }, [])
@@ -32,7 +34,7 @@ const App: React.FC = () => {
                     <Accordion defaultActiveKey="0">
                         <Card>
                             <Accordion.Toggle as={Card.Header} eventKey="0">
-                                Compilation
+                                <i className="fa fa-refresh mr-2" aria-hidden="true"></i>Compilation
                             </Accordion.Toggle>
                             <Accordion.Collapse eventKey="0">
                                 <Card.Body>
@@ -43,7 +45,7 @@ const App: React.FC = () => {
 
                         <Card>
                             <Accordion.Toggle as={Card.Header} eventKey="1">
-                                Setup
+                                <i className="fa fa-cog mr-2" aria-hidden="true"></i>Setup
                             </Accordion.Toggle>
                             <Accordion.Collapse eventKey="1">
                                 <Card.Body>TBD</Card.Body>
@@ -52,7 +54,7 @@ const App: React.FC = () => {
 
                         <Card>
                             <Accordion.Toggle as={Card.Header} eventKey="2">
-                                Export Verifier
+                                <i className="fa fa-key mr-2" aria-hidden="true"></i>Export Verifier
                             </Accordion.Toggle>
                             <Accordion.Collapse eventKey="2">
                                 <Card.Body>TBD</Card.Body>
@@ -61,7 +63,7 @@ const App: React.FC = () => {
 
                         <Card>
                             <Accordion.Toggle as={Card.Header} eventKey="3">
-                                Compute Witness
+                                <i className="fa fa-lightbulb-o mr-2" aria-hidden="true"></i>Compute Witness
                             </Accordion.Toggle>
                             <Accordion.Collapse eventKey="3">
                                 <Card.Body>TBD</Card.Body>
@@ -71,7 +73,7 @@ const App: React.FC = () => {
 
                         <Card>
                             <Accordion.Toggle as={Card.Header} eventKey="4">
-                                Generate Proof
+                                <i className="fa fa-check mr-2" aria-hidden="true"></i>Generate Proof
                             </Accordion.Toggle>
                             <Accordion.Collapse eventKey="4">
                                 <Card.Body>TBD</Card.Body>

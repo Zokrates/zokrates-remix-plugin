@@ -51,7 +51,7 @@ export const Compilation: React.FC = () => {
         <>
         <Row>
             <Col>
-                <div className="d-flex justify-content-between align-items-center">
+                <div className="d-flex justify-content-between">
                     <Button onClick={compileCallback}>
                         <i className="fa fa-refresh" aria-hidden="true"></i><span className="ml-2">Compile</span>
                     </Button>

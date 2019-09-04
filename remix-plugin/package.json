@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Zokrates Compiler plugin for Remix IDE",
   "scripts": {
-    "start": "webpack-dev-server --open --https --mode development",
+    "start": "webpack-dev-server --open --https --mode development --disable-host-check",
     "build": "webpack --mode production"
   },
   "keywords": [
