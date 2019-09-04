@@ -53,7 +53,7 @@ module.exports = {
     devServer: {
         port: '8080',
         compress: true,
-        public: 'zokrates.blockchain-it.hr',
+        allowedHosts: [ 'zokrates.localhost', '.blockchain-it.hr' ],
         host: '0.0.0.0'
      }      
 }
