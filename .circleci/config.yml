@@ -2,7 +2,9 @@ version: 2
 general:
   branches:
     only:
-      - react
+      - feature-ci
+      - master
+      - develop
 jobs:
   build:
     docker:
