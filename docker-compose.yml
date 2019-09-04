@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - 80:80
+      - 443:443
+    links:
+      - zokrates
+    restart: always
+    environment:
+      DOMAINS: 'zokrates.localhost -> http://zokrates:8080'
+      STAGE: staging
+    networks:
+      - zokrates
+
+  zokrates:
+    image: blockchainit/zokrates.js:local
+    ports: 
+      - 8080:8080
+    container_name: zokrates
+    networks: 
+      - zokrates
+  
+networks:
+  zokrates:

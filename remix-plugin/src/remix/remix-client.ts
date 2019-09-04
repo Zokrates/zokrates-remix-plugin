@@ -12,14 +12,18 @@ export class RemixClient {
 
     getFile = async (name: string) => {
         return new Promise<string>(async (resolve, reject) => {
-            try {
-                let content = await this.client.call('fileManager', 'getFile', name);
+            let path = name.startsWith('./') ? name.substr(2) : name;
+            let content = await this.client.call('fileManager', 'getFile', this.getBrowserPath(path));
+            if (content) {
                 resolve(content);
-            } catch (error) {
-                console.log(error);
-                reject(`Module ${name} not found`);
+            } else {
+                reject(`Could not find "${name}"`)
             }
         });
+    }
+
+    getFolder = async() => {
+        return this.client.call('fileManager', 'getFolder', '/browser');
     }
 
     getCurrentFile = async () => {
@@ -38,6 +42,13 @@ export class RemixClient {
     createExample = () => {
         const { name, content } = Example;
         this.createFile(name, content);
+    }
+
+    private getBrowserPath = (path: string) => {
+        if (path.startsWith('browser/')) {
+            return path;
+        }
+        return `browser/${path}`;
     }
 }
 

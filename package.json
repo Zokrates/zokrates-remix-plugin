@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "setup": "cd core && npm install && npm run build && cd ../remix-plugin && npm install",
-    "start": "cd remix-plugin && npm run start"
+    "start": "cd remix-plugin && npm run start",
+    "dev": "cd remix-plugin && npm run start-http"
   },
   "repository": {
     "type": "git",

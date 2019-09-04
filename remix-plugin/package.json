@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Zokrates Compiler plugin for Remix IDE",
   "scripts": {
-    "start": "webpack-dev-server --open --https --mode development",
+    "start": "npm run build && serve dist/",
+    "start-dev": "webpack-dev-server --open --http --mode development --hot --disable-host-check",
     "build": "webpack --mode production"
   },
   "keywords": [
@@ -18,9 +19,13 @@
   "dependencies": {
     "@remixproject/plugin": "^0.1.13",
     "@types/html-webpack-plugin": "^3.2.1",
+    "copy-to-clipboard": "^3.2.0",
+    "file-saver": "^2.0.2",
     "fs": "0.0.1-security",
     "react": "^16.9.0",
-    "react-dom": "^16.9.0"
+    "react-bootstrap": "^1.0.0-beta.12",
+    "react-dom": "^16.9.0",
+    "serve": "^11.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
@@ -41,6 +46,7 @@
     "typescript": "^3.5.3",
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.7",
-    "webpack-dev-server": "^3.8.0"
+    "webpack-dev-server": "^3.8.0",
+    "http-server": "0.11.1"
   }
 }

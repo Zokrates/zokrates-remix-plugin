@@ -1,7 +1,11 @@
+.row + .row {
+    margin-top: 1rem;
+}
+
 .footer {
     display: flex;
     align-items: center;
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
     height: 40px;
@@ -21,4 +25,21 @@
     margin-right: 0.5rem;
     display: inline-block;
     vertical-align: middle;
+}
+
+.error {
+    color: white;
+    background-color: var(--danger);
+    padding: 0.5rem;
+    font-weight: bold;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.accordion > .card > .card-header {
+    cursor: pointer;
 }

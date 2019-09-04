@@ -11,9 +11,15 @@ crate-type = ["cdylib"]
 lto = true
 
 [dependencies]
-wasm-bindgen = "0.2.50"
+serde = "^1.0.59"
+serde_derive = "^1.0.59"
+bincode = "1.1.4"
 zokrates_core = { git = "https://github.com/ZoKrates/ZoKrates", branch = "simplify-resolver" }
 zokrates_field = { git = "https://github.com/ZoKrates/ZoKrates", branch = "simplify-resolver" }
+
+[dependencies.wasm-bindgen]
+version = "0.2.50"
+features = ["serde-serialize"]
 
 [target."cfg(debug_assertions)".dependencies]
 console_error_panic_hook = "0.1.5"
