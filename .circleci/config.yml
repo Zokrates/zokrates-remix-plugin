@@ -19,9 +19,6 @@ jobs:
           if [ $CIRCLE_BRANCH=="feature-ci" ]; then export TAG="latest"; fi
           if [ $CIRCLE_BRANCH=="master" ]; then export TAG="stable"; fi
           echo $TAG
-          docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker build --file Dockerfile --tag blockchainit/zokrates.js:$TAG . fi
-          docker push blockchainit/zokrates.js:stable
 workflows:
   version: 2
   build_and_deploy:
