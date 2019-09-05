@@ -15,6 +15,7 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true 
       - run: |
+          echo "$CIRCLE_BRANCH"
           if [[$CIRCLE_BRANCH=="develop"]]; then export TAG="latest"; fi
           if [[$CIRCLE_BRANCH=="feature-ci"]]; then export TAG="latest"; fi
           if [[$CIRCLE_BRANCH=="master"]]; then export TAG="stable"; fi
