@@ -13,11 +13,10 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker build --file Dockerfile.dev --tag blockchainit/zokrates.js:dev
-          docker build --file Dockerfile --tag blockchainit/zokrates.js:stable
-          docker push blockchainit/zokrates.js
+      - run: echo mandrilo | docker login --username ijsfd --password-stdin
+      - run: docker build --file Dockerfile.dev --tag blockchainit/zokrates.js:dev .
+      - run: docker build --file Dockerfile --tag blockchainit/zokrates.js:stable .
+      - run: docker push blockchainit/zokrates.js
 workflows:
   version: 2
   build_and_deploy:
