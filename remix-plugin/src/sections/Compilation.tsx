@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Row, Col } from 'react-bootstrap';
+import { Button, Row, Col, Alert } from 'react-bootstrap';
 import { remixClient } from '../remix/remix-client'
 import { remixResolver } from '../remix/remix-resolver';
 import { useState } from 'react';
@@ -24,10 +24,11 @@ export const Compilation: React.FC = () => {
     
             // we have to "preload" imports before compiling since remix plugin api returns promises
             await remixResolver.gatherImports(location, source);
-
             let program = compile(source);
+
             setState({ compilationResult: program, error: '' });
         } catch (error) {
+            console.log(error);
             setState({ compilationResult: null, error: error.toString() })
         }
     }
@@ -56,7 +57,7 @@ export const Compilation: React.FC = () => {
                         <i className="fa fa-refresh" aria-hidden="true"></i><span className="ml-2">Compile</span>
                     </Button>
                     <span id="actions">
-                        <a className="btn btn-light pointer mr-1" data-toggle="tooltip" data-placement="top" title="Copy"
+                        <a className="btn btn-light pointer mr-1" data-toggle="tooltip" data-placement="top" title="Copy Bytecode"
                             onClick={onCopy}>
                             <i className="fa fa-clipboard" aria-hidden="true"></i>
                         </a>
@@ -68,20 +69,14 @@ export const Compilation: React.FC = () => {
                 </div>
             </Col>
         </Row>
+        {(state.compilationResult || state.error) && 
         <Row>
             <Col>
-                <p className="mb-1">Bytecode:</p>
-                <textarea className="form-control w-100" rows={8} value={state.compilationResult ? toBytecodeString(state.compilationResult) : ''} placeholder="Output" readOnly />
+                {state.error && <Alert variant="danger"><i className="fa fa-exclamation-circle mr-2" aria-hidden="true"></i>{state.error}</Alert>}
+                {state.compilationResult && <Alert variant="success"><i className="fa fa-check mr-2" aria-hidden="true"></i>Successfully compiled!</Alert>}
             </Col>
         </Row>
-        <Row>
-            <Col>
-                {state.error && 
-                <div className="error">
-                    <i className="fa fa-exclamation-circle mr-2" aria-hidden="true"></i>{state.error}
-                </div>}
-            </Col>
-        </Row>
+        }
         </>
     );
 }
