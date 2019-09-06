@@ -6,7 +6,7 @@
   "scripts": {
     "setup": "cd core && npm install && npm run build && cd ../remix-plugin && npm install",
     "start": "cd remix-plugin && npm run start",
-    "dev": "cd remix-plugin && npm run start-http"
+    "dev": "cd remix-plugin && npm run dev"
   },
   "repository": {
     "type": "git",
