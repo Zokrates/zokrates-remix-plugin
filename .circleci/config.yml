@@ -1,0 +1,40 @@
+version: 2
+general:
+  branches:
+    only:
+      - feature-ci
+      - master
+      - develop
+jobs:
+  build:
+    docker:
+      - image: circleci/node 
+    working_directory: ~/zokrates
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true 
+      - run: |
+          if [ $CIRCLE_BRANCH == "develop" ]; then export TAG="latest"; fi
+          if [ $CIRCLE_BRANCH == "feature-ci" ]; then export TAG="latest"; fi
+          if [ $CIRCLE_BRANCH == "master" ]; then export TAG="stable"; fi
+          echo $TAG
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
+          docker build --file Dockerfile --tag blockchainit/zokrates.js:$TAG .
+          docker push blockchainit/zokrates.js:$TAG
+  deploy:
+    docker:
+      - image: circleci/node 
+    working_directory: ~/zokrates
+    steps:
+      - run: |
+          ssh root@zokrates.blockchain-it.hr 'rm -rf /home/zokrates.js && cd /home/ && git clone https://github.com/blockchain-it-hr/zokrates.js && cd zokrates.js && docker-compose up -d'
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build:
+          context: zokrates
+
+          deployment:
+  
