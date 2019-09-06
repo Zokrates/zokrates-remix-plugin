@@ -28,7 +28,7 @@ jobs:
     working_directory: ~/zokrates
     steps:
       - run: |
-          ssh circleci@zokrates.blockchain-it.hr 'rm -rf /home/zokrates.js && cd /home/ && git clone https://github.com/blockchain-it-hr/zokrates.js && cd zokrates.js && docker-compose up -d'
+          echo yes | ssh circleci@zokrates.blockchain-it.hr 'rm -rf /home/zokrates.js && cd /home/ && git clone https://github.com/blockchain-it-hr/zokrates.js && cd zokrates.js && docker-compose up -d'
 workflows:
   version: 2
   build_and_deploy:
