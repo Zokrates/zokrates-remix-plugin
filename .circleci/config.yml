@@ -31,7 +31,7 @@ jobs:
           fingerprints:
           - "fd:28:56:c6:fa:62:c2:04:47:18:b1:0d:01:66:39:ea"
       - run: echo $CIRCLE_BRANCH
-      - run: ssh -o "StrictHostKeyChecking no" circleci@zokrates.blockchain-it.hr 'rm -rf /home/circleci/zokrates.js && cd /home/circleci && git clone https://github.com/blockchain-it-hr/zokrates.js && cd zokrates.js && git checkout $CIRCLE_BRANCH && docker-compose up -d'
+      - run: ssh -o "StrictHostKeyChecking no" circleci@zokrates.blockchain-it.hr 'rm -rf /home/circleci/zokrates.js && cd /home/circleci && git clone https://github.com/blockchain-it-hr/zokrates.js && cd zokrates.js && git fetch && git checkout $CIRCLE_BRANCH && docker-compose up -d'
 workflows:
   version: 2
   build_and_deploy:
