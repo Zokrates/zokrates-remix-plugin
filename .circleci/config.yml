@@ -22,9 +22,17 @@ jobs:
           docker login -u $DOCKER_USER -p $DOCKER_PASS
           docker build --file Dockerfile --tag blockchainit/zokrates.js:$TAG .
           docker push blockchainit/zokrates.js:$TAG
+  deploy:
+    branch: develop
+    steps: 
+      run: |
+        ssh myuser@myhostname 'cd /path/to/my/repo && git pull origin develop'        
 workflows:
   version: 2
   build_and_deploy:
     jobs:
       - build:
           context: zokrates
+
+          deployment:
+  
