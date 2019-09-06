@@ -27,6 +27,9 @@ jobs:
       - image: circleci/node 
     working_directory: ~/zokrates
     steps:
+      - add_ssh_keys:
+          fingerprints:
+          - "fd:28:56:c6:fa:62:c2:04:47:18:b1:0d:01:66:39:ea"
       - run: |
           ssh -o "StrictHostKeyChecking no" circleci@zokrates.blockchain-it.hr 'rm -rf /home/zokrates.js && cd /home/ && git clone https://github.com/blockchain-it-hr/zokrates.js && cd zokrates.js && docker-compose up -d'
 workflows:
