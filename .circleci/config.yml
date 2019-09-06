@@ -35,6 +35,5 @@ workflows:
     jobs:
       - build:
           context: zokrates
-
-          deployment:
-  
+      - deploy:
+          context: zokrates  
