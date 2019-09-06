@@ -33,7 +33,7 @@ jobs:
       - run: echo $CIRCLE_BRANCH
       - run: ssh -o "StrictHostKeyChecking no" circleci@zokrates.blockchain-it.hr 'rm -rf /home/circleci/zokrates.js && cd /home/circleci && git clone https://github.com/blockchain-it-hr/zokrates.js'
       - run: ssh -o "StrictHostKeyChecking no" -o SendEnv=CIRCLE_BRANCH circleci@zokrates.blockchain-it.hr 'echo $CIRCLE_BRANCH'
-      - run: ssh -o "StrictHostKeyChecking no" circleci@zokrates.blockchain-it.hr 'cd /home/circleci/zokrates.js  && git checkout "$CIRCLE_BRANCH" && docker-compose up -d'
+      - run: ssh -o "StrictHostKeyChecking no" -o SendEnv=CIRCLE_BRANCH circleci@zokrates.blockchain-it.hr 'cd /home/circleci/zokrates.js  && git checkout "$CIRCLE_BRANCH" && docker-compose up -d'
 workflows:
   version: 2
   build_and_deploy:
