@@ -1,4 +1,3 @@
-
 export function parseArguments(source: string) {
     var regex = /field(?:\[([0-9]+)\])?\s+([a-zA-Z0-9_]+)/g;
     var lines = source.split('\n');

@@ -1,10 +1,5 @@
 import React, { createContext, useContext, useReducer } from 'react';
-import { reducer, IActions } from './reducer';
-
-interface Result<R, E> {
-    result?: R,
-    error?: E
-}
+import { IActions, reducer } from './reducer';
 
 export interface IState {
     isLoaded: boolean,

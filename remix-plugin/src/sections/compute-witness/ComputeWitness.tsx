@@ -1,10 +1,12 @@
-import React, { useReducer, useEffect } from 'react';
-import { Row, Col, Button, InputGroup, FormControl, Form } from 'react-bootstrap';
+import React, { useEffect, useReducer } from 'react';
+import { Button, Col, Form, FormControl, InputGroup, Row, Spinner } from 'react-bootstrap';
 import { computeWitness } from '../../../../core';
-import { useStateContext, useDispatchContext } from '../../state/Store';
-import { witnessReducer, IComputeWitnessState } from './reducer';
-import { parseArguments } from './parser';
 import { showAlert } from '../../common/alert';
+import { setWitnessResult } from '../../state/actions';
+import { useDispatchContext, useStateContext } from '../../state/Store';
+import { onCleanup, onComputing, onError, onFieldChange, onSuccess } from './actions';
+import { parseArguments } from './parser';
+import { IComputeWitnessState, witnessReducer } from './reducer';
 
 export const ComputeWitness: React.FC = () => {
 
@@ -16,68 +18,45 @@ export const ComputeWitness: React.FC = () => {
     }
 
     const stateContext = useStateContext();
-    const dispatchToContext = useDispatchContext();
+    const dispatchContext = useDispatchContext();
     const [state, dispatch] = useReducer(witnessReducer, initialState);
 
     useEffect(() => {
-        dispatch({ 
-            type: 'cleanup' 
-        });
+        dispatch(onCleanup());
     }, [stateContext.compilationResult]);
 
     const compute = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            dispatch({ type: 'computing' });
+            dispatch(onComputing());
             setTimeout(() => {
                 try {
                     let args: string[] = Object.values(state.fields);
                     let witness = computeWitness(stateContext.compilationResult.program, args);
-        
-                    dispatch({ 
-                        type: 'success', 
-                        payload: witness 
-                    })
-                    
-                    dispatchToContext({ 
-                        type: 'set_witness_result', 
-                        payload: witness 
-                    });
+
+                    dispatch(onSuccess(witness))
+                    dispatchContext(setWitnessResult(witness));
                 } catch (error) {
-                    dispatchError(error);
+                    dispatch(onError(error));
                 }
             }, 200);
-
         } catch (error) {
-            dispatchError(error);
-        }  
-    }
-
-    const dispatchError = (error: string) => {
-        console.log(error);
-        dispatch({ 
-            type: 'error', 
-            payload: error.toString()
-        });
+            dispatch(onError(error));
+        }
     }
 
     const renderInputFields = () => {
         if (!stateContext.compilationResult) {
             return;
         }
-
         const args = parseArguments(stateContext.compilationResult.source);
-        return args.map((e, i) => 
+        return args.map((e, i) =>
             <InputGroup key={i} className="mb-3">
                 <InputGroup.Prepend>
-                    <InputGroup.Text id={"inputText" + i}>{e}</InputGroup.Text>
+                    <InputGroup.Text>{e}</InputGroup.Text>
                 </InputGroup.Prepend>
-                <FormControl placeholder="Value" type="number" required={true} value={state.fields[e] || ''} onChange={(event: any) => 
-                    dispatch({
-                        type: 'field',
-                        field: e, 
-                        payload: event.currentTarget.value, 
-                    })} />
+                <FormControl placeholder="Value" type="number" name={`${e}`} required={true} value={state.fields[e] || ''} onChange={(event: any) =>
+                    dispatch(onFieldChange(e, event.currentTarget.value))} />
             </InputGroup>
         );
     }
@@ -87,15 +66,30 @@ export const ComputeWitness: React.FC = () => {
             <Row>
                 <Col>
                     <Form onSubmit={compute}>
-                        {renderInputFields()}  
+                        {renderInputFields()}
                         <Button type="submit" disabled={!stateContext.compilationResult}>
-                            <i className="fa fa-lightbulb-o" aria-hidden="true"></i><span className="ml-2">{state.isComputing ? 'Computing...' : 'Compute Witness'}</span>
+                            {(() => {
+                                if (state.isComputing) {
+                                    return (
+                                        <>
+                                            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                                            <span className="ml-2">Computing...</span>
+                                        </>
+                                    );
+                                }
+                                return (
+                                    <>
+                                        <i className="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                        <span className="ml-2">Compute</span>
+                                    </>
+                                )
+                            })()}
                         </Button>
                     </Form>
                 </Col>
             </Row>
-            {state.error  && showAlert('danger', 'fa fa-exclamation-circle', state.error)}
-            {state.result && showAlert('success', 'fa fa-check', 'Witness computed!') }
+            {state.error && showAlert('danger', 'fa fa-exclamation-circle', state.error)}
+            {state.result && showAlert('success', 'fa fa-check', 'Witness computed!')}
         </>
     );
 }

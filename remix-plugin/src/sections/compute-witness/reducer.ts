@@ -12,7 +12,6 @@ export interface IComputeWitnessState {
 }
 
 export function witnessReducer(state: Partial<IComputeWitnessState>, action: IComputeWitnessAction) {
-
     switch (action.type) {
         case 'computing':
             return {

@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { remixClient } from './remix/remix-client'
-import { remixResolver } from './remix/remix-resolver';
+import React, { useEffect } from "react";
+import { Container } from "react-bootstrap";
 import { initialize } from '../../core';
-
+import './App.css';
+import { Accordion, AccordionElement, Footer, Header } from './components';
+import { remixClient } from './remix/remix-client';
+import { remixResolver } from './remix/remix-resolver';
 import { Compilation } from './sections/compilation/Compilation';
 import { ComputeWitness } from './sections/compute-witness/ComputeWitness';
-
-import { Header, Footer, Accordion, AccordionElement } from './components';
-
-import './App.css';
-import { Container } from "react-bootstrap";
-import { useStateContext, useDispatchContext } from './state/Store';
+import { useDispatchContext, useStateContext } from './state/Store';
 
 const App: React.FC = () => {
 
