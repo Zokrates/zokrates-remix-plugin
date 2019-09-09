@@ -27,18 +27,9 @@
     vertical-align: middle;
 }
 
-<<<<<<< HEAD
 .alert {
     padding: 0.5rem;
     font-weight: bold;
-=======
-.error {
-    color: white;
-    background-color: var(--danger);
-    padding: 0.5rem;
-    font-weight: bold;
-    border-radius: 0.25rem;
->>>>>>> 0c5a114db61bafc8a680c52d98653443fc85237c
     font-size: 0.8rem;
 }
 
