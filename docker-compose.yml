@@ -25,7 +25,7 @@ services:
   zokrates-dev:
     image: blockchainit/zokrates.js:latest
     ports:
-      - 8080:8080
+      - 9080:8080
     container_name: zokrates-dev
     networks:
       - zokrates     
