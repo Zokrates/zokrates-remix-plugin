@@ -48,5 +48,11 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, 'public', 'index.html'),
         })
-    ]
+    ],
+    devServer: {
+        port: '8080',
+        compress: true,
+        allowedHosts: [ 'zokrates.localhost', '.blockchain-it.hr' ],
+        host: '0.0.0.0'
+     }      
 }
