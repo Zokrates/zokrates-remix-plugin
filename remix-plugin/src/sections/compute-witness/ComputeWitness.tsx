@@ -30,27 +30,35 @@ export const ComputeWitness: React.FC = () => {
         try {
             dispatch({ type: 'computing' });
             setTimeout(() => {
-                let args: string[] = Object.values(state.fields);
-                let witness = computeWitness(stateContext.compilationResult.program, args);
-    
-                dispatch({ 
-                    type: 'success', 
-                    payload: witness 
-                })
-                
-                dispatchToContext({ 
-                    type: 'set_witness_result', 
-                    payload: witness 
-                });
+                try {
+                    let args: string[] = Object.values(state.fields);
+                    let witness = computeWitness(stateContext.compilationResult.program, args);
+        
+                    dispatch({ 
+                        type: 'success', 
+                        payload: witness 
+                    })
+                    
+                    dispatchToContext({ 
+                        type: 'set_witness_result', 
+                        payload: witness 
+                    });
+                } catch (error) {
+                    dispatchError(error);
+                }
             }, 200);
 
         } catch (error) {
-            console.log(error);
-            dispatch({ 
-                type: 'error',
-                payload: error.toString() 
-            })
+            dispatchError(error);
         }  
+    }
+
+    const dispatchError = (error: string) => {
+        console.log(error);
+        dispatch({ 
+            type: 'error', 
+            payload: error.toString()
+        });
     }
 
     const renderInputFields = () => {

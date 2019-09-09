@@ -25,8 +25,7 @@ export const compilationReducer = (state: ICompilationState, action: ICompilatio
                 isCompiling: false,
             }
         case 'error':
-            return { 
-                ...state, 
+            return {
                 error: action.payload,
                 result: null,
                 isCompiling: false,

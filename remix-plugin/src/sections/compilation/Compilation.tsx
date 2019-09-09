@@ -32,26 +32,34 @@ export const Compilation: React.FC = () => {
             await remixResolver.gatherImports(location, source);
             
             setTimeout(() => {
-                let program = compile(source);
-                dispatch({ 
-                    type: 'success', 
-                    payload: program 
-                });
-    
-                dispatchToContext({ 
-                    type: 'set_compile_result', 
-                    payload: { 
-                        program, source
-                    }
-                });
+                try {
+                    let program = compile(source);
+                    dispatch({ 
+                        type: 'success', 
+                        payload: program 
+                    });
+        
+                    dispatchToContext({ 
+                        type: 'set_compile_result', 
+                        payload: { 
+                            program, source
+                        }
+                    });
+                } catch (error) {
+                    dispatchError(error);
+                }
             }, 200);
         } catch (error) {
-            console.log(error);
-            dispatch({ 
-                type: 'error', 
-                payload: error.toString()
-            });
+            dispatchError(error);
         }
+    }
+
+    const dispatchError = (error: string) => {
+        console.log(error);
+        dispatch({ 
+            type: 'error', 
+            payload: error.toString()
+        });
     }
 
     const toBytecodeString = (input: Uint8Array): string => {
