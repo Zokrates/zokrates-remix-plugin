@@ -8,7 +8,7 @@ export default class RemixResolver implements Resolver {
     private reserved: Array<string> = ['ecc/', 'signature/', 'hashes/', 'utils/'];
 
     gatherImports = async (location: string, source: string) => {
-        var regex = /^\s*import\s*[\'\"]([^\'\"]+)[\'\"]/gm;
+        var regex = /^\s*(?:import|from)\s*[\'\"]([^\'\"]+)[\'\"]/gm;
         var match: any;
 
         while (match = regex.exec(source)) {

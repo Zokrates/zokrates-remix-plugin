@@ -9,5 +9,6 @@ module.exports = merge(common, {
         disableHostCheck: true,
         https: true,
         hot: true,
+        host: 'localhost'
     },
 });

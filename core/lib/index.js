@@ -41,3 +41,10 @@ export function compile(source) {
   }
   return Uint8Array.from(__state.zokrates.compile(source));
 }
+
+export function computeWitness(program, args) {
+  if (typeof __state.zokrates === 'undefined') {
+    throw new Error("You must call initialize() before calling this method")
+  }
+  return __state.zokrates.compute_witness(Array.from(program), Array.from(args));
+}

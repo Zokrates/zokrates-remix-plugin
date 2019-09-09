@@ -6,3 +6,4 @@ export interface ResolverResult {
 export function initialize(callback: (location: string, path: string) => ResolverResult): Promise<void>;
 export function compile(source: string): Uint8Array;
 export function getStdLib(): object;
+export function computeWitness(program: Uint8Array, args: string[]): string;

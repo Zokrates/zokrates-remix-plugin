@@ -1,8 +1,7 @@
 use wasm_bindgen::prelude::*;
 use zokrates_core::compile::compile as compile_core;
 use zokrates_core::ir;
-use zokrates_field::field::FieldPrime;
-// use zokrates_core::proof_system::*;
+use zokrates_field::field::{Field, FieldPrime};
 
 extern crate serde_derive;
 
@@ -30,7 +29,7 @@ extern "C" {
 
 #[wasm_bindgen]
 pub fn compile(source: JsValue) -> JsValue {
-   
+    
     fn resolve_closure<'a>(
         l: String,
         p: String,
@@ -46,45 +45,19 @@ pub fn compile(source: JsValue) -> JsValue {
     JsValue::from_serde(&data).unwrap()
 }
 
-// fn get_scheme(scheme_str: &str) -> Result<&'static dyn ProofSystem, String> {
-//     match scheme_str.to_lowercase().as_ref() {
-//         #[cfg(feature = "libsnark")]
-//         "pghr13" => Ok(&PGHR13 {}),
-//         #[cfg(feature = "libsnark")]
-//         "gm17" => Ok(&GM17 {}),
-//         "g16" => Ok(&G16 {}),
-//         s => Err(format!("Backend \"{}\" not supported", s)),
-//     }
-// }
+#[wasm_bindgen]
+pub fn compute_witness(program: JsValue, args: JsValue) -> JsValue {
+    let out: Vec<u8> = program.into_serde().unwrap();
+    let program_deserialized: ir::Prog<FieldPrime> = bincode::deserialize(&out).unwrap();
 
-// #[wasm_bindgen]
-// pub struct SetupResult {
-//     verifying_key: String,
-//     proving_key: String,
-// }
+    let js_args: Vec<String> = args.into_serde().unwrap();
+    let arguments: Vec<FieldPrime> = js_args.iter()
+                    .map(|x| FieldPrime::try_from_dec_str(x.as_str()).unwrap())
+                    .collect();
 
-// #[wasm_bindgen]
-// impl SetupResult {
-//     #[wasm_bindgen]
-//     pub fn new(verifying_key: String, proving_key: String) -> Self {
-//         SetupResult { verifying_key, proving_key }
-//     }
-// }
-
-// #[wasm_bindgen]
-// pub fn setup(program: JsValue, scheme: JsValue) -> SetupResult {
-//     let default_scheme: String = scheme.into_serde().unwrap_or(String::from("g16"));
-//     let scheme = get_scheme(&default_scheme).unwrap();
-
-//     let out: Vec<u8> = program.into_serde().unwrap();
-//     let _decoded: ir::Prog<FieldPrime> = bincode::deserialize(&out).unwrap();
-
-//     // TODO: add setup phase
-//     // Note: scheme.setup(...) expects file paths (pk_path, vk_path), this has to be changed in the API
-//     // Reference: https://github.com/Zokrates/ZoKrates/blob/master/zokrates_core/src/proof_system/bn128/g16.rs#L18
-
-//     SetupResult::new(String::default(), String::default())
-// }
+    let witness = program_deserialized.execute(&arguments).unwrap();
+    JsValue::from_str(&format!("{}", witness))
+}
 
 #[wasm_bindgen(start)]
 pub fn main_js() -> Result<(), JsValue> {

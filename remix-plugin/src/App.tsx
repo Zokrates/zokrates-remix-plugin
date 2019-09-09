@@ -3,20 +3,24 @@ import { remixClient } from './remix/remix-client'
 import { remixResolver } from './remix/remix-resolver';
 import { initialize } from '../../core';
 
-import { Compilation } from './sections/Compilation';
-import { Footer } from './components/Footer';
+import { Compilation } from './sections/compilation/Compilation';
+import { ComputeWitness } from './sections/compute-witness/ComputeWitness';
+
+import { Header, Footer, Accordion, AccordionElement } from './components';
 
 import './App.css';
-import { Container, Accordion, Card } from "react-bootstrap";
+import { Container } from "react-bootstrap";
+import { useStateContext, useDispatchContext } from './state/Store';
 
 const App: React.FC = () => {
 
-    const [loaded, setLoaded] = useState(false);
+    const state = useStateContext();
+    const dispatch = useDispatchContext();
 
     useEffect(() => {
         const load = async () => {
             try {
-                initialize(remixResolver.syncResolve).then(() => setLoaded(true))
+                initialize(remixResolver.syncResolve).then(() => dispatch({ type: 'set_loaded' }))
                 await remixClient.createClient();
             } catch(err) {
                 console.log(err)
@@ -27,64 +31,29 @@ const App: React.FC = () => {
 
     return (
         <div id="wrapper">
-            <main role="main" className="mt-1">
-                <Container>
-                    <img className="mx-auto d-block" src="./zokrates.svg" style={{ maxHeight: "150px" }} />
-                    <p>ZoKrates will compile your program to an intermediate representation and run a trusted setup protocol to generate proving and verifying keys.</p>
-                    <Accordion defaultActiveKey="0">
-                        <Card>
-                            <Accordion.Toggle as={Card.Header} eventKey="0">
-                                <i className="fa fa-refresh mr-2" aria-hidden="true"></i>Compilation
-                            </Accordion.Toggle>
-                            <Accordion.Collapse eventKey="0">
-                                <Card.Body>
-                                    <Compilation />
-                                </Card.Body>
-                            </Accordion.Collapse>
-                        </Card>
-
-                        <Card>
-                            <Accordion.Toggle as={Card.Header} eventKey="1">
-                                <i className="fa fa-cog mr-2" aria-hidden="true"></i>Setup
-                            </Accordion.Toggle>
-                            <Accordion.Collapse eventKey="1">
-                                <Card.Body>TBD</Card.Body>
-                            </Accordion.Collapse>
-                        </Card>
-
-                        <Card>
-                            <Accordion.Toggle as={Card.Header} eventKey="2">
-                                <i className="fa fa-key mr-2" aria-hidden="true"></i>Export Verifier
-                            </Accordion.Toggle>
-                            <Accordion.Collapse eventKey="2">
-                                <Card.Body>TBD</Card.Body>
-                            </Accordion.Collapse>
-                        </Card>
-
-                        <Card>
-                            <Accordion.Toggle as={Card.Header} eventKey="3">
-                                <i className="fa fa-lightbulb-o mr-2" aria-hidden="true"></i>Compute Witness
-                            </Accordion.Toggle>
-                            <Accordion.Collapse eventKey="3">
-                                <Card.Body>TBD</Card.Body>
-                            </Accordion.Collapse>
-                        </Card>
-
-
-                        <Card>
-                            <Accordion.Toggle as={Card.Header} eventKey="4">
-                                <i className="fa fa-check mr-2" aria-hidden="true"></i>Generate Proof
-                            </Accordion.Toggle>
-                            <Accordion.Collapse eventKey="4">
-                                <Card.Body>TBD</Card.Body>
-                            </Accordion.Collapse>
-                        </Card>
-
+            <Container>
+                <Header />
+                <main role="main">
+                    <Accordion>
+                        <AccordionElement headerText="Compilation" iconClass="fa fa-refresh" eventKey="0">
+                            <Compilation />
+                        </AccordionElement>
+                        <AccordionElement headerText="Setup" iconClass="fa fa-cog" eventKey="1">
+                            TBD
+                        </AccordionElement>
+                        <AccordionElement headerText="Export Verifier" iconClass="fa fa-key" eventKey="2">
+                            TBD
+                        </AccordionElement>
+                        <AccordionElement headerText="Compute Witness" iconClass="fa fa-lightbulb-o" eventKey="3">
+                            <ComputeWitness />
+                        </AccordionElement>
+                        <AccordionElement headerText="Generate Proof" iconClass="fa fa-check" eventKey="4">
+                            TBD
+                        </AccordionElement>
                     </Accordion>
-                </Container>
-            </main>
-
-            <Footer isLoading={!loaded}></Footer>
+                </main>
+            </Container>
+            <Footer isLoaded={state.isLoaded}></Footer>
         </div>
     );
 }

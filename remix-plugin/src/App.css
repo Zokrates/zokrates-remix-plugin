@@ -2,6 +2,11 @@
     margin-top: 1rem;
 }
 
+#wrapper {
+    margin-top: 0.25rem;
+    margin-bottom: 4rem;
+}
+
 .footer {
     display: flex;
     align-items: center;
@@ -31,6 +36,7 @@
     padding: 0.5rem;
     font-weight: bold;
     font-size: 0.8rem;
+    margin-bottom: 0rem !important;
 }
 
 .pointer {
