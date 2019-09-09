@@ -21,3 +21,11 @@ rustup install nightly
 rustup target add wasm32-unknown-unknown --toolchain nightly
 rustup default nightly
 ```
+
+CI notes:
+For deployment to server to work '/etc/ssh/sshd_config' has to be updated.
+Add this at the end of the config:
+```
+PermitUserEnvironment yes
+AcceptEnv CIRCLE_BRANCH
+```
