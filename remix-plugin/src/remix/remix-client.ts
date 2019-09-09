@@ -3,10 +3,9 @@ import Example from './example';
 
 export class RemixClient {
 
-    private client: PluginClient<any>;
+    private client: PluginClient<any> = createIframeClient<Api, RemixApi>();
 
-    createClient = async () => {
-        this.client = createIframeClient<Api, RemixApi>();
+    createClient = () => {
         return this.client.onload();
     }
 
