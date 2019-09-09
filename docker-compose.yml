@@ -8,7 +8,7 @@ services:
       - '443:443'
     restart: always
     environment:
-      DOMAINS: 'zokrates.blockchain-it.hr -> http://zokrates:8080'
+      DOMAINS: 'zokrates.blockchain-it.hr -> http://zokrates:8080, dev.zokrates.blockchain-it.hr -> http://zokrates-dev:8080'
       STAGE: 'production'
     container_name: nginx
     networks:
@@ -21,6 +21,14 @@ services:
     container_name: zokrates
     networks:
       - zokrates
+
+  zokrates-dev:
+    image: blockchainit/zokrates.js:latest
+    ports:
+      - 8080:8080
+    container_name: zokrates-dev
+    networks:
+      - zokrates     
 
 networks:
   zokrates:
