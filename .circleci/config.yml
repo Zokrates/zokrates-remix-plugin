@@ -42,9 +42,9 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-      #- build:
-      #    context: zokrates
+      - build:
+          context: zokrates
       - deploy:
           context: zokrates
-      #    requires:
-      #      - build
+          requires:
+            - build
