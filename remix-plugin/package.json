@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Zokrates Compiler plugin for Remix IDE",
   "scripts": {
-    "start": "npm run build && serve -l 8080 dist/",
+    "start": "npm run build && serve -l 10000 dist/",
     "dev": "webpack-dev-server --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js"
   },
