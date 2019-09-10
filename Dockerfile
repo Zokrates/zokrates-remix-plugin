@@ -1,35 +1,11 @@
-FROM node:10
-SHELL ["/bin/bash", "-c"]
-
+FROM blockchainit/zokrates-base
 WORKDIR /usr/src/app
 
-ENV RUSTUP_HOME=/usr/local/rustup \
-    CARGO_HOME=/usr/local/cargo \
-    PATH=/usr/local/cargo/bin:$PATH
+COPY remix-plugin ./remix-plugin
 
-RUN set -eux; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-        ca-certificates \
-        gcc \
-        libc6-dev \
-        wget \
-        ; \
-    \
-    url="https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init"; \
-    wget "$url"; \
-    chmod +x rustup-init; \
-    ./rustup-init -y --no-modify-path --default-toolchain nightly; \
-    rm rustup-init; \
-    chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
-    rustup --version; \
-    cargo --version; \
-    rustc --version;
+WORKDIR /usr/src/app/remix-plugin
 
-RUN curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh -s -- -y
+RUN npm run build
 
-COPY . ./
-RUN npm run setup
-
-EXPOSE 8080
+EXPOSE 10000
 CMD [ "npm", "run", "start" ]
