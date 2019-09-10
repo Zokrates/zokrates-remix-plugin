@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from 'react';
-import { Button, Col, Form, FormControl, InputGroup, Row, Spinner } from 'react-bootstrap';
+import { Button, Col, Form, FormControl, InputGroup, OverlayTrigger, Row, Spinner, Tooltip } from 'react-bootstrap';
 import { computeWitness } from '../../../../core';
 import { showAlert } from '../../common/alert';
 import { setWitnessResult } from '../../state/actions';
@@ -53,10 +53,14 @@ export const ComputeWitness: React.FC = () => {
         return args.map((e, i) =>
             <InputGroup key={i} className="mb-3">
                 <InputGroup.Prepend>
-                    <InputGroup.Text>{e}</InputGroup.Text>
+                    {e.modifier == 'private' && 
+                    <OverlayTrigger key={e.field} placement="top" overlay={<Tooltip id={`tooltip-${e.field}`}>Private Field</Tooltip>}>
+                        <InputGroup.Text><i className="fa fa-lock" aria-hidden="true"></i></InputGroup.Text>
+                    </OverlayTrigger>}
+                    <InputGroup.Text>{e.field}</InputGroup.Text>
                 </InputGroup.Prepend>
-                <FormControl placeholder="Value" type="number" name={`${e}`} required={true} value={state.fields[e] || ''} onChange={(event: any) =>
-                    dispatch(onFieldChange(e, event.currentTarget.value))} />
+                <FormControl placeholder="Value" type="number" name={`${e.field}`} required={true} value={state.fields[e.field] || ''} onChange={(event: any) =>
+                    dispatch(onFieldChange(e.field, event.currentTarget.value))} />
             </InputGroup>
         );
     }

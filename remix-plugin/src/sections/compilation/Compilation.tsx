@@ -1,7 +1,7 @@
 import copy from 'copy-to-clipboard';
 import saveAs from 'file-saver';
 import React, { useReducer } from 'react';
-import { Button, ButtonGroup, Col, Row, Spinner } from 'react-bootstrap';
+import { Button, ButtonGroup, Col, OverlayTrigger, Row, Spinner, Tooltip } from 'react-bootstrap';
 import { compile } from '../../../../core';
 import { showAlert } from '../../common/alert';
 import { remixClient } from '../../remix/remix-client';
@@ -83,12 +83,17 @@ export const Compilation: React.FC = () => {
                             })()}
                         </Button>
                         <ButtonGroup>
-                            <Button disabled={!state.result} variant="light" onClick={onCopy} data-toggle="tooltip" data-placement="top" title="Copy Bytecode">
-                                <i className="fa fa-clipboard" aria-hidden="true"></i>
-                            </Button>
-                            <Button disabled={!state.result} variant="light" onClick={onDownload} data-toggle="tooltip" data-placement="top" title="Download">
+                            <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy">Copy Bytecode</Tooltip>}>
+                                <Button disabled={!state.result} variant="light" onClick={onCopy}>
+                                    <i className="fa fa-clipboard" aria-hidden="true"></i>
+                                </Button>
+                            </OverlayTrigger>
+
+                            <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download">Download</Tooltip>}>
+                                <Button disabled={!state.result} variant="light" onClick={onDownload}>
                                 <i className="fa fa-download" aria-hidden="true"></i>
-                            </Button>
+                                </Button>
+                            </OverlayTrigger>
                         </ButtonGroup>
                     </div>
                 </Col>
