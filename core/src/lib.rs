@@ -2,6 +2,7 @@ use wasm_bindgen::prelude::*;
 use zokrates_core::compile::compile as compile_core;
 use zokrates_core::ir;
 use zokrates_field::field::{Field, FieldPrime};
+use zokrates_core::proof_system::{self, ProofSystem};
 
 extern crate serde_derive;
 
@@ -29,7 +30,6 @@ extern "C" {
 
 #[wasm_bindgen]
 pub fn compile(source: JsValue) -> JsValue {
-    
     fn resolve_closure<'a>(
         l: String,
         p: String,
@@ -57,6 +57,15 @@ pub fn compute_witness(program: JsValue, args: JsValue) -> JsValue {
 
     let witness = program_deserialized.execute(&arguments).unwrap();
     JsValue::from_str(&format!("{}", witness))
+}
+
+#[wasm_bindgen]
+pub fn export_solidity_verifier(vk: JsValue, is_abiv2: JsValue) -> JsValue {
+    let vk_av: String = vk.into_serde().unwrap();
+    let is_abiv2_av: bool = is_abiv2.into_serde().unwrap();
+
+    let verifier: String = proof_system::G16{}.export_solidity_verifier_wasm(vk_av, is_abiv2_av);
+    JsValue::from_str(verifier.as_str())
 }
 
 #[wasm_bindgen(start)]

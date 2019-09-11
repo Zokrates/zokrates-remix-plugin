@@ -7,3 +7,4 @@ export function initialize(callback: (location: string, path: string) => Resolve
 export function compile(source: string): Uint8Array;
 export function getStdLib(): object;
 export function computeWitness(program: Uint8Array, args: string[]): string;
+export function exportSolidityVerifier(verifyingKey: string, isAbiv2: boolean): string;

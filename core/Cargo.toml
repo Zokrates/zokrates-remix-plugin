@@ -14,8 +14,8 @@ lto = true
 serde = "^1.0.59"
 serde_derive = "^1.0.59"
 bincode = "1.1.4"
-zokrates_core = { git = "https://github.com/ZoKrates/ZoKrates", branch = "simplify-resolver" }
-zokrates_field = { git = "https://github.com/ZoKrates/ZoKrates", branch = "simplify-resolver" }
+zokrates_core = { git = "https://github.com/dark64/ZoKrates", branch = "simplify-resolver" }
+zokrates_field = { git = "https://github.com/dark64/ZoKrates", branch = "simplify-resolver" }
 
 [dependencies.wasm-bindgen]
 version = "0.2.50"

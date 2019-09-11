@@ -8,6 +8,7 @@ import { remixResolver } from './remix/remix-resolver';
 import { Compilation } from './sections/compilation/Compilation';
 import { ComputeWitness } from './sections/compute-witness/ComputeWitness';
 import { useDispatchContext, useStateContext } from './state/Store';
+import { ExportSolidityVerifier } from "./sections/export-solidity/ExportSolidityVerifier";
 
 const App: React.FC = () => {
 
@@ -39,7 +40,7 @@ const App: React.FC = () => {
                             TBD
                         </AccordionElement>
                         <AccordionElement headerText="Export Verifier" iconClass="fa fa-key" eventKey="2">
-                            TBD
+                            <ExportSolidityVerifier />
                         </AccordionElement>
                         <AccordionElement headerText="Compute Witness" iconClass="fa fa-lightbulb-o" eventKey="3">
                             <ComputeWitness />
