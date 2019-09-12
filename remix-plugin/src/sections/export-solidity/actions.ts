@@ -14,7 +14,7 @@ export const onSuccess = (verifierCode: string): IExportVerifierAction => {
 }
 
 export const onError = (error: any): IExportVerifierAction => {
-    console.log(error);
+    console.error("Error occurred while exporting verifier: " + error);
     return {
         type: 'error',
         payload: error.toString()

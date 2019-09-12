@@ -1,10 +1,11 @@
+import { saveAs } from 'file-saver';
 import React, { useReducer } from 'react';
-import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';
+import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Spinner, Tooltip } from 'react-bootstrap';
 import { exportSolidityVerifier } from '../../../../core';
+import { Alert } from '../../common/alert';
 import { remixClient } from '../../remix/remix-client';
-import { IExportVerifierState, exportVerifierReducer } from './reducer';
-import { onError, onSuccess, onGenerating, onFieldChange } from './actions';
-import { showAlert } from '../../common/alert';
+import { onError, onFieldChange, onGenerating, onSuccess } from './actions';
+import { exportVerifierReducer, IExportVerifierState } from './reducer';
 
 export const ExportSolidityVerifier: React.FC = () => {
     
@@ -27,15 +28,12 @@ export const ExportSolidityVerifier: React.FC = () => {
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(state);
         try {
             dispatch(onGenerating());
             setTimeout(async () => {
                 try {
                     let verifierCode = exportSolidityVerifier(state.fields.vk, state.fields.abiv2);
                     dispatch(onSuccess(verifierCode));
-        
-                    await remixClient.createFile('browser/verifier.sol', verifierCode);
                 } catch (error) {
                     dispatch(onError(error.toString()));
                 }
@@ -43,6 +41,15 @@ export const ExportSolidityVerifier: React.FC = () => {
         } catch (error) {
             dispatch(onError(error.toString()));
         }
+    }
+
+    const openInRemix = () => {
+        remixClient.createFile('browser/verifier.sol', state.result);
+    }
+
+    const onDownload = () => {
+        var blob = new Blob([state.result], { type: 'text/plain;charset=utf-8' });
+        saveAs(blob, "verifier.sol");
     }
 
     return (
@@ -61,29 +68,53 @@ export const ExportSolidityVerifier: React.FC = () => {
                                 dispatch(onFieldChange("abiv2", event.currentTarget.checked))}
                             }/>
                         </Form.Group>
-                        <Button variant="primary" type="submit">
-                            {(() => {
-                                if (state.isGenerating) {
+                        <div className="d-flex justify-content-between">
+                            <Button variant="primary" type="submit">
+                                {(() => {
+                                    if (state.isGenerating) {
+                                        return (
+                                            <>
+                                                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                                                <span className="ml-2">Generating...</span>
+                                            </>
+                                        );
+                                    }
                                     return (
                                         <>
-                                            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                                            <span className="ml-2">Generating...</span>
+                                            <i className="fa fa-key" aria-hidden="true"></i>
+                                            <span className="ml-2">Generate Solidity Verifier</span>
                                         </>
-                                    );
-                                }
-                                return (
-                                    <>
-                                        <i className="fa fa-key" aria-hidden="true"></i>
-                                        <span className="ml-2">Generate Solidity Verifier</span>
-                                    </>
-                                )
-                            })()}   
-                        </Button>
+                                    )
+                                })()}   
+                            </Button>
+                            <ButtonGroup>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy">Open in Remix</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={openInRemix}>
+                                        <i className="fa fa-share" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download">Download</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={onDownload}>
+                                    <i className="fa fa-download" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
+                            </ButtonGroup>
+                        </div>
                     </Form>
                 </Col>
             </Row>
-            {state.error && showAlert('danger', 'fa fa-exclamation-circle', state.error)}
-            {state.result && showAlert('success', 'fa fa-check', 'Solidity verifier generated!')}
+            {state.error && 
+            <Alert variant='danger' iconClass='fa fa-exclamation-circle'>
+                <pre>
+                    <code>{state.error}</code>
+                </pre>
+            </Alert>
+            }
+            {state.result && 
+            <Alert variant='success' iconClass='fa fa-check'>
+                Solidity verifier generated!
+            </Alert>
+            }
         </>
     );
 }

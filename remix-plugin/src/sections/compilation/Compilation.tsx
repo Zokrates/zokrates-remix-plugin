@@ -3,7 +3,7 @@ import saveAs from 'file-saver';
 import React, { useReducer } from 'react';
 import { Button, ButtonGroup, Col, OverlayTrigger, Row, Spinner, Tooltip } from 'react-bootstrap';
 import { compile } from '../../../../core';
-import { showAlert } from '../../common/alert';
+import { Alert } from '../../common/alert';
 import { remixClient } from '../../remix/remix-client';
 import { remixResolver } from '../../remix/remix-resolver';
 import { setCompileResult } from '../../state/actions';
@@ -34,7 +34,7 @@ export const Compilation: React.FC = () => {
 
             setTimeout(() => {
                 try {
-                    let program = compile(source);
+                    let program = compile(source, location.split('/')[1]);
                     dispatch(onSuccess(program));
                     dispatchContext(setCompileResult(program, source));
                 } catch (error) {
@@ -47,7 +47,7 @@ export const Compilation: React.FC = () => {
     }
 
     const toBytecodeString = (input: Uint8Array): string => {
-        return '0x' + Buffer.from(state.result).toString('hex');
+        return '0x' + Buffer.from(input).toString('hex');
     }
 
     const onCopy = () => {
@@ -99,8 +99,18 @@ export const Compilation: React.FC = () => {
                 </Col>
             </Row>
 
-            {state.error && showAlert('danger', 'fa fa-exclamation-circle', state.error)}
-            {state.result && showAlert('success', 'fa fa-check', 'Successfully compiled!')}
+            {state.error && 
+            <Alert variant='danger' iconClass='fa fa-exclamation-circle'>
+                <pre>
+                    <code>{state.error}</code>
+                </pre>
+            </Alert>
+            }
+            {state.result && 
+            <Alert variant='success' iconClass='fa fa-check'>
+                Successfully compiled!
+            </Alert>
+            }
         </>
     );
 }

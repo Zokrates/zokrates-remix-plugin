@@ -35,11 +35,11 @@ export function getStdLib() {
   return stdlib;
 }
 
-export function compile(source) {
+export function compile(source, location) {
   if (typeof __state.zokrates === 'undefined') {
     throw new Error("You must call initialize() before calling this method")
   }
-  return Uint8Array.from(__state.zokrates.compile(source));
+  return Uint8Array.from(__state.zokrates.compile(source, location));
 }
 
 export function computeWitness(program, args) {
@@ -49,4 +49,3 @@ export function computeWitness(program, args) {
 export function exportSolidityVerifier(verifyingKey, isAbiv2) {
   return __state.zokrates.export_solidity_verifier(verifyingKey, isAbiv2);
 }
-

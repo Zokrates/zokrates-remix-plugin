@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from 'react';
 import { Button, Col, Form, FormControl, InputGroup, OverlayTrigger, Row, Spinner, Tooltip } from 'react-bootstrap';
 import { computeWitness } from '../../../../core';
-import { showAlert } from '../../common/alert';
+import { Alert } from '../../common/alert';
 import { setWitnessResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onCleanup, onComputing, onError, onFieldChange, onSuccess } from './actions';
@@ -59,7 +59,7 @@ export const ComputeWitness: React.FC = () => {
                     </OverlayTrigger>}
                     <InputGroup.Text>{e.field}</InputGroup.Text>
                 </InputGroup.Prepend>
-                <FormControl placeholder="Value" type="number" name={`${e.field}`} required={true} value={state.fields[e.field] || ''} onChange={(event: any) =>
+                <FormControl placeholder="Value" type="number" name={`${e.field}`} value={state.fields[e.field] || ''} required={true} onChange={(event: any) =>
                     dispatch(onFieldChange(e.field, event.currentTarget.value))} />
             </InputGroup>
         );
@@ -92,8 +92,18 @@ export const ComputeWitness: React.FC = () => {
                     </Form>
                 </Col>
             </Row>
-            {state.error && showAlert('danger', 'fa fa-exclamation-circle', state.error)}
-            {state.result && showAlert('success', 'fa fa-check', 'Witness computed!')}
+            {state.error && 
+            <Alert variant='danger' iconClass='fa fa-exclamation-circle'>
+                <pre>
+                    <code>{state.error}</code>
+                </pre>
+            </Alert>
+            }
+            {state.result && 
+            <Alert variant='success' iconClass='fa fa-check'>
+                Witness computed!
+            </Alert>
+            }
         </>
     );
 }

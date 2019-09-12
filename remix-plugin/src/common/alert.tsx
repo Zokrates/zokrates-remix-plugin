@@ -1,14 +1,13 @@
 import React from 'react';
-import { Row, Col, Alert, AlertProps } from 'react-bootstrap';
+import { Alert as BAlert, Col, Row } from 'react-bootstrap';
 
-export const showAlert = (variant: AlertProps["variant"], iconClass: string, message: string) => {
-    return (
-        <Row>
-            <Col>
-                <Alert variant={variant}>
-                    <i className={iconClass + " mr-2"} aria-hidden="true"></i>{message}
-                </Alert>
-            </Col>
-        </Row>
-    );
-}
+export const Alert = ({ variant, iconClass, children }) => (
+    <Row>
+        <Col>
+            <BAlert variant={variant} className="d-flex">
+                <i className={iconClass + " mr-2"} aria-hidden="true" style={{ marginTop: "3px" }}></i>
+                {children}
+            </BAlert>
+        </Col>
+    </Row>
+);
