@@ -1,7 +1,9 @@
+import { saveAs } from 'file-saver';
 import React, { useEffect, useReducer } from 'react';
-import { Button, Col, Form, FormControl, InputGroup, OverlayTrigger, Row, Spinner, Tooltip } from 'react-bootstrap';
+import { Button, ButtonGroup, Col, Form, FormControl, InputGroup, OverlayTrigger, Row, Spinner, Tooltip } from 'react-bootstrap';
 import { computeWitness } from '../../../../core';
 import { Alert } from '../../common/alert';
+import { remixClient } from '../../remix/remix-client';
 import { setWitnessResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onCleanup, onComputing, onError, onFieldChange, onSuccess } from './actions';
@@ -45,6 +47,15 @@ export const ComputeWitness: React.FC = () => {
         }
     }
 
+    const openInRemix = () => {
+        remixClient.createFile('browser/witness.out', state.result);
+    }
+
+    const onDownload = () => {
+        var blob = new Blob([state.result], { type: 'text/plain;charset=utf-8' });
+        saveAs(blob, "witness.out");
+    }
+
     const renderInputFields = () => {
         if (!stateContext.compilationResult) {
             return;
@@ -71,24 +82,38 @@ export const ComputeWitness: React.FC = () => {
                 <Col>
                     <Form onSubmit={compute}>
                         {renderInputFields()}
-                        <Button type="submit" disabled={!stateContext.compilationResult}>
-                            {(() => {
-                                if (state.isComputing) {
+                        <div className="d-flex justify-content-between">
+                            <Button type="submit" disabled={!stateContext.compilationResult}>
+                                {(() => {
+                                    if (state.isComputing) {
+                                        return (
+                                            <>
+                                                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                                                <span className="ml-2">Computing...</span>
+                                            </>
+                                        );
+                                    }
                                     return (
                                         <>
-                                            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                                            <span className="ml-2">Computing...</span>
+                                            <i className="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                            <span className="ml-2">Compute</span>
                                         </>
-                                    );
-                                }
-                                return (
-                                    <>
-                                        <i className="fa fa-lightbulb-o" aria-hidden="true"></i>
-                                        <span className="ml-2">Compute</span>
-                                    </>
-                                )
-                            })()}
-                        </Button>
+                                    )
+                                })()}
+                            </Button>
+                            <ButtonGroup>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy">Open in Remix Editor</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={openInRemix}>
+                                        <i className="fa fa-share" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download">Download</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={onDownload}>
+                                    <i className="fa fa-download" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
+                            </ButtonGroup>
+                        </div>
                     </Form>
                 </Col>
             </Row>

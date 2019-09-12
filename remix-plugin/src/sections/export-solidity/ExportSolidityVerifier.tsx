@@ -82,13 +82,13 @@ export const ExportSolidityVerifier: React.FC = () => {
                                     return (
                                         <>
                                             <i className="fa fa-key" aria-hidden="true"></i>
-                                            <span className="ml-2">Generate Solidity Verifier</span>
+                                            <span className="ml-2">Generate</span>
                                         </>
                                     )
                                 })()}   
                             </Button>
                             <ButtonGroup>
-                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy">Open in Remix</Tooltip>}>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy">Open in Remix Editor</Tooltip>}>
                                     <Button disabled={!state.result} variant="light" onClick={openInRemix}>
                                         <i className="fa fa-share" aria-hidden="true"></i>
                                     </Button>

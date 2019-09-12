@@ -1,4 +1,4 @@
-import { createIframeClient, PluginClient, Api, RemixApi } from '@remixproject/plugin'
+import { createIframeClient, PluginClient, Api, RemixApi, HighlightPosition } from '@remixproject/plugin'
 import Example from './example';
 
 export class RemixClient {
@@ -36,6 +36,14 @@ export class RemixClient {
         } catch (err) {
             console.log(err)
         }
+    }
+
+    highlight = async (position: HighlightPosition, file: string, color: string) => {
+        await this.client.call('editor', 'highlight', position, file, color);
+    }
+
+    discardHighlight = async () => {
+        await this.client.call('editor', 'discardHighlight');
     }
 
     createExample = () => {

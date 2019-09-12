@@ -10,6 +10,7 @@ import { setCompileResult } from '../../state/actions';
 import { useDispatchContext } from '../../state/Store';
 import { onCompiling, onError, onSuccess } from './actions';
 import { compilationReducer, ICompilationState } from './reducer';
+import { HighlightPosition } from '@remixproject/plugin';
 
 export const Compilation: React.FC = () => {
 
@@ -32,15 +33,17 @@ export const Compilation: React.FC = () => {
             // we have to "preload" imports before compiling since remix plugin api returns promises
             await remixResolver.gatherImports(location, source);
 
-            setTimeout(() => {
+            setTimeout((location) => {
                 try {
                     let program = compile(source, location.split('/')[1]);
                     dispatch(onSuccess(program));
                     dispatchContext(setCompileResult(program, source));
+                    remixClient.discardHighlight();
                 } catch (error) {
+                    highlightCompileError(location, error);
                     dispatch(onError(error));
                 }
-            }, 200);
+            }, 200, location);
         } catch (error) {
             dispatch(onError(error));
         }
@@ -57,6 +60,23 @@ export const Compilation: React.FC = () => {
     const onDownload = () => {
         var blob = new Blob([state.result.buffer], { type: 'application/octet-stream' });
         saveAs(blob, "out");
+    }
+
+    const highlightCompileError = (location: string, error: string) => {
+        var match = /\b(\d+):(\d+)\b/.exec(error);
+        if (!match) {
+            return;
+        }
+            
+        var line = Number(match[1]) - 1;
+        var column = Number(match[2]);
+        
+        var highlightPosition: HighlightPosition = {
+            start: { line, column },
+            end:   { line, column },
+        }
+
+        remixClient.highlight(highlightPosition, location, '#ff7675');
     }
 
     return (
