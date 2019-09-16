@@ -21,6 +21,9 @@ rustup install nightly
 rustup target add wasm32-unknown-unknown --toolchain nightly
 rustup default nightly
 ```
+Latest working versions (tested):
+cargo 1.38.0-nightly (e853aa976 2019-08-09)
+rustc 1.39.0-nightly (2111aed0a 2019-08-17)
 
 CI notes:
 For deployment to server to work '/etc/ssh/sshd_config' has to be updated.
