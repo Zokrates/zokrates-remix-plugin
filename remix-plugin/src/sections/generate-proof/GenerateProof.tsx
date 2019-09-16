@@ -1,23 +1,35 @@
 import { saveAs } from 'file-saver';
-import React, { useReducer } from 'react';
-import { Button, ButtonGroup, Col, OverlayTrigger, Row, Tooltip, Spinner } from 'react-bootstrap';
+import React, { useEffect, useReducer } from 'react';
+import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { generateProof } from '../../../../core';
-import { Alert } from '../../common/alert';
+import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/remix-client';
 import { setGenerateProofResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
-import { onError, onSuccess, onLoading } from './actions';
-import { generateProofReducer } from './reducer';
+import { onCleanup, onError, onLoading, onSuccess } from './actions';
+import { generateProofReducer, IGenerateProofState } from './reducer';
 
 export const GenerateProof: React.FC = () => {
 
+    const initialState: IGenerateProofState = {
+        isLoading: false,
+        result: '',
+        error: ''
+    }
+
     const stateContext = useStateContext();
     const dispatchContext = useDispatchContext();
+    const [state, dispatch] = useReducer(generateProofReducer, initialState);
 
-    const [state, dispatch] = useReducer(generateProofReducer, {})
+    useEffect(() => {
+        dispatch(onCleanup());
+        dispatchContext(setGenerateProofResult(''));
+    }, [stateContext.compilationResult, stateContext.witnessResult, stateContext.setupResult]);
 
-    const onGenerateProof = () => {
+    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         dispatch(onLoading());
+
         setTimeout(() => {
             try {
                 let proof = generateProof(
@@ -62,38 +74,27 @@ export const GenerateProof: React.FC = () => {
             <Row>
                 <Col>
                     <p>Generates a proof for a computation of the compiled program using proving key and computed witness.</p>
-                    <div className="d-flex justify-content-between">
-                        <Button onClick={onGenerateProof} variant="primary" type="submit" disabled={requirementsConstraint}>
-                            {(() => {
-                                if (state.isLoading) {
-                                    return (
-                                        <>
-                                            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                                            <span className="ml-2">Generating...</span>
-                                        </>
-                                    );
-                                }
-                                return (
-                                    <>
-                                        <i className="fa fa-check" aria-hidden="true"></i>
-                                        <span className="ml-2">Generate</span>
-                                    </>
-                                )
-                            })()}
-                        </Button>
-                        <ButtonGroup>
-                            <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-remix-proof">Open in Remix Editor</Tooltip>}>
-                                <Button disabled={!state.result} variant="light" onClick={openInRemix}>
-                                    <i className="fa fa-share" aria-hidden="true"></i>
-                                </Button>
-                            </OverlayTrigger>
-                            <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download-proof">Download</Tooltip>}>
-                                <Button disabled={!state.result} variant="light" onClick={onDownload}>
-                                    <i className="fa fa-download" aria-hidden="true"></i>
-                                </Button>
-                            </OverlayTrigger>
-                        </ButtonGroup>
-                    </div>
+                    <Form onSubmit={onSubmit}>
+                        <div className="d-flex justify-content-between">
+                            <LoadingButton type="submit" disabled={requirementsConstraint}
+                                defaultText="Generate" 
+                                loadingText="Generating..." 
+                                iconClassName="fa fa-check" 
+                                isLoading={state.isLoading} />
+                            <ButtonGroup>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-remix-proof">Open in Remix Editor</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={openInRemix}>
+                                        <i className="fa fa-share" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download-proof">Download</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={onDownload}>
+                                        <i className="fa fa-download" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
+                            </ButtonGroup>
+                        </div>
+                    </Form>
                 </Col>
             </Row>
             {state.error && 

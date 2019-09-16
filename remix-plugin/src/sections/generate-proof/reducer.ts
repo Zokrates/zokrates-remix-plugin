@@ -1,5 +1,5 @@
 export type IGenerateProofAction = {
-    type: 'loading' | 'success' | 'error';
+    type: 'loading' | 'cleanup' | 'success' | 'error';
     payload?: string;
 }
 
@@ -12,12 +12,19 @@ export interface IGenerateProofState {
 export function generateProofReducer(state: Partial<IGenerateProofState>, action: IGenerateProofAction) {
     switch (action.type) {
         case 'loading': 
+        return {
+            ...state,
+            result: '',
+            error: '',
+            isLoading: true
+        }
+        case 'cleanup': {
             return {
-                ...state,
                 result: '',
                 error: '',
-                isLoading: true
+                isLoading: false,
             }
+        }
         case 'success':
             return { 
                 result: action.payload, 

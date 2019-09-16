@@ -1,12 +1,12 @@
 import { saveAs } from 'file-saver';
 import React, { useEffect, useReducer } from 'react';
-import { Button, ButtonGroup, Col, Form, FormControl, InputGroup, OverlayTrigger, Row, Spinner, Tooltip } from 'react-bootstrap';
+import { Button, ButtonGroup, Col, Form, FormControl, InputGroup, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { computeWitness } from '../../../../core';
-import { Alert } from '../../common/alert';
+import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/remix-client';
 import { setWitnessResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
-import { onCleanup, onLoading, onError, onFieldChange, onSuccess } from './actions';
+import { onCleanup, onError, onFieldChange, onLoading, onSuccess } from './actions';
 import { parseArguments } from './parser';
 import { IComputeWitnessState, witnessReducer } from './reducer';
 
@@ -28,7 +28,7 @@ export const ComputeWitness: React.FC = () => {
         dispatchContext(setWitnessResult(''));
     }, [stateContext.compilationResult]);
 
-    const compute = (e: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         dispatch(onLoading());
         
@@ -88,27 +88,14 @@ export const ComputeWitness: React.FC = () => {
             <Row>
                 <Col>
                     <p>Computes a witness for the compiled program. A witness is a valid assignment of the variables, which include the results of the computation.</p>
-                    <Form onSubmit={compute}>
+                    <Form onSubmit={onSubmit}>
                         {renderInputFields()}
                         <div className="d-flex justify-content-between">
-                            <Button type="submit" disabled={!stateContext.compilationResult}>
-                                {(() => {
-                                    if (state.isLoading) {
-                                        return (
-                                            <>
-                                                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                                                <span className="ml-2">Computing...</span>
-                                            </>
-                                        );
-                                    }
-                                    return (
-                                        <>
-                                            <i className="fa fa-lightbulb-o" aria-hidden="true"></i>
-                                            <span className="ml-2">Compute</span>
-                                        </>
-                                    )
-                                })()}
-                            </Button>
+                            <LoadingButton type="submit" disabled={!stateContext.compilationResult}
+                                defaultText="Compute" 
+                                loadingText="Computing..." 
+                                iconClassName="fa fa-lightbulb-o" 
+                                isLoading={state.isLoading} />
                             <ButtonGroup>
                                 <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-remix-witness">Open in Remix Editor</Tooltip>}>
                                     <Button disabled={!state.result} variant="light" onClick={openInRemix}>

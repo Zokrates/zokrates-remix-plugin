@@ -1,5 +1,5 @@
 export type IExportVerifierAction = {
-    type: 'loading' | 'update_abiv2' | 'success' | 'error';
+    type: 'loading' | 'cleanup' | 'update_abiv2' | 'success' | 'error';
     field?: string,
     payload?: any;
 }
@@ -20,6 +20,14 @@ export function exportVerifierReducer(state: Partial<IExportVerifierState>, acti
                 error: '',
                 isLoading: true,
             }
+        case 'cleanup': {
+            return {
+                ...state,
+                result: '',
+                error: '',
+                isLoading: false,
+            }
+        }
         case 'update_abiv2':
             return { 
                 ...state, 

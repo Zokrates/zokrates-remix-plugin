@@ -6,6 +6,12 @@ export const onLoading = (): IGenerateProofAction => {
     };
 }
 
+export const onCleanup = (): IGenerateProofAction => {
+    return { 
+        type: 'cleanup' 
+    };
+}
+
 export const onSuccess = (proof: string): IGenerateProofAction => {
     return {
         type: 'success',

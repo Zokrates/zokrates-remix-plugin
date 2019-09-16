@@ -1,12 +1,12 @@
 import { saveAs } from 'file-saver';
-import React, { useReducer } from 'react';
-import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Spinner, Tooltip } from 'react-bootstrap';
+import React, { useEffect, useReducer } from 'react';
+import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { exportSolidityVerifier } from '../../../../core';
-import { Alert } from '../../common/alert';
+import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/remix-client';
 import { setExportVerifierResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
-import { onError, onLoading, onSuccess, updateAbi } from './actions';
+import { onCleanup, onError, onLoading, onSuccess, updateAbi } from './actions';
 import { exportVerifierReducer, IExportVerifierState } from './reducer';
 
 export const ExportVerifier: React.FC = () => {
@@ -20,8 +20,12 @@ export const ExportVerifier: React.FC = () => {
 
     const stateContext = useStateContext();
     const dispatchContext = useDispatchContext();
-
     const [state, dispatch] = useReducer(exportVerifierReducer, initialState);
+
+    useEffect(() => {
+        dispatch(onCleanup());
+        dispatchContext(setExportVerifierResult(''));
+    }, [stateContext.setupResult]);
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -70,24 +74,11 @@ export const ExportVerifier: React.FC = () => {
                             }/>
                         </Form.Group>
                         <div className="d-flex justify-content-between">
-                            <Button variant="primary" type="submit" disabled={!stateContext.setupResult}>
-                                {(() => {
-                                    if (state.isLoading) {
-                                        return (
-                                            <>
-                                                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                                                <span className="ml-2">Generating...</span>
-                                            </>
-                                        );
-                                    }
-                                    return (
-                                        <>
-                                            <i className="fa fa-key" aria-hidden="true"></i>
-                                            <span className="ml-2">Generate</span>
-                                        </>
-                                    )
-                                })()}   
-                            </Button>
+                            <LoadingButton type="submit" disabled={!stateContext.setupResult}
+                                defaultText="Export" 
+                                loadingText="Exporting..." 
+                                iconClassName="fa fa-key" 
+                                isLoading={state.isLoading} />
                             <ButtonGroup>
                                 <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-remix-verifier">Open in Remix Editor</Tooltip>}>
                                     <Button disabled={!state.result} variant="light" onClick={openInRemix}>

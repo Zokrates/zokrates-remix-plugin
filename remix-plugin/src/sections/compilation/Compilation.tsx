@@ -1,16 +1,16 @@
+import { HighlightPosition } from '@remixproject/plugin';
 import copy from 'copy-to-clipboard';
 import saveAs from 'file-saver';
 import React, { useReducer } from 'react';
-import { Button, ButtonGroup, Col, OverlayTrigger, Row, Spinner, Tooltip } from 'react-bootstrap';
+import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { compile } from '../../../../core';
-import { Alert } from '../../common/alert';
+import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/remix-client';
 import { remixResolver } from '../../remix/remix-resolver';
 import { setCompileResult } from '../../state/actions';
 import { useDispatchContext } from '../../state/Store';
-import { onLoading, onError, onSuccess } from './actions';
+import { onError, onLoading, onSuccess } from './actions';
 import { compilationReducer, ICompilationState } from './reducer';
-import { HighlightPosition } from '@remixproject/plugin';
 
 export const Compilation: React.FC = () => {
 
@@ -23,7 +23,8 @@ export const Compilation: React.FC = () => {
     const dispatchContext = useDispatchContext();
     const [state, dispatch] = useReducer(compilationReducer, initialState)
 
-    const compileCallback = async () => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         try {
             dispatch(onLoading());
 
@@ -83,39 +84,28 @@ export const Compilation: React.FC = () => {
         <>
             <Row>
                 <Col>
-                    <div className="d-flex justify-content-between">
-                        <Button onClick={compileCallback}>
-                            {(() => {
-                                if (state.isLoading) {
-                                    return (
-                                        <>
-                                            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                                            <span className="ml-2">Compiling...</span>
-                                        </>
-                                    );
-                                }
-                                return (
-                                    <>
-                                        <i className="fa fa-refresh" aria-hidden="true"></i>
-                                        <span className="ml-2">Compile</span>
-                                    </>
-                                )
-                            })()}
-                        </Button>
-                        <ButtonGroup>
-                            <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-bytecode">Copy Bytecode</Tooltip>}>
-                                <Button disabled={!state.result} variant="light" onClick={onCopy}>
-                                    <i className="fa fa-clipboard" aria-hidden="true"></i>
-                                </Button>
-                            </OverlayTrigger>
+                    <Form onSubmit={onSubmit}>
+                        <div className="d-flex justify-content-between">
+                            <LoadingButton type="submit"
+                                defaultText="Compile" 
+                                loadingText="Compiling..." 
+                                iconClassName="fa fa-refresh" 
+                                isLoading={state.isLoading} />
+                            <ButtonGroup>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-bytecode">Copy Bytecode</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={onCopy}>
+                                        <i className="fa fa-clipboard" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
 
-                            <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download-program">Download</Tooltip>}>
-                                <Button disabled={!state.result} variant="light" onClick={onDownload}>
-                                <i className="fa fa-download" aria-hidden="true"></i>
-                                </Button>
-                            </OverlayTrigger>
-                        </ButtonGroup>
-                    </div>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download-program">Download</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={onDownload}>
+                                    <i className="fa fa-download" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
+                            </ButtonGroup>
+                        </div>
+                    </Form>
                 </Col>
             </Row>
 

@@ -7,6 +7,12 @@ export const onLoading = (): ISetupAction => {
     }
 }
 
+export const onCleanup = (): ISetupAction => {
+    return { 
+        type: 'cleanup' 
+    };
+}
+
 export const onSuccess = (setupResult: SetupResult): ISetupAction => {
     return {
         type: 'success',

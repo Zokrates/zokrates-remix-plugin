@@ -1,7 +1,7 @@
 import { SetupResult } from "../../state/types";
 
 export type ISetupAction = {
-    type: 'loading' | 'success' | 'error';
+    type: 'loading' | 'cleanup' | 'success' | 'error';
     payload?: SetupResult | string;
 }
 
@@ -18,6 +18,13 @@ export function setupReducer(state: Partial<ISetupState>, action: ISetupAction) 
                 ...state,
                 isLoading: true,
             }
+        case 'cleanup': {
+            return {
+                result: null,
+                error: '',
+                isLoading: false
+            }
+        }
         case 'success':
             return { 
                 isLoading: false,

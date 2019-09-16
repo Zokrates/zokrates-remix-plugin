@@ -6,6 +6,12 @@ export const onLoading = (): IExportVerifierAction => {
     };
 }
 
+export const onCleanup = (): IExportVerifierAction => {
+    return { 
+        type: 'cleanup' 
+    };
+}
+
 export const onSuccess = (verifierCode: string): IExportVerifierAction => {
     return {
         type: 'success',

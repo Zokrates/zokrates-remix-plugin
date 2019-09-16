@@ -1,11 +1,11 @@
-import React, { useReducer } from 'react';
-import { Button, Col, Row, Spinner } from 'react-bootstrap';
+import React, { useEffect, useReducer } from 'react';
+import { Col, Form, Row } from 'react-bootstrap';
 import { setup } from '../../../../core';
-import { Alert } from '../../common/alert';
+import { Alert, LoadingButton } from '../../components';
 import { setSetupResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { SetupResult } from '../../state/types';
-import { onError, onSuccess, onLoading } from './actions';
+import { onCleanup, onError, onLoading, onSuccess } from './actions';
 import { ISetupState, setupReducer } from './reducer';
 
 export const Setup: React.FC = () => {
@@ -20,8 +20,15 @@ export const Setup: React.FC = () => {
     const dispatchContext = useDispatchContext();
     const [state, dispatch] = useReducer(setupReducer, initialState)
 
-    const onSetup = () => {
+    useEffect(() => {
+        dispatch(onCleanup());
+        dispatchContext(setSetupResult(null));
+    }, [stateContext.compilationResult]);
+
+    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         dispatch(onLoading());
+
         setTimeout(() => {
             try {
                 let result = setup(stateContext.compilationResult.program);
@@ -48,26 +55,15 @@ export const Setup: React.FC = () => {
                 </Row>
             }
             <Row>
-                <Col>
+                <Col> 
                     <p>Creates a proving key and a verification key. These keys are derived from a source of randomness, commonly referred to as “toxic waste”.</p>
-                    <Button onClick={onSetup} variant="primary" type="submit" disabled={!stateContext.compilationResult}>
-                        {(() => {
-                            if (state.isLoading) {
-                                return (
-                                    <>
-                                        <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                                        <span className="ml-2">Running setup...</span>
-                                    </>
-                                );
-                            }
-                            return (
-                                <>
-                                    <i className="fa fa-cog" aria-hidden="true"></i>
-                                    <span className="ml-2">Run Setup</span>
-                                </>
-                            )
-                        })()}
-                    </Button>
+                    <Form onSubmit={onSubmit}>
+                        <LoadingButton type="submit" disabled={!stateContext.compilationResult}
+                            defaultText="Run Setup" 
+                            loadingText="Running setup..." 
+                            iconClassName="fa fa-cog" 
+                            isLoading={state.isLoading} />
+                    </Form>
                 </Col>
             </Row>
             {state.error && 
