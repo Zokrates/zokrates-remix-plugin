@@ -46,6 +46,15 @@ export function computeWitness(program, args) {
   return __state.zokrates.compute_witness(Array.from(program), Array.from(args));
 }
 
+export function setup(program) {
+  let result = __state.zokrates.setup(Array.from(program));
+  return [result[0], Uint8Array.from(result[1])];
+}
+
 export function exportSolidityVerifier(verifyingKey, isAbiv2) {
   return __state.zokrates.export_solidity_verifier(verifyingKey, isAbiv2);
+}
+
+export function generateProof(program, witness, provingKey) {
+  return __state.zokrates.generate_proof(Array.from(program), witness, Array.from(provingKey));
 }

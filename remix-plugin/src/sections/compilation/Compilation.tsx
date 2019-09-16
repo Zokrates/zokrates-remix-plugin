@@ -8,7 +8,7 @@ import { remixClient } from '../../remix/remix-client';
 import { remixResolver } from '../../remix/remix-resolver';
 import { setCompileResult } from '../../state/actions';
 import { useDispatchContext } from '../../state/Store';
-import { onCompiling, onError, onSuccess } from './actions';
+import { onLoading, onError, onSuccess } from './actions';
 import { compilationReducer, ICompilationState } from './reducer';
 import { HighlightPosition } from '@remixproject/plugin';
 
@@ -25,7 +25,7 @@ export const Compilation: React.FC = () => {
 
     const compileCallback = async () => {
         try {
-            dispatch(onCompiling());
+            dispatch(onLoading());
 
             let location = await remixClient.getCurrentFile();
             let source = await remixClient.getFile(location);
@@ -86,7 +86,7 @@ export const Compilation: React.FC = () => {
                     <div className="d-flex justify-content-between">
                         <Button onClick={compileCallback}>
                             {(() => {
-                                if (state.isCompiling) {
+                                if (state.isLoading) {
                                     return (
                                         <>
                                             <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
@@ -103,13 +103,13 @@ export const Compilation: React.FC = () => {
                             })()}
                         </Button>
                         <ButtonGroup>
-                            <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy">Copy Bytecode</Tooltip>}>
+                            <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-bytecode">Copy Bytecode</Tooltip>}>
                                 <Button disabled={!state.result} variant="light" onClick={onCopy}>
                                     <i className="fa fa-clipboard" aria-hidden="true"></i>
                                 </Button>
                             </OverlayTrigger>
 
-                            <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download">Download</Tooltip>}>
+                            <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download-program">Download</Tooltip>}>
                                 <Button disabled={!state.result} variant="light" onClick={onDownload}>
                                 <i className="fa fa-download" aria-hidden="true"></i>
                                 </Button>

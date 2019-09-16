@@ -1,8 +1,8 @@
 import { IExportVerifierAction } from "./reducer";
 
-export const onGenerating = (): IExportVerifierAction => {
+export const onLoading = (): IExportVerifierAction => {
     return { 
-        type: 'generating' 
+        type: 'loading' 
     };
 }
 
@@ -21,10 +21,9 @@ export const onError = (error: any): IExportVerifierAction => {
     }
 }
 
-export const onFieldChange = (field: string, value: any): IExportVerifierAction => {
+export const updateAbi = (value: boolean): IExportVerifierAction => {
     return {
-        type: 'field',
-        field: field, 
+        type: 'update_abiv2',
         payload: value, 
     }
 }

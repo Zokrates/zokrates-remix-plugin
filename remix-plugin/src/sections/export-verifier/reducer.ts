@@ -1,44 +1,43 @@
 export type IExportVerifierAction = {
-    type: 'generating' | 'field' | 'success' | 'error';
+    type: 'loading' | 'update_abiv2' | 'success' | 'error';
     field?: string,
     payload?: any;
 }
 
 export interface IExportVerifierState {
-    isGenerating: boolean,
-    fields: any,
+    isLoading: boolean,
+    abiv2: boolean,
     result: string,
     error: string
 }
 
 export function exportVerifierReducer(state: Partial<IExportVerifierState>, action: IExportVerifierAction) {
     switch (action.type) {
-        case 'generating':
+        case 'loading':
             return {
                 ...state,
-                isGenerating: true,
+                result: '',
+                error: '',
+                isLoading: true,
             }
-        case 'field':
+        case 'update_abiv2':
             return { 
                 ...state, 
-                fields: {
-                    ...state.fields,
-                    [action.field]: action.payload,
-                }
+                abiv2: action.payload
             }
         case 'success':
             return { 
                 ...state, 
                 result: action.payload, 
                 error: '',
-                isGenerating: false,
+                isLoading: false,
             }
         case 'error':
             return { 
                 ...state, 
                 error: action.payload,
                 result: null,
-                isGenerating: false,
+                isLoading: false,
             }
         default:
             return state;

@@ -1,34 +1,34 @@
-export type ICompilationAction = {
+import { SetupResult } from "../../state/types";
+
+export type ISetupAction = {
     type: 'loading' | 'success' | 'error';
-    payload?: any;
+    payload?: SetupResult | string;
 }
 
-export interface ICompilationState {
-    isLoading?: boolean,
-    result?: Uint8Array,
-    error?: string
+export interface ISetupState {
+    isLoading: boolean,
+    result: SetupResult,
+    error: string
 }
 
-export const compilationReducer = (state: ICompilationState, action: ICompilationAction) => {
+export function setupReducer(state: Partial<ISetupState>, action: ISetupAction) {
     switch (action.type) {
         case 'loading':
             return {
-                result: null,
-                error: '',
+                ...state,
                 isLoading: true,
             }
         case 'success':
             return { 
-                ...state, 
+                isLoading: false,
                 result: action.payload, 
                 error: '',
-                isLoading: false,
             }
         case 'error':
-            return {
+            return { 
+                isLoading: false,
                 error: action.payload,
                 result: null,
-                isLoading: false,
             }
         default:
             return state;

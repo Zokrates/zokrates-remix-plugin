@@ -1,8 +1,8 @@
 import { IComputeWitnessAction } from "./reducer";
 
-export const onComputing = (): IComputeWitnessAction => {
+export const onLoading = (): IComputeWitnessAction => {
     return { 
-        type: 'computing' 
+        type: 'loading' 
     };
 }
 

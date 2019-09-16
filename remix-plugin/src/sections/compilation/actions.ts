@@ -1,8 +1,8 @@
 import { ICompilationAction } from "./reducer";
 
-export const onCompiling = (): ICompilationAction => {
+export const onLoading = (): ICompilationAction => {
     return { 
-        type: 'compiling' 
+        type: 'loading' 
     };
 }
 

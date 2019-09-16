@@ -1,11 +1,11 @@
 export type IComputeWitnessAction = {
-    type: 'computing' | 'field' | 'success' | 'error' | 'cleanup';
+    type: 'loading' | 'field' | 'success' | 'error' | 'cleanup';
     field?: string,
     payload?: any;
 }
 
 export interface IComputeWitnessState {
-    isComputing: boolean,
+    isLoading: boolean,
     fields: object,
     result: string,
     error: string
@@ -13,10 +13,12 @@ export interface IComputeWitnessState {
 
 export function witnessReducer(state: Partial<IComputeWitnessState>, action: IComputeWitnessAction) {
     switch (action.type) {
-        case 'computing':
+        case 'loading':
             return {
                 ...state,
-                isComputing: true,
+                result: '',
+                error: '',
+                isLoading: true,
             }
         case 'field':
             return { 
@@ -31,21 +33,21 @@ export function witnessReducer(state: Partial<IComputeWitnessState>, action: ICo
                 ...state, 
                 result: action.payload, 
                 error: '',
-                isComputing: false,
+                isLoading: false,
             }
         case 'error':
             return { 
                 ...state, 
                 error: action.payload,
                 result: null,
-                isComputing: false,
+                isLoading: false,
             }
         case 'cleanup':
             return {
                 fields: {},
                 result: null,
                 error: '',
-                isComputing: false,
+                isLoading: false,
             }
         default:
             return state;

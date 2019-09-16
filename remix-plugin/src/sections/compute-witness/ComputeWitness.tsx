@@ -6,14 +6,14 @@ import { Alert } from '../../common/alert';
 import { remixClient } from '../../remix/remix-client';
 import { setWitnessResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
-import { onCleanup, onComputing, onError, onFieldChange, onSuccess } from './actions';
+import { onCleanup, onLoading, onError, onFieldChange, onSuccess } from './actions';
 import { parseArguments } from './parser';
 import { IComputeWitnessState, witnessReducer } from './reducer';
 
 export const ComputeWitness: React.FC = () => {
 
     const initialState: IComputeWitnessState = {
-        isComputing: false,
+        isLoading: false,
         fields: {},
         result: null,
         error: ''
@@ -25,26 +25,24 @@ export const ComputeWitness: React.FC = () => {
 
     useEffect(() => {
         dispatch(onCleanup());
+        dispatchContext(setWitnessResult(''));
     }, [stateContext.compilationResult]);
 
     const compute = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        try {
-            dispatch(onComputing());
-            setTimeout(() => {
-                try {
-                    let args: string[] = Object.values(state.fields);
-                    let witness = computeWitness(stateContext.compilationResult.program, args);
+        dispatch(onLoading());
+        
+        setTimeout(() => {
+            try {
+                let args: string[] = Object.values(state.fields);
+                let witness = computeWitness(stateContext.compilationResult.program, args);
 
-                    dispatch(onSuccess(witness))
-                    dispatchContext(setWitnessResult(witness));
-                } catch (error) {
-                    dispatch(onError(error));
-                }
-            }, 200);
-        } catch (error) {
-            dispatch(onError(error));
-        }
+                dispatch(onSuccess(witness))
+                dispatchContext(setWitnessResult(witness));
+            } catch (error) {
+                dispatch(onError(error));
+            }
+        }, 200);
     }
 
     const openInRemix = () => {
@@ -78,14 +76,24 @@ export const ComputeWitness: React.FC = () => {
 
     return (
         <>
+            {!stateContext.compilationResult && 
+                <Row>
+                    <Col>
+                        <Alert variant='primary' iconClass='fa fa-exclamation-circle'>
+                            Please compile your program before running setup!
+                        </Alert>
+                    </Col>
+                </Row>
+            }
             <Row>
                 <Col>
+                    <p>Computes a witness for the compiled program. A witness is a valid assignment of the variables, which include the results of the computation.</p>
                     <Form onSubmit={compute}>
                         {renderInputFields()}
                         <div className="d-flex justify-content-between">
                             <Button type="submit" disabled={!stateContext.compilationResult}>
                                 {(() => {
-                                    if (state.isComputing) {
+                                    if (state.isLoading) {
                                         return (
                                             <>
                                                 <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
@@ -102,12 +110,12 @@ export const ComputeWitness: React.FC = () => {
                                 })()}
                             </Button>
                             <ButtonGroup>
-                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy">Open in Remix Editor</Tooltip>}>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-remix-witness">Open in Remix Editor</Tooltip>}>
                                     <Button disabled={!state.result} variant="light" onClick={openInRemix}>
                                         <i className="fa fa-share" aria-hidden="true"></i>
                                     </Button>
                                 </OverlayTrigger>
-                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download">Download</Tooltip>}>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download-witness">Download</Tooltip>}>
                                     <Button disabled={!state.result} variant="light" onClick={onDownload}>
                                     <i className="fa fa-download" aria-hidden="true"></i>
                                     </Button>
