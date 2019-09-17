@@ -2,7 +2,6 @@ version: 2
 general:
   branches:
     only:
-      - feature-ci
       - master
       - develop
 jobs:
@@ -31,8 +30,8 @@ jobs:
           - "fd:28:56:c6:fa:62:c2:04:47:18:b1:0d:01:66:39:ea"
       - run: |
           if [[ "$CIRCLE_BRANCH" == "develop" ]]; then export TAG="latest"; fi
-          if [[ "$CIRCLE_BRANCH" == "feature-ci" ]]; then export TAG="latest"; fi
           if [[ "$CIRCLE_BRANCH" == "master" ]]; then export TAG="stable"; fi
+          if [[ $TAG="" ]]; then TAG="latest"; fi
           echo $TAG
           ssh -o "StrictHostKeyChecking no" circleci@zokrates.blockchain-it.hr 'echo 'y' | docker system prune && rm -rf /home/circleci/zokrates.js && cd /home/circleci && git clone https://github.com/blockchain-it-hr/zokrates.js'
           ssh -o "StrictHostKeyChecking no" -o SendEnv=CIRCLE_BRANCH circleci@zokrates.blockchain-it.hr 'cd /home/circleci/zokrates.js  && git checkout "$CIRCLE_BRANCH"'
@@ -43,6 +42,11 @@ workflows:
     jobs:
       - build:
           context: zokrates
+          filters:
+            branches:
+              only: 
+              - develop
+              - master
       - deploy:
           context: zokrates
           requires:

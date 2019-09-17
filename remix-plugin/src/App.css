@@ -37,6 +37,14 @@
     font-weight: bold;
     font-size: 0.8rem;
     margin-bottom: 0rem !important;
+    white-space: pre-line;
+}
+
+.alert > pre {
+    font-family: monospace;
+    color: var(--white);
+    margin: 0;
+    font-size: 0.8rem;
 }
 
 .pointer {

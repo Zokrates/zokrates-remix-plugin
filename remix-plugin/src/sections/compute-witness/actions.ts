@@ -1,8 +1,8 @@
 import { IComputeWitnessAction } from "./reducer";
 
-export const onComputing = (): IComputeWitnessAction => {
+export const onLoading = (): IComputeWitnessAction => {
     return { 
-        type: 'computing' 
+        type: 'loading' 
     };
 }
 
@@ -20,7 +20,7 @@ export const onSuccess = (witness: string): IComputeWitnessAction => {
 }
 
 export const onError = (error: any): IComputeWitnessAction => {
-    console.log(error);
+    console.error("Error occurred while computing witness: " + error);
     return {
         type: 'error',
         payload: error.toString()

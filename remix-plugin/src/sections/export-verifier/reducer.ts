@@ -1,17 +1,17 @@
-export type IComputeWitnessAction = {
-    type: 'loading' | 'field' | 'success' | 'error' | 'cleanup';
+export type IExportVerifierAction = {
+    type: 'loading' | 'cleanup' | 'update_abiv2' | 'success' | 'error';
     field?: string,
     payload?: any;
 }
 
-export interface IComputeWitnessState {
+export interface IExportVerifierState {
     isLoading: boolean,
-    fields: object,
+    abiv2: boolean,
     result: string,
     error: string
 }
 
-export function witnessReducer(state: Partial<IComputeWitnessState>, action: IComputeWitnessAction) {
+export function exportVerifierReducer(state: Partial<IExportVerifierState>, action: IExportVerifierAction) {
     switch (action.type) {
         case 'loading':
             return {
@@ -20,13 +20,18 @@ export function witnessReducer(state: Partial<IComputeWitnessState>, action: ICo
                 error: '',
                 isLoading: true,
             }
-        case 'field':
+        case 'cleanup': {
+            return {
+                ...state,
+                result: '',
+                error: '',
+                isLoading: false,
+            }
+        }
+        case 'update_abiv2':
             return { 
                 ...state, 
-                fields: {
-                    ...state.fields,
-                    [action.field]: action.payload,
-                }
+                abiv2: action.payload
             }
         case 'success':
             return { 
@@ -40,13 +45,6 @@ export function witnessReducer(state: Partial<IComputeWitnessState>, action: ICo
                 ...state, 
                 error: action.payload,
                 result: null,
-                isLoading: false,
-            }
-        case 'cleanup':
-            return {
-                fields: {},
-                result: null,
-                error: '',
                 isLoading: false,
             }
         default:

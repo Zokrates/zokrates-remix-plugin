@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "gulp:pack-stdlib": "gulp pack-stdlib",
+    "cargo:build": "cargo build --target=wasm32-unknown-unknown",
     "build": "npm run gulp:pack-stdlib && rimraf pkg && wasm-pack build --out-name index"
   },
   "devDependencies": {

@@ -1,34 +1,34 @@
 export type ICompilationAction = {
-    type: 'compiling' | 'success' | 'error';
+    type: 'loading' | 'success' | 'error';
     payload?: any;
 }
 
 export interface ICompilationState {
-    isCompiling?: boolean,
+    isLoading?: boolean,
     result?: Uint8Array,
     error?: string
 }
 
 export const compilationReducer = (state: ICompilationState, action: ICompilationAction) => {
     switch (action.type) {
-        case 'compiling':
+        case 'loading':
             return {
                 result: null,
                 error: '',
-                isCompiling: true,
+                isLoading: true,
             }
         case 'success':
             return { 
                 ...state, 
                 result: action.payload, 
                 error: '',
-                isCompiling: false,
+                isLoading: false,
             }
         case 'error':
             return {
                 error: action.payload,
                 result: null,
-                isCompiling: false,
+                isLoading: false,
             }
         default:
             return state;

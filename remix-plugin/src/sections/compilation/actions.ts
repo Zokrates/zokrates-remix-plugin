@@ -1,8 +1,8 @@
 import { ICompilationAction } from "./reducer";
 
-export const onCompiling = (): ICompilationAction => {
+export const onLoading = (): ICompilationAction => {
     return { 
-        type: 'compiling' 
+        type: 'loading' 
     };
 }
 
@@ -14,7 +14,7 @@ export const onSuccess = (program: any): ICompilationAction => {
 }
 
 export const onError = (error: any): ICompilationAction => {
-    console.log(error);
+    console.error("Error occurred while compiling: " + error);
     return {
         type: 'error',
         payload: error.toString()

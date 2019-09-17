@@ -1,17 +1,19 @@
+import { saveAs } from 'file-saver';
 import React, { useEffect, useReducer } from 'react';
-import { Button, Col, Form, FormControl, InputGroup, OverlayTrigger, Row, Spinner, Tooltip } from 'react-bootstrap';
+import { Button, ButtonGroup, Col, Form, FormControl, InputGroup, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { computeWitness } from '../../../../core';
-import { showAlert } from '../../common/alert';
+import { Alert, LoadingButton } from '../../components';
+import { remixClient } from '../../remix/remix-client';
 import { setWitnessResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
-import { onCleanup, onComputing, onError, onFieldChange, onSuccess } from './actions';
+import { onCleanup, onError, onFieldChange, onLoading, onSuccess } from './actions';
 import { parseArguments } from './parser';
 import { IComputeWitnessState, witnessReducer } from './reducer';
 
 export const ComputeWitness: React.FC = () => {
 
     const initialState: IComputeWitnessState = {
-        isComputing: false,
+        isLoading: false,
         fields: {},
         result: null,
         error: ''
@@ -23,26 +25,33 @@ export const ComputeWitness: React.FC = () => {
 
     useEffect(() => {
         dispatch(onCleanup());
+        dispatchContext(setWitnessResult(''));
     }, [stateContext.compilationResult]);
 
-    const compute = (e: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        try {
-            dispatch(onComputing());
-            setTimeout(() => {
-                try {
-                    let args: string[] = Object.values(state.fields);
-                    let witness = computeWitness(stateContext.compilationResult.program, args);
+        dispatch(onLoading());
+        
+        setTimeout(() => {
+            try {
+                let args: string[] = Object.values(state.fields);
+                let witness = computeWitness(stateContext.compilationResult.program, args);
 
-                    dispatch(onSuccess(witness))
-                    dispatchContext(setWitnessResult(witness));
-                } catch (error) {
-                    dispatch(onError(error));
-                }
-            }, 200);
-        } catch (error) {
-            dispatch(onError(error));
-        }
+                dispatch(onSuccess(witness))
+                dispatchContext(setWitnessResult(witness));
+            } catch (error) {
+                dispatch(onError(error));
+            }
+        }, 200);
+    }
+
+    const openInRemix = () => {
+        remixClient.createFile('browser/witness.out', state.result);
+    }
+
+    const onDownload = () => {
+        var blob = new Blob([state.result], { type: 'text/plain;charset=utf-8' });
+        saveAs(blob, "witness.out");
     }
 
     const renderInputFields = () => {
@@ -59,7 +68,7 @@ export const ComputeWitness: React.FC = () => {
                     </OverlayTrigger>}
                     <InputGroup.Text>{e.field}</InputGroup.Text>
                 </InputGroup.Prepend>
-                <FormControl placeholder="Value" type="number" name={`${e.field}`} required={true} value={state.fields[e.field] || ''} onChange={(event: any) =>
+                <FormControl placeholder="Value" type="number" name={`${e.field}`} value={state.fields[e.field] || ''} required={true} onChange={(event: any) =>
                     dispatch(onFieldChange(e.field, event.currentTarget.value))} />
             </InputGroup>
         );
@@ -67,33 +76,54 @@ export const ComputeWitness: React.FC = () => {
 
     return (
         <>
+            {!stateContext.compilationResult && 
+                <Row>
+                    <Col>
+                        <Alert variant='primary' iconClass='fa fa-exclamation-circle'>
+                            Please compile your program before running setup!
+                        </Alert>
+                    </Col>
+                </Row>
+            }
             <Row>
                 <Col>
-                    <Form onSubmit={compute}>
+                    <p>Computes a witness for the compiled program. A witness is a valid assignment of the variables, which include the results of the computation.</p>
+                    <Form onSubmit={onSubmit}>
                         {renderInputFields()}
-                        <Button type="submit" disabled={!stateContext.compilationResult}>
-                            {(() => {
-                                if (state.isComputing) {
-                                    return (
-                                        <>
-                                            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                                            <span className="ml-2">Computing...</span>
-                                        </>
-                                    );
-                                }
-                                return (
-                                    <>
-                                        <i className="fa fa-lightbulb-o" aria-hidden="true"></i>
-                                        <span className="ml-2">Compute</span>
-                                    </>
-                                )
-                            })()}
-                        </Button>
+                        <div className="d-flex justify-content-between">
+                            <LoadingButton type="submit" disabled={!stateContext.compilationResult}
+                                defaultText="Compute" 
+                                loadingText="Computing..." 
+                                iconClassName="fa fa-lightbulb-o" 
+                                isLoading={state.isLoading} />
+                            <ButtonGroup>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-remix-witness">Open in Remix Editor</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={openInRemix}>
+                                        <i className="fa fa-share" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download-witness">Download</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={onDownload}>
+                                    <i className="fa fa-download" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
+                            </ButtonGroup>
+                        </div>
                     </Form>
                 </Col>
             </Row>
-            {state.error && showAlert('danger', 'fa fa-exclamation-circle', state.error)}
-            {state.result && showAlert('success', 'fa fa-check', 'Witness computed!')}
+            {state.error && 
+            <Alert variant='danger' iconClass='fa fa-exclamation-circle'>
+                <pre>
+                    <code>{state.error}</code>
+                </pre>
+            </Alert>
+            }
+            {state.result && 
+            <Alert variant='success' iconClass='fa fa-check'>
+                Witness computed!
+            </Alert>
+            }
         </>
     );
 }
