@@ -5,7 +5,7 @@
   "scripts": {
     "start": "serve -l 10000 dist/",
     "dev": "webpack-dev-server --open --config webpack.dev.js",
-    "build": "npm install && webpack --config webpack.prod.js"
+    "build": "rimraf dist && npm install && webpack --config webpack.prod.js"
   },
   "keywords": [
     "zokrates",
@@ -18,15 +18,11 @@
   "license": "ISC",
   "dependencies": {
     "@remixproject/plugin": "^0.1.13",
-    "@types/html-webpack-plugin": "^3.2.1",
     "copy-to-clipboard": "^3.2.0",
     "file-saver": "^2.0.2",
-    "fs": "0.0.1-security",
-    "outstated": "^3.0.1",
     "react": "^16.9.0",
     "react-bootstrap": "^1.0.0-beta.12",
-    "react-dom": "^16.9.0",
-    "serve": "^11.1.0"
+    "react-dom": "^16.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
@@ -39,9 +35,8 @@
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "copy-webpack-plugin": "^5.0.4",
     "css-loader": "^3.2.0",
-    "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
-    "http-server": "0.11.1",
+    "serve": "^11.1.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.0.0",
     "ts-loader": "^6.0.4",
