@@ -5,7 +5,7 @@
   "scripts": {
     "start": "serve -l 10000 dist/",
     "dev": "webpack-dev-server --open --config webpack.dev.js",
-    "build": "rimraf dist && npm install && webpack --config webpack.prod.js"
+    "build": "npm install && rimraf dist && webpack --config webpack.prod.js"
   },
   "keywords": [
     "zokrates",
