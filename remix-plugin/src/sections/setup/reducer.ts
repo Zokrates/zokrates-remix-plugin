@@ -16,6 +16,8 @@ export function setupReducer(state: Partial<ISetupState>, action: ISetupAction) 
         case 'loading':
             return {
                 ...state,
+                result: '',
+                error: '',
                 isLoading: true,
             }
         case 'cleanup': {

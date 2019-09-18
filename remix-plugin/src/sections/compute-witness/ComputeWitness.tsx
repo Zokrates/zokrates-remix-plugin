@@ -76,15 +76,6 @@ export const ComputeWitness: React.FC = () => {
 
     return (
         <>
-            {!stateContext.compilationResult && 
-                <Row>
-                    <Col>
-                        <Alert variant='primary' iconClass='fa fa-exclamation-circle'>
-                            Please compile your program before running setup!
-                        </Alert>
-                    </Col>
-                </Row>
-            }
             <Row>
                 <Col>
                     <p>Computes a witness for the compiled program. A witness is a valid assignment of the variables, which include the results of the computation.</p>

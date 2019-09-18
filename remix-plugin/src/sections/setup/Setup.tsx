@@ -45,15 +45,6 @@ export const Setup: React.FC = () => {
     
     return (
         <>
-            {!stateContext.compilationResult && 
-                <Row>
-                    <Col>
-                        <Alert variant='primary' iconClass='fa fa-exclamation-circle'>
-                            Please compile your program before running setup!
-                        </Alert>
-                    </Col>
-                </Row>
-            }
             <Row>
                 <Col> 
                     <p>Creates a proving key and a verification key. These keys are derived from a source of randomness, commonly referred to as “toxic waste”.</p>

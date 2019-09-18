@@ -1,7 +1,7 @@
-import { saveAs } from 'file-saver';
 import copy from 'copy-to-clipboard';
+import { saveAs } from 'file-saver';
 import React, { useEffect, useReducer } from 'react';
-import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import { Button, ButtonGroup, Col, Form, FormControl, FormLabel, InputGroup, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { generateProof } from '../../../../core';
 import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/remix-client';
@@ -25,7 +25,10 @@ export const GenerateProof: React.FC = () => {
     useEffect(() => {
         dispatch(onCleanup());
         dispatchContext(setGenerateProofResult(''));
-    }, [stateContext.compilationResult, stateContext.witnessResult, stateContext.setupResult]);
+    }, [stateContext.compilationResult, 
+        stateContext.witnessResult, 
+        stateContext.setupResult, 
+        stateContext.exportVerifierResult]);
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -47,8 +50,8 @@ export const GenerateProof: React.FC = () => {
         }, 200);
     }
 
-    const onCopy = () => {
-        copy(state.result);
+    const onCopy = (value: string) => {
+        copy(value);
     }
 
     const openInRemix = () => {
@@ -60,35 +63,31 @@ export const GenerateProof: React.FC = () => {
         saveAs(blob, 'proof.out');
     }
 
-    const requirementsConstraint = 
-        !stateContext.compilationResult || 
-        !stateContext.witnessResult || 
-        !stateContext.setupResult;
+    const getCompatibleParametersFormat = (input: string, abiv2: boolean) => {
+        const json = JSON.parse(input);
+        const proofValues = Object.values(json.proof).map(el => JSON.stringify(el)).join();
+        const inputValues = JSON.stringify(json.inputs);
+        if (abiv2) {
+            return `[${proofValues}],${inputValues}`;
+        }
+        return `${proofValues},${inputValues}`;
+    }
 
     return (
         <>
-            {requirementsConstraint && 
-                <Row>
-                    <Col>
-                        <Alert variant='primary' iconClass='fa fa-exclamation-circle'>
-                            Please complete all phases before generating proof!
-                        </Alert>
-                    </Col>
-                </Row>
-            }
             <Row>
                 <Col>
                     <p>Generates a proof for a computation of the compiled program using proving key and computed witness.</p>
                     <Form onSubmit={onSubmit}>
                         <div className="d-flex justify-content-between">
-                            <LoadingButton type="submit" disabled={requirementsConstraint}
+                            <LoadingButton type="submit" disabled={!stateContext.compilationResult || !stateContext.witnessResult || !stateContext.setupResult}
                                 defaultText="Generate" 
                                 loadingText="Generating..." 
                                 iconClassName="fa fa-check" 
                                 isLoading={state.isLoading} />
                             <ButtonGroup>
-                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-proof">Copy</Tooltip>}>
-                                    <Button disabled={!state.result} variant="light" onClick={onCopy}>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-output">Copy Output</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={() => onCopy(state.result)}>
                                         <i className="fa fa-clipboard" aria-hidden="true"></i>
                                     </Button>
                                 </OverlayTrigger>
@@ -107,6 +106,26 @@ export const GenerateProof: React.FC = () => {
                     </Form>
                 </Col>
             </Row>
+            {state.result && (() => {
+                const result = getCompatibleParametersFormat(state.result, stateContext.exportVerifierResult.abiv2);
+                return (
+                    <Row>
+                        <Col>
+                            <FormLabel>Remix compatible parameters:</FormLabel>
+                            <InputGroup>
+                                <FormControl aria-label="Parameters" value={result} readOnly />
+                                <InputGroup.Append>
+                                    <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-parameters">Copy Parameters</Tooltip>}>
+                                        <Button disabled={!state.result} onClick={() => onCopy(result)}>
+                                            <i className="fa fa-clipboard" aria-hidden="true"></i>
+                                        </Button>
+                                    </OverlayTrigger>
+                                </InputGroup.Append>
+                            </InputGroup>
+                        </Col>
+                    </Row>
+                );
+            })()}
             {state.error && 
             <Alert variant='danger' iconClass='fa fa-exclamation-circle'>
                 <pre>
