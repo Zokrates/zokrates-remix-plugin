@@ -1,9 +1,4 @@
 version: 2
-general:
-  branches:
-    only:
-      - master
-      - develop
 jobs:
   build:
     docker:
@@ -18,6 +13,8 @@ jobs:
           if [[ "$CIRCLE_BRANCH" == "master" ]]; then export TAG="stable"; fi
           echo $TAG
           docker login -u $DOCKER_USER -p $DOCKER_PASS
+          docker build --file Dockerfile.base --tag blockchainit/zokrates-base:$TAG .
+          docker push blockchainit/zokrates-base:$TAG
           docker build --file Dockerfile --tag blockchainit/zokrates.js:$TAG .
           docker push blockchainit/zokrates.js:$TAG
   deploy:

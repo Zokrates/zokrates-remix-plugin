@@ -1,4 +1,4 @@
-FROM blockchainit/zokrates-base
+FROM blockchainit/zokrates-base:latest
 WORKDIR /usr/src/app
 
 COPY remix-plugin ./remix-plugin
