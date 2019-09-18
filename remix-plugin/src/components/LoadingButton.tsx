@@ -10,8 +10,9 @@ export type LoadingButtonProps = {
 
 export const LoadingButton: React.FC<LoadingButtonProps> = (props) => {
 
+    const { defaultText, loadingText, isLoading, iconClassName, ...rest } = props;
     return (
-        <Button {...props }>
+        <Button {...rest }>
             {(() => {
                 if (props.isLoading) {
                     return (
