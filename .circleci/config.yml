@@ -46,5 +46,10 @@ workflows:
               - master
       - deploy:
           context: zokrates
+          filters:
+            branches:
+              only: 
+              - develop
+              - master
           requires:
             - build
