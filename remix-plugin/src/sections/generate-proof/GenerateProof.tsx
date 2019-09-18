@@ -1,4 +1,5 @@
 import { saveAs } from 'file-saver';
+import copy from 'copy-to-clipboard';
 import React, { useEffect, useReducer } from 'react';
 import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { generateProof } from '../../../../core';
@@ -46,6 +47,10 @@ export const GenerateProof: React.FC = () => {
         }, 200);
     }
 
+    const onCopy = () => {
+        copy(state.result);
+    }
+
     const openInRemix = () => {
         remixClient.createFile('browser/proof.out', state.result);
     }
@@ -82,6 +87,11 @@ export const GenerateProof: React.FC = () => {
                                 iconClassName="fa fa-check" 
                                 isLoading={state.isLoading} />
                             <ButtonGroup>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-proof">Copy</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={onCopy}>
+                                        <i className="fa fa-clipboard" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
                                 <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-remix-proof">Open in Remix Editor</Tooltip>}>
                                     <Button disabled={!state.result} variant="light" onClick={openInRemix}>
                                         <i className="fa fa-share" aria-hidden="true"></i>
