@@ -13,7 +13,7 @@ export const ExportVerifier: React.FC = () => {
     
     const initialState: IExportVerifierState = {
         isLoading: false,
-        abiv2: true,
+        abiv2: false,
         result: null,
         error: ''
     }
@@ -24,7 +24,7 @@ export const ExportVerifier: React.FC = () => {
 
     useEffect(() => {
         dispatch(onCleanup());
-        dispatchContext(setExportVerifierResult(''));
+        dispatchContext(setExportVerifierResult(null));
     }, [stateContext.setupResult]);
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,7 +37,7 @@ export const ExportVerifier: React.FC = () => {
                     stateContext.setupResult.verificationKey, state.abiv2
                 );
                 dispatch(onSuccess(verifier));
-                dispatchContext(setExportVerifierResult(verifier));
+                dispatchContext(setExportVerifierResult({ verifier, abiv2: state.abiv2 }));
             } catch (error) {
                 dispatch(onError(error.toString()));
             }
@@ -55,15 +55,6 @@ export const ExportVerifier: React.FC = () => {
 
     return (
         <>
-            {!stateContext.setupResult && 
-                <Row>
-                    <Col>
-                        <Alert variant='primary' iconClass='fa fa-exclamation-circle'>
-                            Please run setup phase before generating Solidity contract!
-                        </Alert>
-                    </Col>
-                </Row>
-            }
             <Row>
                 <Col>
                     <p>Generates a Solidity contract which contains the generated verification key and a public function to verify a solution to the compiled program.</p>

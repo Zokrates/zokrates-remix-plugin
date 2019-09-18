@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useReducer } from 'react';
 import { IActions, reducer } from './reducer';
-import { CompilationResult, SetupResult } from './types';
+import { CompilationResult, ExportVerifierResult, SetupResult } from './types';
 
 export interface IState {
     isLoaded: boolean,
     compilationResult: CompilationResult,
     setupResult: SetupResult,
     witnessResult: string,
-    exportVerifierResult: string,
+    exportVerifierResult: ExportVerifierResult,
     generateProofResult: string
 }
 
@@ -16,7 +16,7 @@ const initialState = {
     compilationResult: null,
     setupResult: null,
     witnessResult: '',
-    exportVerifierResult: '',
+    exportVerifierResult: null,
     generateProofResult: '',
 } as IState;
 
