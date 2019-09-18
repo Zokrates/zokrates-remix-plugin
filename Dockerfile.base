@@ -19,7 +19,7 @@ RUN set -eux; \
     url="https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init"; \
     wget "$url"; \
     chmod +x rustup-init; \
-    ./rustup-init -y --no-modify-path --default-toolchain nightly; \
+    ./rustup-init -y --no-modify-path --default-toolchain nightly-2019-08-09; \
     rm rustup-init; \
     chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
     rustup --version; \
@@ -28,8 +28,8 @@ RUN set -eux; \
 
 RUN curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh -s -- -y
 
-COPY . ./
-RUN npm run setup
+COPY core ./core
+WORKDIR /usr/src/app/core
 
-EXPOSE 8080
-CMD [ "npm", "run", "start" ]
+RUN npm install
+RUN npm run build

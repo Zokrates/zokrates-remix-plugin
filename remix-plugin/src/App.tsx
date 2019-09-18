@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { remixClient } from './remix/remix-client'
-import { remixResolver } from './remix/remix-resolver';
+import React, { useEffect } from 'react';
+import { Container } from 'react-bootstrap';
 import { initialize } from '../../core';
-
+import './App.css';
+import { Accordion, AccordionElement, Footer, Header } from './components';
+import { remixClient } from './remix/remix-client';
+import { remixResolver } from './remix/remix-resolver';
 import { Compilation } from './sections/compilation/Compilation';
 import { ComputeWitness } from './sections/compute-witness/ComputeWitness';
-
-import { Header, Footer, Accordion, AccordionElement } from './components';
-
-import './App.css';
-import { Container } from "react-bootstrap";
-import { useStateContext, useDispatchContext } from './state/Store';
+import { ExportVerifier } from './sections/export-verifier/ExportVerifier';
+import { GenerateProof } from './sections/generate-proof/GenerateProof';
+import { Setup } from './sections/setup/Setup';
+import { useDispatchContext, useStateContext } from './state/Store';
 
 const App: React.FC = () => {
 
@@ -38,17 +38,17 @@ const App: React.FC = () => {
                         <AccordionElement headerText="Compilation" iconClass="fa fa-refresh" eventKey="0">
                             <Compilation />
                         </AccordionElement>
-                        <AccordionElement headerText="Setup" iconClass="fa fa-cog" eventKey="1">
-                            TBD
-                        </AccordionElement>
-                        <AccordionElement headerText="Export Verifier" iconClass="fa fa-key" eventKey="2">
-                            TBD
-                        </AccordionElement>
                         <AccordionElement headerText="Compute Witness" iconClass="fa fa-lightbulb-o" eventKey="3">
                             <ComputeWitness />
                         </AccordionElement>
+                        <AccordionElement headerText="Setup" iconClass="fa fa-cog" eventKey="1">
+                            <Setup />
+                        </AccordionElement>
+                        <AccordionElement headerText="Export Verifier" iconClass="fa fa-key" eventKey="2">
+                            <ExportVerifier />
+                        </AccordionElement>
                         <AccordionElement headerText="Generate Proof" iconClass="fa fa-check" eventKey="4">
-                            TBD
+                            <GenerateProof />
                         </AccordionElement>
                     </Accordion>
                 </main>

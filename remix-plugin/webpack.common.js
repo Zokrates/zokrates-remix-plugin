@@ -12,11 +12,6 @@ module.exports = {
                 loader: "ts-loader"
             },
             {
-                enforce: "pre",
-                test: /\.js$/,
-                loader: "source-map-loader"
-            },
-            {
                 test: /\.css$/i,
                 use: ['style-loader', 'css-loader'],
             },
@@ -34,7 +29,7 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.css']
+        extensions: ['.ts', '.tsx', '.js', '.css', '.wasm']
     },
     output: {
         filename: '[name].[hash].js',

@@ -1,14 +1,16 @@
-import React, { useReducer } from 'react';
-import { Button, Row, Col, ButtonGroup } from 'react-bootstrap';
-import { remixClient } from '../../remix/remix-client'
-import { remixResolver } from '../../remix/remix-resolver';
-import { compile } from '../../../../core';
-import { compilationReducer, ICompilationState } from './reducer';
-import { useDispatchContext } from '../../state/Store';
-import { showAlert } from '../../common/alert';
-
+import { HighlightPosition } from '@remixproject/plugin';
 import copy from 'copy-to-clipboard';
 import saveAs from 'file-saver';
+import React, { useReducer } from 'react';
+import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import { compile } from '../../../../core';
+import { Alert, LoadingButton } from '../../components';
+import { remixClient } from '../../remix/remix-client';
+import { remixResolver } from '../../remix/remix-resolver';
+import { setCompileResult } from '../../state/actions';
+import { useDispatchContext } from '../../state/Store';
+import { onError, onLoading, onSuccess } from './actions';
+import { compilationReducer, ICompilationState } from './reducer';
 
 export const Compilation: React.FC = () => {
 
@@ -18,52 +20,38 @@ export const Compilation: React.FC = () => {
         error: ''
     } as ICompilationState;
 
-    const dispatchToContext = useDispatchContext();
+    const dispatchContext = useDispatchContext();
     const [state, dispatch] = useReducer(compilationReducer, initialState)
 
-    const compileCallback = async () => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         try {
-            dispatch({ type: 'compiling' });
+            dispatch(onLoading());
 
             let location = await remixClient.getCurrentFile();
             let source = await remixClient.getFile(location);
-    
+
             // we have to "preload" imports before compiling since remix plugin api returns promises
             await remixResolver.gatherImports(location, source);
-            
-            setTimeout(() => {
+
+            setTimeout((location) => {
                 try {
-                    let program = compile(source);
-                    dispatch({ 
-                        type: 'success', 
-                        payload: program 
-                    });
-        
-                    dispatchToContext({ 
-                        type: 'set_compile_result', 
-                        payload: { 
-                            program, source
-                        }
-                    });
+                    let program = compile(source, location.split('/')[1]);
+                    dispatch(onSuccess(program));
+                    dispatchContext(setCompileResult(program, source));
+                    remixClient.discardHighlight();
                 } catch (error) {
-                    dispatchError(error);
+                    highlightCompileError(location, error);
+                    dispatch(onError(error));
                 }
-            }, 200);
+            }, 200, location);
         } catch (error) {
-            dispatchError(error);
+            dispatch(onError(error));
         }
     }
 
-    const dispatchError = (error: string) => {
-        console.log(error);
-        dispatch({ 
-            type: 'error', 
-            payload: error.toString()
-        });
-    }
-
     const toBytecodeString = (input: Uint8Array): string => {
-        return '0x' + Buffer.from(state.result).toString('hex');
+        return '0x' + Buffer.from(input).toString('hex');
     }
 
     const onCopy = () => {
@@ -75,28 +63,64 @@ export const Compilation: React.FC = () => {
         saveAs(blob, "out");
     }
 
+    const highlightCompileError = (location: string, error: string) => {
+        var match = /\b(\d+):(\d+)\b/.exec(error);
+        if (!match) {
+            return;
+        }
+            
+        var line = Number(match[1]) - 1;
+        var column = Number(match[2]);
+        
+        var highlightPosition: HighlightPosition = {
+            start: { line, column },
+            end:   { line, column },
+        }
+
+        remixClient.highlight(highlightPosition, location, '#ff7675');
+    }
+
     return (
         <>
             <Row>
                 <Col>
-                    <div className="d-flex justify-content-between">
-                        <Button onClick={compileCallback}>
-                            <i className="fa fa-refresh" aria-hidden="true"></i><span className="ml-2">{state.isCompiling ? 'Compiling...' : 'Compile'}</span>
-                        </Button>
-                        <ButtonGroup>
-                            <Button disabled={!state.result} variant="light" onClick={onCopy} data-toggle="tooltip" data-placement="top" title="Copy Bytecode">
-                                <i className="fa fa-clipboard" aria-hidden="true"></i>
-                            </Button>
-                            <Button disabled={!state.result} variant="light" onClick={onDownload} data-toggle="tooltip" data-placement="top" title="Download">
-                                <i className="fa fa-download" aria-hidden="true"></i>
-                            </Button>
-                        </ButtonGroup>
-                    </div>
+                    <Form onSubmit={onSubmit}>
+                        <div className="d-flex justify-content-between">
+                            <LoadingButton type="submit"
+                                defaultText="Compile" 
+                                loadingText="Compiling..." 
+                                iconClassName="fa fa-refresh" 
+                                isLoading={state.isLoading} />
+                            <ButtonGroup>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-bytecode">Copy Bytecode</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={onCopy}>
+                                        <i className="fa fa-clipboard" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
+
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download-program">Download</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={onDownload}>
+                                    <i className="fa fa-download" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
+                            </ButtonGroup>
+                        </div>
+                    </Form>
                 </Col>
             </Row>
 
-            {state.error  && showAlert('danger', 'fa fa-exclamation-circle', state.error)}
-            {state.result && showAlert('success', 'fa fa-check', 'Successfully compiled!')}
+            {state.error && 
+            <Alert variant='danger' iconClass='fa fa-exclamation-circle'>
+                <pre>
+                    <code>{state.error}</code>
+                </pre>
+            </Alert>
+            }
+            {state.result && 
+            <Alert variant='success' iconClass='fa fa-check'>
+                Successfully compiled!
+            </Alert>
+            }
         </>
     );
 }

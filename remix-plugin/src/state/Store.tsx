@@ -1,25 +1,24 @@
 import React, { createContext, useContext, useReducer } from 'react';
-import { reducer, IActions } from './reducer';
-
-interface Result<R, E> {
-    result?: R,
-    error?: E
-}
+import { IActions, reducer } from './reducer';
+import { CompilationResult, SetupResult } from './types';
 
 export interface IState {
     isLoaded: boolean,
-    compilationResult: {
-        program: Uint8Array,
-        source: string
-    },
+    compilationResult: CompilationResult,
+    setupResult: SetupResult,
     witnessResult: string,
+    exportVerifierResult: string,
+    generateProofResult: string
 }
 
 const initialState = {
     isLoaded: false,
     compilationResult: null,
+    setupResult: null,
     witnessResult: '',
-};
+    exportVerifierResult: '',
+    generateProofResult: '',
+} as IState;
 
 const StateContext = createContext<Partial<IState>>(initialState);
 const DispatchContext = createContext((() => {}) as React.Dispatch<IActions>);

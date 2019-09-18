@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "setup": "cd core && npm install && npm run build && cd ../remix-plugin && npm install",
+    "setup": "npm run setup-core && npm run setup-remix-plugin",
+    "setup-core": "cd core && npm install && npm run build",
+    "setup-remix-plugin": "cd remix-plugin && npm install",
     "start": "cd remix-plugin && npm run start",
     "dev": "cd remix-plugin && npm run dev"
   },

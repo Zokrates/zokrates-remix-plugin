@@ -26,8 +26,6 @@
     border-radius: 9999px;
     height: 8px;
     width: 8px;
-    margin-left: 1rem;
-    margin-right: 0.5rem;
     display: inline-block;
     vertical-align: middle;
 }
@@ -37,6 +35,14 @@
     font-weight: bold;
     font-size: 0.8rem;
     margin-bottom: 0rem !important;
+    white-space: pre-line;
+}
+
+.alert > pre {
+    font-family: monospace;
+    color: var(--white);
+    margin: 0;
+    font-size: 0.8rem;
 }
 
 .pointer {
