@@ -28,11 +28,10 @@ jobs:
       - run: |
           if [[ "$CIRCLE_BRANCH" == "develop" ]]; then export TAG="latest"; fi
           if [[ "$CIRCLE_BRANCH" == "master" ]]; then export TAG="stable"; fi
-          if [[ $TAG="" ]]; then TAG="latest"; fi
           echo $TAG
           ssh -o "StrictHostKeyChecking no" circleci@zokrates.blockchain-it.hr 'echo 'y' | docker system prune && rm -rf /home/circleci/zokrates.js && cd /home/circleci && git clone https://github.com/blockchain-it-hr/zokrates.js'
           ssh -o "StrictHostKeyChecking no" -o SendEnv=CIRCLE_BRANCH circleci@zokrates.blockchain-it.hr 'cd /home/circleci/zokrates.js  && git checkout "$CIRCLE_BRANCH"'
-          ssh -o "StrictHostKeyChecking no" -o SendEnv=TAG circleci@zokrates.blockchain-it.hr 'echo $TAG && cd /home/circleci/zokrates.js && docker pull blockchainit/zokrates.js:"$TAG" && docker-compose up -d'
+          ssh -o "StrictHostKeyChecking no" -o SendEnv=CIRCLE_BRANCH circleci@zokrates.blockchain-it.hr 'if [[ "$CIRCLE_BRANCH" == "develop" ]]; then export TAG="latest"; fi && if [[ "$CIRCLE_BRANCH" == "master" ]]; then export TAG="stable"; fi && echo $TAG && cd /home/circleci/zokrates.js && docker pull blockchainit/zokrates.js:"$TAG" && docker-compose up -d'
 workflows:
   version: 2
   build_and_deploy:
