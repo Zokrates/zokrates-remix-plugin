@@ -116,7 +116,7 @@ export const GenerateProof: React.FC = () => {
             }
             {state.result && 
             <Alert variant='success' iconClass='fa fa-check'>
-                Setup completed!
+                Proof generated!
             </Alert>
             }
         </>
