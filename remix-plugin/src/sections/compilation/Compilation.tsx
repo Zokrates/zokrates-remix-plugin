@@ -4,11 +4,12 @@ import saveAs from 'file-saver';
 import React, { useReducer } from 'react';
 import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { compile } from '../../../../core';
+import { hex } from '../../common/utils';
 import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/remix-client';
 import { remixResolver } from '../../remix/remix-resolver';
 import { setCompileResult } from '../../state/actions';
-import { useDispatchContext } from '../../state/Store';
+import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onError, onLoading, onSuccess } from './actions';
 import { compilationReducer, ICompilationState } from './reducer';
 
@@ -20,6 +21,7 @@ export const Compilation: React.FC = () => {
         error: ''
     } as ICompilationState;
 
+    const stateContext = useStateContext();
     const dispatchContext = useDispatchContext();
     const [state, dispatch] = useReducer(compilationReducer, initialState)
 
@@ -50,12 +52,8 @@ export const Compilation: React.FC = () => {
         }
     }
 
-    const toBytecodeString = (input: Uint8Array): string => {
-        return '0x' + Buffer.from(input).toString('hex');
-    }
-
     const onCopy = () => {
-        copy(toBytecodeString(state.result));
+        copy(hex(state.result));
     }
 
     const onDownload = () => {
@@ -86,7 +84,7 @@ export const Compilation: React.FC = () => {
                 <Col>
                     <Form onSubmit={onSubmit}>
                         <div className="d-flex justify-content-between">
-                            <LoadingButton type="submit"
+                            <LoadingButton type="submit" disabled={!stateContext.isLoaded}
                                 defaultText="Compile" 
                                 loadingText="Compiling..." 
                                 iconClassName="fa fa-refresh" 

@@ -1,5 +1,11 @@
 import { IActions } from './reducer';
-import { SetupResult } from './types';
+import { ExportVerifierResult, SetupResult } from './types';
+
+export const onLoaded = (): IActions => {
+    return {
+        type: 'set_loaded', 
+    }
+}
 
 export const setCompileResult = (program: any, source: string): IActions => {
     return {
@@ -24,10 +30,10 @@ export const setSetupResult = (result: SetupResult): IActions => {
     }
 }
 
-export const setExportVerifierResult = (verifier: string): IActions => {
+export const setExportVerifierResult = (result: ExportVerifierResult): IActions => {
     return {
         type: 'set_export_verifier_result', 
-        payload: verifier
+        payload: result
     }
 }
 

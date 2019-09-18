@@ -10,6 +10,7 @@ import { ComputeWitness } from './sections/compute-witness/ComputeWitness';
 import { ExportVerifier } from './sections/export-verifier/ExportVerifier';
 import { GenerateProof } from './sections/generate-proof/GenerateProof';
 import { Setup } from './sections/setup/Setup';
+import { onLoaded } from './state/actions';
 import { useDispatchContext, useStateContext } from './state/Store';
 
 const App: React.FC = () => {
@@ -20,7 +21,7 @@ const App: React.FC = () => {
     useEffect(() => {
         const load = async () => {
             try {
-                initialize(remixResolver.syncResolve).then(() => dispatch({ type: 'set_loaded' }))
+                initialize(remixResolver.syncResolve).then(() => dispatch(onLoaded()))
                 await remixClient.createClient();
             } catch(err) {
                 console.log(err)
@@ -38,16 +39,16 @@ const App: React.FC = () => {
                         <AccordionElement headerText="Compilation" iconClass="fa fa-refresh" eventKey="0">
                             <Compilation />
                         </AccordionElement>
-                        <AccordionElement headerText="Compute Witness" iconClass="fa fa-lightbulb-o" eventKey="3">
+                        <AccordionElement headerText="Compute Witness" iconClass="fa fa-lightbulb-o" eventKey="1" disabled={!state.compilationResult}>
                             <ComputeWitness />
                         </AccordionElement>
-                        <AccordionElement headerText="Setup" iconClass="fa fa-cog" eventKey="1">
+                        <AccordionElement headerText="Setup" iconClass="fa fa-cog" eventKey="2" disabled={!state.compilationResult}>
                             <Setup />
                         </AccordionElement>
-                        <AccordionElement headerText="Export Verifier" iconClass="fa fa-key" eventKey="2">
+                        <AccordionElement headerText="Export Verifier" iconClass="fa fa-key" eventKey="3" disabled={!state.setupResult}>
                             <ExportVerifier />
                         </AccordionElement>
-                        <AccordionElement headerText="Generate Proof" iconClass="fa fa-check" eventKey="4">
+                        <AccordionElement headerText="Generate Proof" iconClass="fa fa-check" eventKey="4" disabled={!state.compilationResult || !state.witnessResult || !state.setupResult || !state.exportVerifierResult}>
                             <GenerateProof />
                         </AccordionElement>
                     </Accordion>

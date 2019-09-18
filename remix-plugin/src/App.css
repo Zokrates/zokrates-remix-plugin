@@ -46,7 +46,11 @@
 }
 
 .pointer {
-    cursor: pointer;
+    cursor: pointer !important;
+}
+
+.default-cursor {
+    cursor: default !important;
 }
 
 .accordion > .card > .card-header {
