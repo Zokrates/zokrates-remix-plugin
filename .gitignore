@@ -1,6 +1,3 @@
-node_modules
-dist
-target
-pkg
-wasm-pack.log
-.idea
+node_modules/
+dist/
+*.log
