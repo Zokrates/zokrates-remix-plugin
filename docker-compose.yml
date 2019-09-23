@@ -15,7 +15,7 @@ services:
       - zokrates
 
   zokrates:
-    image: blockchainit/zokrates.js:stable
+    image: blockchainit/zokrates-remix-plugin:stable
     ports:
       - 10000:10000
     container_name: zokrates
@@ -23,7 +23,7 @@ services:
       - zokrates
 
   zokrates-dev:
-    image: blockchainit/zokrates.js:latest
+    image: blockchainit/zokrates-remix-plugin:latest
     ports:
       - 11000:10000
     container_name: zokrates-dev
