@@ -16,5 +16,5 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: Dockerfile
-          snapshot: true #To publish with current tag
+          #snapshot: true #To publish with current tag
           #cache: true
