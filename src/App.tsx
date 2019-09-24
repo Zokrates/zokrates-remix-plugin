@@ -39,14 +39,14 @@ const App: React.FC = () => {
                         <AccordionElement headerText="Compilation" iconClass="fa fa-refresh" eventKey="0">
                             <Compilation />
                         </AccordionElement>
-                        <AccordionElement headerText="Compute Witness" iconClass="fa fa-lightbulb-o" eventKey="1" disabled={!state.compilationResult}>
-                            <ComputeWitness />
-                        </AccordionElement>
-                        <AccordionElement headerText="Setup" iconClass="fa fa-cog" eventKey="2" disabled={!state.compilationResult}>
+                        <AccordionElement headerText="Setup" iconClass="fa fa-cog" eventKey="1" disabled={!state.compilationResult}>
                             <Setup />
                         </AccordionElement>
-                        <AccordionElement headerText="Export Verifier" iconClass="fa fa-key" eventKey="3" disabled={!state.setupResult}>
+                        <AccordionElement headerText="Export Verifier" iconClass="fa fa-key" eventKey="2" disabled={!state.setupResult}>
                             <ExportVerifier />
+                        </AccordionElement>
+                        <AccordionElement headerText="Compute Witness" iconClass="fa fa-lightbulb-o" eventKey="3" disabled={!state.compilationResult}>
+                            <ComputeWitness />
                         </AccordionElement>
                         <AccordionElement headerText="Generate Proof" iconClass="fa fa-check" eventKey="4" disabled={!state.compilationResult || !state.witnessResult || !state.setupResult || !state.exportVerifierResult}>
                             <GenerateProof />

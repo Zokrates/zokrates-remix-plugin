@@ -1,5 +1,7 @@
+import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
 import React, { useEffect, useReducer } from 'react';
-import { Col, Form, Row } from 'react-bootstrap';
+import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { setup } from 'zokrates-js';
 import { Alert, LoadingButton } from '../../components';
 import { setSetupResult } from '../../state/actions';
@@ -42,6 +44,13 @@ export const Setup: React.FC = () => {
             }
         }, 200)
     }
+
+    const onDownload = () => {
+        let zip = new JSZip();
+        zip.file("verifying.key", state.result.verificationKey);
+        zip.file("proving.key", state.result.provingKey.buffer);
+        zip.generateAsync({ type: "blob" }).then((content: any) => saveAs(content, "keys.zip"));
+    }
     
     return (
         <>
@@ -49,11 +58,20 @@ export const Setup: React.FC = () => {
                 <Col> 
                     <p>Creates a proving key and a verification key. These keys are derived from a source of randomness, commonly referred to as “toxic waste”.</p>
                     <Form onSubmit={onSubmit}>
-                        <LoadingButton type="submit" disabled={!stateContext.compilationResult}
-                            defaultText="Run Setup" 
-                            loadingText="Running setup..." 
-                            iconClassName="fa fa-cog" 
-                            isLoading={state.isLoading} />
+                        <div className="d-flex justify-content-between">
+                            <LoadingButton type="submit" disabled={!stateContext.compilationResult}
+                                defaultText="Run Setup" 
+                                loadingText="Running setup..." 
+                                iconClassName="fa fa-cog" 
+                                isLoading={state.isLoading} />
+                            <ButtonGroup>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download-keys">Download Keys</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={onDownload}>
+                                        <i className="fa fa-download" aria-hidden="true"></i>
+                                    </Button>
+                                </OverlayTrigger>
+                            </ButtonGroup>
+                        </div>
                     </Form>
                 </Col>
             </Row>
