@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-CIRCLE_BRANCH="develop"
           
 if [ "$CIRCLE_BRANCH" == "develop" ]; then
     export TAG="latest";
