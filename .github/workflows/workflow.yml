@@ -1,0 +1,20 @@
+name: Run every time
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build docker images and push them to docker hub
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Build docker image for Zokrates remix plugin
+        run: docker build --file Dockerfile --tag blockchainit/zokrates-remix-plugin .
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: blockchainit/zokrates-remix-plugin
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          dockerfile: Dockerfile
+          snapshot: true #To publish with current tag
+          #cache: true
