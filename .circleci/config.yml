@@ -8,7 +8,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true 
-      - run: ./scripts/build.sh
+      - run: ./../scripts/build.sh
   deploy:
     docker:
       - image: circleci/node 
@@ -17,7 +17,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
           - "fd:28:56:c6:fa:62:c2:04:47:18:b1:0d:01:66:39:ea"
-      - run: bash ./scripts/deploy.sh
+      - run: bash ./../scripts/deploy.sh
 workflows:
   version: 2
   build_and_deploy:
