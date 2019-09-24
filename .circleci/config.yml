@@ -8,13 +8,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true 
-      - run: |
-          if [[ "$CIRCLE_BRANCH" == "develop" ]]; then export TAG="latest"; fi
-          if [[ "$CIRCLE_BRANCH" == "master" ]]; then export TAG="stable"; fi
-          echo $TAG
-          docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker build --file Dockerfile --tag blockchainit/zokrates-remix-plugin:$TAG .
-          docker push blockchainit/zokrates-remix-plugin:$TAG
+      - run: ./scripts/build.sh
   deploy:
     docker:
       - image: circleci/node 
@@ -23,13 +17,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
           - "fd:28:56:c6:fa:62:c2:04:47:18:b1:0d:01:66:39:ea"
-      - run: |
-          if [[ "$CIRCLE_BRANCH" == "develop" ]]; then export TAG="latest"; fi
-          if [[ "$CIRCLE_BRANCH" == "master" ]]; then export TAG="stable"; fi
-          echo $TAG
-          ssh -o "StrictHostKeyChecking no" circleci@zokrates.blockchain-it.hr "echo 'y' | docker system prune && rm -rf /home/circleci/zokrates-remix-plugin || true && cd /home/circleci && git clone https://github.com/blockchain-it-hr/zokrates-remix-plugin"
-          ssh -o "StrictHostKeyChecking no" circleci@zokrates.blockchain-it.hr "cd /home/circleci/zokrates-remix-plugin && git checkout ${CIRCLE_BRANCH}"
-          ssh -o "StrictHostKeyChecking no" circleci@zokrates.blockchain-it.hr "echo ${TAG} && cd /home/circleci/zokrates-remix-plugin && docker pull blockchainit/zokrates-remix-plugin:${TAG} && docker-compose up -d"
+      - run: bash ./scripts/deploy.sh
 workflows:
   version: 2
   build_and_deploy:
