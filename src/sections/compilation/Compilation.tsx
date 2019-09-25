@@ -43,7 +43,7 @@ export const Compilation: React.FC = () => {
                     dispatchContext(setCompileResult(program, source));
                     remixClient.discardHighlight();
                 } catch (error) {
-                    highlightCompileError(location, error);
+                    highlightCompileError(error);
                     dispatch(onError(error));
                 }
             }, 200, location);
@@ -61,7 +61,7 @@ export const Compilation: React.FC = () => {
         saveAs(blob, "out");
     }
 
-    const highlightCompileError = (location: string, error: string) => {
+    const highlightCompileError = (error: string) => {
         var match = /\b(\d+):(\d+)\b/.exec(error);
         if (!match) {
             return;
@@ -75,7 +75,15 @@ export const Compilation: React.FC = () => {
             end:   { line, column },
         }
 
-        remixClient.highlight(highlightPosition, location, '#ff7675');
+        try {
+            let file: string = error.split(':')[0];
+            if (file) {
+                remixClient.switchFile(file.endsWith('.code') ? file : file.concat('.code'));
+                remixClient.highlight(highlightPosition, file, '#ff7675');
+            }
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     return (

@@ -39,7 +39,7 @@ export class RemixClient {
     }
 
     highlight = async (position: HighlightPosition, file: string, color: string) => {
-        await this.client.call('editor', 'highlight', position, file, color);
+        await this.client.call('editor', 'highlight', position, this.getBrowserPath(file), color);
     }
 
     discardHighlight = async () => {
@@ -49,6 +49,10 @@ export class RemixClient {
     createExample = () => {
         const { name, content } = Example;
         this.createFile(name, content);
+    }
+
+    switchFile = async (file: string) => {
+        await this.client.call('fileManager', 'switchFile', this.getBrowserPath(file));
     }
 
     private getBrowserPath = (path: string) => {
