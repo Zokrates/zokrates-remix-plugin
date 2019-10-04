@@ -30,6 +30,7 @@ export const ComputeWitness: React.FC = () => {
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log(e.target);
         dispatch(onLoading());
         
         setTimeout(() => {
@@ -68,8 +69,17 @@ export const ComputeWitness: React.FC = () => {
                     </OverlayTrigger>}
                     <InputGroup.Text>{e.field}</InputGroup.Text>
                 </InputGroup.Prepend>
-                <FormControl placeholder="Value" type="number" name={`${e.field}`} value={state.fields[e.field] || ''} required={true} onChange={(event: any) =>
+                {e.type == 'field' && 
+                <FormControl type="number" placeholder="Field" name={`${e.field}`} value={state.fields[e.field] || ''} required={true} onChange={(event: any) =>
                     dispatch(onFieldChange(e.field, event.currentTarget.value))} />
+                }
+                {e.type == 'bool' && 
+                <Form.Control as="select" placeholder="Boolean" name={`${e.field}`} required={true} value={state.fields[e.field] || ''} onChange={(event: any) => dispatch(onFieldChange(e.field, event.target.value))}>
+                    <option hidden value="">Select...</option>
+                    <option value="1">True</option>
+                    <option value="0">False</option>
+                </Form.Control>
+                }
             </InputGroup>
         );
     }
