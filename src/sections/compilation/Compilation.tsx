@@ -92,7 +92,7 @@ export const Compilation: React.FC = () => {
                 <Col>
                     <Form onSubmit={onSubmit}>
                         <div className="d-flex justify-content-between">
-                            <LoadingButton type="submit" disabled={!stateContext.isLoaded}
+                            <LoadingButton type="submit" disabled={!stateContext.isLoaded || state.isLoading}
                                 defaultText="Compile" 
                                 loadingText="Compiling..." 
                                 iconClassName="fa fa-refresh" 

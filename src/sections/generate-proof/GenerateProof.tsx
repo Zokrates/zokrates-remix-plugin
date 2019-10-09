@@ -80,7 +80,7 @@ export const GenerateProof: React.FC = () => {
                     <p>Generates a proof for a computation of the compiled program using proving key and computed witness.</p>
                     <Form onSubmit={onSubmit}>
                         <div className="d-flex justify-content-between">
-                            <LoadingButton type="submit" disabled={!stateContext.compilationResult || !stateContext.witnessResult || !stateContext.setupResult}
+                            <LoadingButton type="submit" disabled={!stateContext.compilationResult || !stateContext.witnessResult || !stateContext.setupResult || state.isLoading}
                                 defaultText="Generate" 
                                 loadingText="Generating..." 
                                 iconClassName="fa fa-check" 

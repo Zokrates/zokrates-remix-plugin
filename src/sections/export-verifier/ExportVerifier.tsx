@@ -65,7 +65,7 @@ export const ExportVerifier: React.FC = () => {
                             }/>
                         </Form.Group>
                         <div className="d-flex justify-content-between">
-                            <LoadingButton type="submit" disabled={!stateContext.setupResult}
+                            <LoadingButton type="submit" disabled={!stateContext.setupResult || state.isLoading}
                                 defaultText="Export" 
                                 loadingText="Exporting..." 
                                 iconClassName="fa fa-key" 
