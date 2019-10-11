@@ -1,5 +1,5 @@
 import { Resolver, ResolverResult } from '../common/types';
-import { remixClient } from './remix-client';
+import { remixClient } from './RemixClient';
 
 export default class RemixResolver implements Resolver {
 

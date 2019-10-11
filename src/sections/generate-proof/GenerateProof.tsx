@@ -4,7 +4,7 @@ import React, { useEffect, useReducer } from 'react';
 import { Button, ButtonGroup, Col, Form, FormControl, FormLabel, InputGroup, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { generateProof } from 'zokrates-js';
 import { Alert, LoadingButton } from '../../components';
-import { remixClient } from '../../remix/remix-client';
+import { remixClient } from '../../remix/RemixClient';
 import { setGenerateProofResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onCleanup, onError, onLoading, onSuccess } from './actions';
