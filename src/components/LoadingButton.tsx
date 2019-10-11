@@ -6,7 +6,7 @@ export type LoadingButtonProps = {
     loadingText?: string,
     isLoading: boolean;
     iconClassName: string,
-} & ButtonProps & React.DOMAttributes<HTMLButtonElement>;
+} & ButtonProps & React.HTMLAttributes<HTMLButtonElement>;
 
 export const LoadingButton: React.FC<LoadingButtonProps> = (props) => {
 

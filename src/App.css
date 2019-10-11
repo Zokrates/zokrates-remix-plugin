@@ -55,3 +55,9 @@
 .accordion > .card > .card-header {
     cursor: pointer;
 }
+
+.btn-overflow {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: pre;
+}
