@@ -3,7 +3,7 @@ import { remixClient } from './RemixClient';
 
 export default class RemixResolver implements Resolver {
 
-    private extension: string = '.code';
+    private extension: string = '.zok';
     private imports: Map<String, ResolverResult> = new Map();
     private reserved: Array<string> = ['ecc/', 'signature/', 'hashes/', 'utils/'];
 
