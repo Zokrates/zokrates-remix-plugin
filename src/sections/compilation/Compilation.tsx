@@ -82,7 +82,7 @@ export const Compilation: React.FC = () => {
         try {
             let file: string = error.split(':')[0];
             if (file) {
-                remixClient.switchFile(file.endsWith('.zok') ? file : file.concat('.zok'));
+                remixClient.switchFile(file);
                 remixClient.highlight(highlightPosition, file, '#ff7675');
             }
         } catch (err) {

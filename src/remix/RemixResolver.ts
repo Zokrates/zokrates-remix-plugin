@@ -3,7 +3,7 @@ import { remixClient } from './RemixClient';
 
 export default class RemixResolver implements Resolver {
 
-    private extension: string = '.zok';
+    private defaultExtension: string = '.zok';
     private imports: Map<String, ResolverResult> = new Map();
     private reserved: Array<string> = ['ecc/', 'signature/', 'hashes/', 'utils/'];
 
@@ -31,7 +31,10 @@ export default class RemixResolver implements Resolver {
     resolve = (location: string, path: string): Promise<ResolverResult> => {
         return new Promise<ResolverResult>(async (resolve, reject) => {
             try {
-                let path_ = path.endsWith(this.extension) ? path : path.concat(this.extension);
+                let path_ = path;
+                if (path.split('.').length < 2) {
+                    path_ = path.concat(this.defaultExtension);
+                }
                 let source = await remixClient.getFile(path_);
                 resolve({ source: source, location: path } as ResolverResult);
             } catch (error) {
