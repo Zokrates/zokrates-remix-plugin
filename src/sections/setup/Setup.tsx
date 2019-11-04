@@ -59,7 +59,7 @@ export const Setup: React.FC = () => {
                     <p>Creates a proving key and a verification key. These keys are derived from a source of randomness, commonly referred to as “toxic waste”.</p>
                     <Form onSubmit={onSubmit}>
                         <div className="d-flex justify-content-between">
-                            <LoadingButton type="submit" disabled={!stateContext.compilationResult}
+                            <LoadingButton type="submit" disabled={!stateContext.compilationResult || state.isLoading}
                                 defaultText="Run Setup" 
                                 loadingText="Running setup..." 
                                 iconClassName="fa fa-cog" 

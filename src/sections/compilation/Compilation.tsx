@@ -6,8 +6,8 @@ import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 're
 import { compile } from 'zokrates-js';
 import { hex } from '../../common/utils';
 import { Alert, LoadingButton } from '../../components';
-import { remixClient } from '../../remix/remix-client';
-import { remixResolver } from '../../remix/remix-resolver';
+import { remixClient } from '../../remix/RemixClient';
+import { remixResolver } from '../../remix/RemixResolver';
 import { setCompileResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onError, onLoading, onSuccess } from './actions';
@@ -31,6 +31,10 @@ export const Compilation: React.FC = () => {
             dispatch(onLoading());
 
             let location = await remixClient.getCurrentFile();
+            if (!location) {
+                throw new Error('Location unknown');
+            }
+
             let source = await remixClient.getFile(location);
 
             // we have to "preload" imports before compiling since remix plugin api returns promises
@@ -78,7 +82,7 @@ export const Compilation: React.FC = () => {
         try {
             let file: string = error.split(':')[0];
             if (file) {
-                remixClient.switchFile(file.endsWith('.code') ? file : file.concat('.code'));
+                remixClient.switchFile(file);
                 remixClient.highlight(highlightPosition, file, '#ff7675');
             }
         } catch (err) {
@@ -92,7 +96,7 @@ export const Compilation: React.FC = () => {
                 <Col>
                     <Form onSubmit={onSubmit}>
                         <div className="d-flex justify-content-between">
-                            <LoadingButton type="submit" disabled={!stateContext.isLoaded}
+                            <LoadingButton type="submit" disabled={!stateContext.isLoaded || state.isLoading}
                                 defaultText="Compile" 
                                 loadingText="Compiling..." 
                                 iconClassName="fa fa-refresh" 

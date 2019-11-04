@@ -3,7 +3,7 @@ import React, { useEffect, useReducer } from 'react';
 import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { exportSolidityVerifier } from 'zokrates-js';
 import { Alert, LoadingButton } from '../../components';
-import { remixClient } from '../../remix/remix-client';
+import { remixClient } from '../../remix/RemixClient';
 import { setExportVerifierResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onCleanup, onError, onLoading, onSuccess, updateAbi } from './actions';
@@ -65,7 +65,7 @@ export const ExportVerifier: React.FC = () => {
                             }/>
                         </Form.Group>
                         <div className="d-flex justify-content-between">
-                            <LoadingButton type="submit" disabled={!stateContext.setupResult}
+                            <LoadingButton type="submit" disabled={!stateContext.setupResult || state.isLoading}
                                 defaultText="Export" 
                                 loadingText="Exporting..." 
                                 iconClassName="fa fa-key" 

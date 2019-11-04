@@ -4,7 +4,7 @@ import React, { useEffect, useReducer } from 'react';
 import { Button, ButtonGroup, Col, Form, FormControl, FormLabel, InputGroup, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { generateProof } from 'zokrates-js';
 import { Alert, LoadingButton } from '../../components';
-import { remixClient } from '../../remix/remix-client';
+import { remixClient } from '../../remix/RemixClient';
 import { setGenerateProofResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onCleanup, onError, onLoading, onSuccess } from './actions';
@@ -80,7 +80,7 @@ export const GenerateProof: React.FC = () => {
                     <p>Generates a proof for a computation of the compiled program using proving key and computed witness.</p>
                     <Form onSubmit={onSubmit}>
                         <div className="d-flex justify-content-between">
-                            <LoadingButton type="submit" disabled={!stateContext.compilationResult || !stateContext.witnessResult || !stateContext.setupResult}
+                            <LoadingButton type="submit" className="btn-overflow" disabled={!stateContext.compilationResult || !stateContext.witnessResult || !stateContext.setupResult || state.isLoading}
                                 defaultText="Generate" 
                                 loadingText="Generating..." 
                                 iconClassName="fa fa-check" 

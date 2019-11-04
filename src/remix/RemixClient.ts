@@ -1,4 +1,4 @@
-import { createIframeClient, PluginClient, Api, RemixApi, HighlightPosition } from '@remixproject/plugin'
+import { Api, createIframeClient, HighlightPosition, PluginClient, RemixApi } from '@remixproject/plugin';
 import Example from './example';
 
 export class RemixClient {

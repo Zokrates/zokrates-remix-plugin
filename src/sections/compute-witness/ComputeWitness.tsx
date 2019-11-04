@@ -3,7 +3,7 @@ import React, { useEffect, useReducer } from 'react';
 import { Button, ButtonGroup, Col, Form, FormControl, InputGroup, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { computeWitness } from 'zokrates-js';
 import { Alert, LoadingButton } from '../../components';
-import { remixClient } from '../../remix/remix-client';
+import { remixClient } from '../../remix/RemixClient';
 import { setWitnessResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onCleanup, onError, onFieldChange, onLoading, onSuccess } from './actions';
@@ -30,14 +30,12 @@ export const ComputeWitness: React.FC = () => {
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(e.target);
         dispatch(onLoading());
         
         setTimeout(() => {
             try {
-                let args: string[] = Object.values(state.fields);
+                let args: string[] = Object.values(state.fields).map(val => JSON.parse(val));
                 let witness = computeWitness(stateContext.compilationResult.program, args);
-
                 dispatch(onSuccess(witness))
                 dispatchContext(setWitnessResult(witness));
             } catch (error) {
@@ -64,22 +62,13 @@ export const ComputeWitness: React.FC = () => {
             <InputGroup key={i} className="mb-3">
                 <InputGroup.Prepend>
                     {e.modifier == 'private' && 
-                    <OverlayTrigger key={e.field} placement="top" overlay={<Tooltip id={`tooltip-${e.field}`}>Private Field</Tooltip>}>
+                    <OverlayTrigger key={e.name} placement="top" overlay={<Tooltip id={`tooltip-${e.name}`}>Private Field</Tooltip>}>
                         <InputGroup.Text><i className="fa fa-lock" aria-hidden="true"></i></InputGroup.Text>
                     </OverlayTrigger>}
-                    <InputGroup.Text>{e.field}</InputGroup.Text>
+                    <InputGroup.Text>{e.name + ": " + e.type}</InputGroup.Text>
                 </InputGroup.Prepend>
-                {e.type == 'field' && 
-                <FormControl type="number" placeholder="Field" name={`${e.field}`} value={state.fields[e.field] || ''} required={true} onChange={(event: any) =>
-                    dispatch(onFieldChange(e.field, event.currentTarget.value))} />
-                }
-                {e.type == 'bool' && 
-                <Form.Control as="select" placeholder="Boolean" name={`${e.field}`} required={true} value={state.fields[e.field] || ''} onChange={(event: any) => dispatch(onFieldChange(e.field, event.target.value))}>
-                    <option hidden value="">Select...</option>
-                    <option value="1">True</option>
-                    <option value="0">False</option>
-                </Form.Control>
-                }
+                <FormControl type="text" placeholder="Field" name={`${e.name}`} value={state.fields[e.name] || ''} required={true} onChange={(event: any) =>
+                    dispatch(onFieldChange(e.name, String(event.currentTarget.value)))} />
             </InputGroup>
         );
     }
@@ -92,7 +81,7 @@ export const ComputeWitness: React.FC = () => {
                     <Form onSubmit={onSubmit}>
                         {renderInputFields()}
                         <div className="d-flex justify-content-between">
-                            <LoadingButton type="submit" disabled={!stateContext.compilationResult}
+                            <LoadingButton type="submit" disabled={!stateContext.compilationResult || state.isLoading}
                                 defaultText="Compute" 
                                 loadingText="Computing..." 
                                 iconClassName="fa fa-lightbulb-o" 
