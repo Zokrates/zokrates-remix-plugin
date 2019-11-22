@@ -27,7 +27,7 @@ export const onError = (error: any): IComputeWitnessAction => {
     }
 }
 
-export const onFieldChange = (field: string, value: string): IComputeWitnessAction => {
+export const onFieldChange = (field: string, value: any): IComputeWitnessAction => {
     return {
         type: 'field',
         field: field, 

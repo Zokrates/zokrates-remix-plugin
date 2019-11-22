@@ -34,7 +34,12 @@ export const ComputeWitness: React.FC = () => {
         
         setTimeout(() => {
             try {
-                let args: string[] = Object.values(state.fields).map(val => JSON.parse(val));
+                let args: string[] = Object.values(state.fields).map(field => {
+                    if (field.type !== 'field') {
+                        return JSON.parse(field.value);
+                    }
+                    return field.value;
+                });
                 let witness = computeWitness(stateContext.compilationResult.program, args);
                 dispatch(onSuccess(witness))
                 dispatchContext(setWitnessResult(witness));
@@ -67,8 +72,11 @@ export const ComputeWitness: React.FC = () => {
                     </OverlayTrigger>}
                     <InputGroup.Text>{e.name + ": " + e.type}</InputGroup.Text>
                 </InputGroup.Prepend>
-                <FormControl type="text" placeholder="Field" name={`${e.name}`} value={state.fields[e.name] || ''} required={true} onChange={(event: any) =>
-                    dispatch(onFieldChange(e.name, String(event.currentTarget.value)))} />
+                <FormControl type="text" placeholder="Field" name={`${e.name}`} value={state.fields[e.name] ? state.fields[e.name].value : ''} required={true} onChange={(event: any) =>
+                    dispatch(onFieldChange(e.name, { 
+                        type: e.type, 
+                        value: event.currentTarget.value 
+                    }))} />
             </InputGroup>
         );
     }
