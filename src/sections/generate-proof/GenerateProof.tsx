@@ -2,7 +2,6 @@ import copy from 'copy-to-clipboard';
 import { saveAs } from 'file-saver';
 import React, { useEffect, useReducer } from 'react';
 import { Button, ButtonGroup, Col, Form, FormControl, FormLabel, InputGroup, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
-import { generateProof } from 'zokrates-js';
 import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/RemixClient';
 import { setGenerateProofResult } from '../../state/actions';
@@ -36,7 +35,7 @@ export const GenerateProof: React.FC = () => {
 
         setTimeout(() => {
             try {
-                let proof = generateProof(
+                let proof = stateContext.zokratesProvider.generateProof(
                     stateContext.compilationResult.program,
                     stateContext.witnessResult,
                     stateContext.setupResult.provingKey

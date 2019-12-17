@@ -1,7 +1,6 @@
 import { saveAs } from 'file-saver';
 import React, { useEffect, useReducer } from 'react';
 import { Button, ButtonGroup, Col, Form, FormControl, InputGroup, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
-import { computeWitness } from 'zokrates-js';
 import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/RemixClient';
 import { setWitnessResult } from '../../state/actions';
@@ -40,7 +39,7 @@ export const ComputeWitness: React.FC = () => {
                     }
                     return field.value;
                 });
-                let witness = computeWitness(stateContext.compilationResult.program, args);
+                let witness = stateContext.zokratesProvider.computeWitness(stateContext.compilationResult.program, args);
                 dispatch(onSuccess(witness))
                 dispatchContext(setWitnessResult(witness));
             } catch (error) {

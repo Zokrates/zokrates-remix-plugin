@@ -1,7 +1,6 @@
 import { saveAs } from 'file-saver';
 import React, { useEffect, useReducer } from 'react';
 import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
-import { exportSolidityVerifier } from 'zokrates-js';
 import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/RemixClient';
 import { setExportVerifierResult } from '../../state/actions';
@@ -33,7 +32,7 @@ export const ExportVerifier: React.FC = () => {
 
         setTimeout(() => {
             try {
-                let verifier = exportSolidityVerifier(
+                let verifier = stateContext.zokratesProvider.exportSolidityVerifier(
                     stateContext.setupResult.verificationKey, state.abiv2
                 );
                 dispatch(onSuccess(verifier));

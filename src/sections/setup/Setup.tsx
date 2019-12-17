@@ -2,7 +2,6 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 import React, { useEffect, useReducer } from 'react';
 import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
-import { setup } from 'zokrates-js';
 import { Alert, LoadingButton } from '../../components';
 import { setSetupResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
@@ -33,9 +32,9 @@ export const Setup: React.FC = () => {
 
         setTimeout(() => {
             try {
-                let result = setup(stateContext.compilationResult.program);
+                let keypair = stateContext.zokratesProvider.setup(stateContext.compilationResult.program);
                 let setupResult: SetupResult = {
-                    verificationKey: result[0], provingKey: result[1]
+                    verificationKey: keypair.vk, provingKey: keypair.pk
                 }
                 dispatch(onSuccess(setupResult));
                 dispatchContext(setSetupResult(setupResult));

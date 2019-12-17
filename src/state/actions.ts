@@ -1,9 +1,10 @@
 import { IActions } from './reducer';
 import { ExportVerifierResult, SetupResult } from './types';
 
-export const onLoaded = (): IActions => {
+export const onLoaded = (provider: any): IActions => {
     return {
-        type: 'set_loaded', 
+        type: 'set_loaded',
+        payload: provider
     }
 }
 

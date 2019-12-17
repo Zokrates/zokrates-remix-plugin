@@ -3,7 +3,6 @@ import copy from 'copy-to-clipboard';
 import saveAs from 'file-saver';
 import React, { useReducer } from 'react';
 import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
-import { compile } from 'zokrates-js';
 import { hex } from '../../common/utils';
 import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/RemixClient';
@@ -42,7 +41,7 @@ export const Compilation: React.FC = () => {
 
             setTimeout((location) => {
                 try {
-                    let program = compile(source, location.split('/')[1]);
+                    let program = stateContext.zokratesProvider.compile(source, location.split('/')[1]);
                     dispatch(onSuccess(program));
                     dispatchContext(setCompileResult(program, source));
                     remixClient.discardHighlight();

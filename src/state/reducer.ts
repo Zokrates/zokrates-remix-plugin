@@ -16,7 +16,8 @@ export const reducer = (state: IState, action: IActions) => {
         case 'set_loaded': 
             return { 
                 ...state, 
-                isLoaded: true 
+                isLoaded: true,
+                zokratesProvider: action.payload
             };
         case 'set_compile_result':
             return {
