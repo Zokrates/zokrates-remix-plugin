@@ -1,13 +1,12 @@
 import { HighlightPosition } from '@remixproject/plugin';
-import copy from 'copy-to-clipboard';
+import JSZip from 'jszip';
 import saveAs from 'file-saver';
 import React, { useReducer } from 'react';
 import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
-import { hex } from '../../common/utils';
 import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/RemixClient';
 import { remixResolver } from '../../remix/RemixResolver';
-import { setCompileResult } from '../../state/actions';
+import { setCompilationResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onError, onLoading, onSuccess } from './actions';
 import { compilationReducer, ICompilationState } from './reducer';
@@ -41,9 +40,13 @@ export const Compilation: React.FC = () => {
 
             setTimeout((location) => {
                 try {
-                    let program = stateContext.zokratesProvider.compile(source, location.split('/')[1]);
-                    dispatch(onSuccess(program));
-                    dispatchContext(setCompileResult(program, source));
+                    let artifacts = stateContext.zokratesProvider.compile(
+                        source, 
+                        location.split('/')[1], 
+                        remixResolver.syncResolve
+                    );
+                    dispatch(onSuccess(artifacts));
+                    dispatchContext(setCompilationResult(artifacts, source));
                     remixClient.discardHighlight();
                 } catch (error) {
                     highlightCompileError(error);
@@ -55,13 +58,15 @@ export const Compilation: React.FC = () => {
         }
     }
 
-    const onCopy = () => {
-        copy(hex(state.result));
+    const openInRemix = () => {
+        remixClient.createFile('browser/abi.json', state.result.abi);
     }
 
     const onDownload = () => {
-        var blob = new Blob([state.result.buffer], { type: 'application/octet-stream' });
-        saveAs(blob, "out");
+        let zip = new JSZip();
+        zip.file("out", state.result.program);
+        zip.file("abi.json", state.result.abi);
+        zip.generateAsync({ type: "blob" }).then((content: any) => saveAs(content, "output.zip"));
     }
 
     const highlightCompileError = (error: string) => {
@@ -101,13 +106,13 @@ export const Compilation: React.FC = () => {
                                 iconClassName="fa fa-refresh" 
                                 isLoading={state.isLoading} />
                             <ButtonGroup>
-                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-bytecode">Copy Bytecode</Tooltip>}>
-                                    <Button disabled={!state.result} variant="light" onClick={onCopy}>
-                                        <i className="fa fa-clipboard" aria-hidden="true"></i>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-show-abi">Show ABI</Tooltip>}>
+                                    <Button disabled={!state.result} variant="light" onClick={openInRemix}>
+                                        <i className="fa fa-share" aria-hidden="true"></i>
                                     </Button>
                                 </OverlayTrigger>
 
-                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download-program">Download</Tooltip>}>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-download-program">Download Artifacts</Tooltip>}>
                                     <Button disabled={!state.result} variant="light" onClick={onDownload}>
                                     <i className="fa fa-download" aria-hidden="true"></i>
                                     </Button>

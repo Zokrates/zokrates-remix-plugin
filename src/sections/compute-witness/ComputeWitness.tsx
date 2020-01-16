@@ -39,7 +39,7 @@ export const ComputeWitness: React.FC = () => {
                     }
                     return field.value;
                 });
-                let witness = stateContext.zokratesProvider.computeWitness(stateContext.compilationResult.program, args);
+                let witness = stateContext.zokratesProvider.computeWitness(stateContext.compilationResult.artifacts, args);
                 dispatch(onSuccess(witness))
                 dispatchContext(setWitnessResult(witness));
             } catch (error) {

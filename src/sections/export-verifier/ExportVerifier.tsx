@@ -29,7 +29,7 @@ export const ExportVerifier: React.FC = () => {
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         dispatch(onLoading());
-
+        
         setTimeout(() => {
             try {
                 let verifier = stateContext.zokratesProvider.exportSolidityVerifier(

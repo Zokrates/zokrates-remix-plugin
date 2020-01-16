@@ -2,7 +2,7 @@ import { IState } from './Store';
 
 export type IActions = {
     type: 'set_loaded' | 
-          'set_compile_result' | 
+          'set_compilation_result' | 
           'set_witness_result' |
           'set_setup_result'   |
           'set_export_verifier_result' |
@@ -19,7 +19,7 @@ export const reducer = (state: IState, action: IActions) => {
                 isLoaded: true,
                 zokratesProvider: action.payload
             };
-        case 'set_compile_result':
+        case 'set_compilation_result':
             return {
                 ...state,
                 compilationResult: action.payload

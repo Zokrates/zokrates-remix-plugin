@@ -21,7 +21,7 @@ const App: React.FC = () => {
     useEffect(() => {
         const load = async () => {
             try {
-                initialize(remixResolver.syncResolve).then((provider) => dispatch(onLoaded(provider)))
+                initialize().then((provider) => dispatch(onLoaded(provider)))
                 await remixClient.createClient();
             } catch(err) {
                 console.log(err)

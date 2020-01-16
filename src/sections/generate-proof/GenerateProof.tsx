@@ -36,11 +36,10 @@ export const GenerateProof: React.FC = () => {
         setTimeout(() => {
             try {
                 let proof = stateContext.zokratesProvider.generateProof(
-                    stateContext.compilationResult.program,
+                    stateContext.compilationResult.artifacts.program,
                     stateContext.witnessResult,
                     stateContext.setupResult.provingKey
                 );
-    
                 dispatch(onSuccess(proof));
                 dispatchContext(setGenerateProofResult(proof));
             } catch (error) {
@@ -54,12 +53,12 @@ export const GenerateProof: React.FC = () => {
     }
 
     const openInRemix = () => {
-        remixClient.createFile('browser/proof.out', state.result);
+        remixClient.createFile('browser/proof.json', state.result);
     }
 
     const onDownload = () => {
         var blob = new Blob([state.result], { type: 'text/plain;charset=utf-8' });
-        saveAs(blob, 'proof.out');
+        saveAs(blob, 'proof.json');
     }
 
     const getCompatibleParametersFormat = (input: string, abiv2: boolean) => {

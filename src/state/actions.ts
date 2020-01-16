@@ -8,11 +8,11 @@ export const onLoaded = (provider: any): IActions => {
     }
 }
 
-export const setCompileResult = (program: any, source: string): IActions => {
+export const setCompilationResult = (artifacts: any, source: string): IActions => {
     return {
-        type: 'set_compile_result', 
+        type: 'set_compilation_result', 
         payload: { 
-            program, source 
+            artifacts, source 
         }
     }
 }

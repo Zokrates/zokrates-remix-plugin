@@ -3,8 +3,13 @@ export type SetupResult = {
     provingKey: Uint8Array
 }
 
-export type CompilationResult = {
+export type CompilationArtifacts = {
     program: Uint8Array,
+    abi: string
+}
+
+export type CompilationResult = {
+    artifacts: CompilationArtifacts,
     source: string
 }
 
