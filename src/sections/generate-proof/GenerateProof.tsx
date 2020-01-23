@@ -25,7 +25,7 @@ export const GenerateProof: React.FC = () => {
         dispatch(onCleanup());
         dispatchContext(setGenerateProofResult(''));
     }, [stateContext.compilationResult, 
-        stateContext.witnessResult, 
+        stateContext.computationResult, 
         stateContext.setupResult, 
         stateContext.exportVerifierResult]);
 
@@ -37,7 +37,7 @@ export const GenerateProof: React.FC = () => {
             try {
                 let proof = stateContext.zokratesProvider.generateProof(
                     stateContext.compilationResult.artifacts.program,
-                    stateContext.witnessResult,
+                    stateContext.computationResult.witness,
                     stateContext.setupResult.provingKey
                 );
                 dispatch(onSuccess(proof));
@@ -78,7 +78,11 @@ export const GenerateProof: React.FC = () => {
                     <p>Generates a proof for a computation of the compiled program using proving key and computed witness.</p>
                     <Form onSubmit={onSubmit}>
                         <div className="d-flex justify-content-between">
-                            <LoadingButton type="submit" className="btn-overflow" disabled={!stateContext.compilationResult || !stateContext.witnessResult || !stateContext.setupResult || state.isLoading}
+                            <LoadingButton type="submit" className="btn-overflow" 
+                                disabled={!stateContext.compilationResult || 
+                                    !stateContext.computationResult || 
+                                    !stateContext.setupResult || 
+                                    state.isLoading}
                                 defaultText="Generate" 
                                 loadingText="Generating..." 
                                 iconClassName="fa fa-check" 

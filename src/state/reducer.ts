@@ -3,7 +3,7 @@ import { IState } from './Store';
 export type IActions = {
     type: 'set_loaded' | 
           'set_compilation_result' | 
-          'set_witness_result' |
+          'set_computation_result' |
           'set_setup_result'   |
           'set_export_verifier_result' |
           'set_generate_proof_result';
@@ -24,10 +24,10 @@ export const reducer = (state: IState, action: IActions) => {
                 ...state,
                 compilationResult: action.payload
             };
-        case 'set_witness_result':
+        case 'set_computation_result':
             return { 
                 ...state, 
-                witnessResult: action.payload   
+                computationResult: action.payload   
             };
         case 'set_setup_result':
             return { 

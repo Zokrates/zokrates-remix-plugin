@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer } from 'react';
 import { IActions, reducer } from './reducer';
-import { CompilationResult, ExportVerifierResult, SetupResult } from './types';
+import { CompilationResult, ExportVerifierResult, SetupResult, ComputationResult } from './types';
 import { ZoKratesProvider } from 'zokrates-js';
 
 export interface IState {
@@ -8,7 +8,7 @@ export interface IState {
     zokratesProvider: ZoKratesProvider,
     compilationResult: CompilationResult,
     setupResult: SetupResult,
-    witnessResult: string,
+    computationResult: ComputationResult,
     exportVerifierResult: ExportVerifierResult,
     generateProofResult: string
 }
@@ -17,7 +17,7 @@ const initialState = {
     isLoaded: false,
     compilationResult: null,
     setupResult: null,
-    witnessResult: '',
+    computationResult: null,
     exportVerifierResult: null,
     generateProofResult: '',
 } as IState;

@@ -1,15 +1,15 @@
-export type ICompilationAction = {
+export type ICompileAction = {
     type: 'loading' | 'success' | 'error';
     payload?: any;
 }
 
-export interface ICompilationState {
+export interface ICompileState {
     isLoading?: boolean,
     result?: Uint8Array,
     error?: string
 }
 
-export const compilationReducer = (state: ICompilationState, action: ICompilationAction) => {
+export const compileReducer = (state: ICompileState, action: ICompileAction) => {
     switch (action.type) {
         case 'loading':
             return {

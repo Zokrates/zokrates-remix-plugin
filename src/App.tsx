@@ -4,8 +4,8 @@ import { initialize } from 'zokrates-js';
 import './App.css';
 import { Accordion, AccordionElement, Footer, Header } from './components';
 import { remixClient } from './remix/RemixClient';
-import { Compilation } from './sections/compilation/Compilation';
-import { ComputeWitness } from './sections/compute-witness/ComputeWitness';
+import { Compile } from './sections/compile/Compile';
+import { Compute } from './sections/compute/Compute';
 import { ExportVerifier } from './sections/export-verifier/ExportVerifier';
 import { GenerateProof } from './sections/generate-proof/GenerateProof';
 import { Setup } from './sections/setup/Setup';
@@ -35,19 +35,41 @@ const App: React.FC = () => {
                 <Header />
                 <main role="main">
                     <Accordion>
-                        <AccordionElement headerText="Compilation" iconClass="fa fa-refresh" eventKey="0">
-                            <Compilation />
+                        <AccordionElement 
+                            headerText="Compile" 
+                            iconClass="fa fa-refresh"
+                            eventKey="0">
+                            <Compile />
                         </AccordionElement>
-                        <AccordionElement headerText="Setup" iconClass="fa fa-cog" eventKey="1" disabled={!state.compilationResult}>
+                        <AccordionElement 
+                            headerText="Setup" 
+                            iconClass="fa fa-cog" 
+                            eventKey="1" 
+                            disabled={!state.compilationResult}>
                             <Setup />
                         </AccordionElement>
-                        <AccordionElement headerText="Export Verifier" iconClass="fa fa-key" eventKey="2" disabled={!state.setupResult}>
+                        <AccordionElement 
+                            headerText="Export Verifier" 
+                            iconClass="fa fa-key" 
+                            eventKey="2" 
+                            disabled={!state.setupResult}>
                             <ExportVerifier />
                         </AccordionElement>
-                        <AccordionElement headerText="Compute Witness" iconClass="fa fa-lightbulb-o" eventKey="3" disabled={!state.compilationResult}>
-                            <ComputeWitness />
+                        <AccordionElement 
+                            headerText="Compute" 
+                            iconClass="fa fa-lightbulb-o" 
+                            eventKey="3" 
+                            disabled={!state.compilationResult}>
+                            <Compute />
                         </AccordionElement>
-                        <AccordionElement headerText="Generate Proof" iconClass="fa fa-check" eventKey="4" disabled={!state.compilationResult || !state.witnessResult || !state.setupResult || !state.exportVerifierResult}>
+                        <AccordionElement 
+                            headerText="Generate Proof" 
+                            iconClass="fa fa-check" 
+                            eventKey="4" 
+                            disabled={!state.compilationResult || 
+                            !state.computationResult || 
+                            !state.setupResult || 
+                            !state.exportVerifierResult}>
                             <GenerateProof />
                         </AccordionElement>
                     </Accordion>

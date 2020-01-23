@@ -9,19 +9,19 @@ import { remixResolver } from '../../remix/RemixResolver';
 import { setCompilationResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onError, onLoading, onSuccess } from './actions';
-import { compilationReducer, ICompilationState } from './reducer';
+import { compileReducer, ICompileState } from './reducer';
 
-export const Compilation: React.FC = () => {
+export const Compile: React.FC = () => {
 
     const initialState = {
         isCompiling: false,
         result: null,
         error: ''
-    } as ICompilationState;
+    } as ICompileState;
 
     const stateContext = useStateContext();
     const dispatchContext = useDispatchContext();
-    const [state, dispatch] = useReducer(compilationReducer, initialState)
+    const [state, dispatch] = useReducer(compileReducer, initialState)
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();

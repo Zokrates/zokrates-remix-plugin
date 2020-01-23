@@ -1,16 +1,16 @@
-export type IComputeWitnessAction = {
+export type IComputeAction = {
     type: 'loading' | 'success' | 'error' | 'reset' | 'field_update';
     payload?: any;
 }
 
-export interface IComputeWitnessState {
+export interface IComputeState {
     isLoading: boolean;
     result: string;
     error: string;
     inputFields: object;
 }
 
-export function witnessReducer(state: Partial<IComputeWitnessState>, action: IComputeWitnessAction) {
+export function computeReducer(state: Partial<IComputeState>, action: IComputeAction) {
     switch (action.type) {
         case 'loading':
             return {

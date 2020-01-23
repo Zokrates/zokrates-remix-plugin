@@ -4,15 +4,15 @@ import { Button, ButtonGroup, Col, Form, FormGroup, OverlayTrigger, Row, Tooltip
 import { Abi } from '../../common/abiTypes';
 import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/RemixClient';
-import { setWitnessResult } from '../../state/actions';
+import { setComputationResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onError, onFieldUpdate, onLoading, onReset, onSuccess } from './actions';
 import { InputComponent } from './components/InputComponent';
-import { IComputeWitnessState, witnessReducer } from './reducer';
+import { IComputeState, computeReducer } from './reducer';
 
-export const ComputeWitness: React.FC = () => {
+export const Compute: React.FC = () => {
 
-    const initialState: IComputeWitnessState = {
+    const initialState: IComputeState = {
         isLoading: false,
         result: null,
         error: '',
@@ -21,14 +21,14 @@ export const ComputeWitness: React.FC = () => {
 
     const stateContext = useStateContext();
     const dispatchContext = useDispatchContext();
-    const [state, dispatch] = useReducer(witnessReducer, initialState);
+    const [state, dispatch] = useReducer(computeReducer, initialState);
 
     const abi: Abi = JSON.parse(stateContext.compilationResult.artifacts.abi);
     const inputs = abi.inputs;
 
     useEffect(() => {
         dispatch(onReset());
-        dispatchContext(setWitnessResult(''));
+        dispatchContext(setComputationResult(''));
     }, [stateContext.compilationResult]);
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -38,9 +38,9 @@ export const ComputeWitness: React.FC = () => {
         setTimeout(() => {
             try {
                 const args = inputs.map(component => state.inputFields[component.name].value);
-                let witness = stateContext.zokratesProvider.computeWitness(stateContext.compilationResult.artifacts, args);
-                dispatch(onSuccess(witness))
-                dispatchContext(setWitnessResult(witness));
+                let result = stateContext.zokratesProvider.computeWitness(stateContext.compilationResult.artifacts, args);
+                dispatch(onSuccess(result))
+                dispatchContext(setComputationResult(result));
             } catch (error) {
                 dispatch(onError(error));
             }
@@ -48,11 +48,11 @@ export const ComputeWitness: React.FC = () => {
     }
 
     const openInRemix = () => {
-        remixClient.createFile('browser/witness', state.result);
+        remixClient.createFile('browser/witness', state.result.witness);
     }
 
     const onDownload = () => {
-        var blob = new Blob([state.result], { type: 'text/plain;charset=utf-8' });
+        var blob = new Blob([state.result.witness], { type: 'text/plain;charset=utf-8' });
         saveAs(blob, "witness");
     }
 
@@ -111,9 +111,16 @@ export const ComputeWitness: React.FC = () => {
                 </Alert>
             }
             {state.result &&
+            <>
                 <Alert variant='success' iconClass='fa fa-check'>
-                    Witness computed!
-            </Alert>
+                    Computed successfully!
+                </Alert>
+                <pre className="bg-light p-2 mt-3 mb-0">
+                    <code>
+                        {state.result.output}
+                    </code>
+                </pre>
+            </>
             } 
         </>
     );
