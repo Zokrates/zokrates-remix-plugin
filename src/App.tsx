@@ -4,7 +4,6 @@ import { initialize } from 'zokrates-js';
 import './App.css';
 import { Accordion, AccordionElement, Footer, Header } from './components';
 import { remixClient } from './remix/RemixClient';
-import { remixResolver } from './remix/RemixResolver';
 import { Compilation } from './sections/compilation/Compilation';
 import { ComputeWitness } from './sections/compute-witness/ComputeWitness';
 import { ExportVerifier } from './sections/export-verifier/ExportVerifier';
@@ -21,7 +20,7 @@ const App: React.FC = () => {
     useEffect(() => {
         const load = async () => {
             try {
-                initialize(remixResolver.syncResolve).then((provider) => dispatch(onLoaded(provider)))
+                initialize().then((provider) => dispatch(onLoaded(provider)))
                 await remixClient.createClient();
             } catch(err) {
                 console.log(err)

@@ -6,9 +6,9 @@ export const onLoading = (): IComputeWitnessAction => {
     };
 }
 
-export const onCleanup = (): IComputeWitnessAction => {
+export const onReset = (): IComputeWitnessAction => {
     return { 
-        type: 'cleanup' 
+        type: 'reset'
     };
 }
 
@@ -20,17 +20,15 @@ export const onSuccess = (witness: string): IComputeWitnessAction => {
 }
 
 export const onError = (error: any): IComputeWitnessAction => {
-    console.error("Error occurred while computing witness: " + error);
     return {
         type: 'error',
         payload: error.toString()
     }
 }
 
-export const onFieldChange = (field: string, value: any): IComputeWitnessAction => {
+export const onFieldUpdate = (name: string, raw: string, value: any): IComputeWitnessAction => {
     return {
-        type: 'field',
-        field: field, 
-        payload: value, 
+        type: 'field_update',
+        payload: { name, raw, value }
     }
 }

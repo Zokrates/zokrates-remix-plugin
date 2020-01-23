@@ -6,10 +6,10 @@ export const onLoading = (): ICompilationAction => {
     };
 }
 
-export const onSuccess = (program: any): ICompilationAction => {
+export const onSuccess = (artifacts: any): ICompilationAction => {
     return {
         type: 'success',
-        payload: program
+        payload: artifacts
     }
 }
 
