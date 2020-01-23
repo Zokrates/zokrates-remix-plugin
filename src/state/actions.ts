@@ -8,19 +8,19 @@ export const onLoaded = (provider: any): IActions => {
     }
 }
 
-export const setCompileResult = (program: any, source: string): IActions => {
+export const setCompilationResult = (artifacts: any, source: string): IActions => {
     return {
-        type: 'set_compile_result', 
+        type: 'set_compilation_result', 
         payload: { 
-            program, source 
+            artifacts, source 
         }
     }
 }
 
-export const setWitnessResult = (witness: string): IActions => {
+export const setComputationResult = (output: any): IActions => {
     return {
-        type: 'set_witness_result', 
-        payload: witness
+        type: 'set_computation_result', 
+        payload: output
     }
 }
 

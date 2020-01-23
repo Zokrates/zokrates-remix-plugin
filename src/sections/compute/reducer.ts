@@ -1,17 +1,16 @@
-export type IComputeWitnessAction = {
-    type: 'loading' | 'field' | 'success' | 'error' | 'cleanup';
-    field?: string,
+export type IComputeAction = {
+    type: 'loading' | 'success' | 'error' | 'reset' | 'field_update';
     payload?: any;
 }
 
-export interface IComputeWitnessState {
-    isLoading: boolean,
-    fields: object,
-    result: string,
-    error: string
+export interface IComputeState {
+    isLoading: boolean;
+    result: string;
+    error: string;
+    inputFields: object;
 }
 
-export function witnessReducer(state: Partial<IComputeWitnessState>, action: IComputeWitnessAction) {
+export function computeReducer(state: Partial<IComputeState>, action: IComputeAction) {
     switch (action.type) {
         case 'loading':
             return {
@@ -19,14 +18,6 @@ export function witnessReducer(state: Partial<IComputeWitnessState>, action: ICo
                 result: '',
                 error: '',
                 isLoading: true,
-            }
-        case 'field':
-            return { 
-                ...state, 
-                fields: {
-                    ...state.fields,
-                    [action.field]: action.payload,
-                }
             }
         case 'success':
             return { 
@@ -42,13 +33,26 @@ export function witnessReducer(state: Partial<IComputeWitnessState>, action: ICo
                 result: null,
                 isLoading: false,
             }
-        case 'cleanup':
+        case 'reset':
             return {
-                fields: {},
                 result: null,
                 error: '',
                 isLoading: false,
+                inputFields: {}
             }
+        case 'field_update': {
+            return {
+                ...state,
+                inputFields: {
+                    ...state.inputFields,
+                    [action.payload.name]: 
+                    {
+                        raw: action.payload.raw,
+                        value: action.payload.value
+                    }
+                }
+            }
+        }
         default:
             return state;
     }

@@ -32,7 +32,7 @@ export const Setup: React.FC = () => {
 
         setTimeout(() => {
             try {
-                let keypair = stateContext.zokratesProvider.setup(stateContext.compilationResult.program);
+                let keypair = stateContext.zokratesProvider.setup(stateContext.compilationResult.artifacts.program);
                 let setupResult: SetupResult = {
                     verificationKey: keypair.vk, provingKey: keypair.pk
                 }
@@ -47,7 +47,7 @@ export const Setup: React.FC = () => {
     const onDownload = () => {
         let zip = new JSZip();
         zip.file("verifying.key", state.result.verificationKey);
-        zip.file("proving.key", state.result.provingKey.buffer);
+        zip.file("proving.key", state.result.provingKey);
         zip.generateAsync({ type: "blob" }).then((content: any) => saveAs(content, "keys.zip"));
     }
     
