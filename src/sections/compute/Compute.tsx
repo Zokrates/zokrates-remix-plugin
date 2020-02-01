@@ -8,7 +8,7 @@ import { setComputationResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onError, onFieldUpdate, onLoading, onReset, onSuccess } from './actions';
 import { InputComponent } from './components/InputComponent';
-import { IComputeState, computeReducer } from './reducer';
+import { computeReducer, IComputeState } from './reducer';
 
 export const Compute: React.FC = () => {
 
@@ -37,7 +37,7 @@ export const Compute: React.FC = () => {
 
         setTimeout(() => {
             try {
-                const args = inputs.map(component => state.inputFields[component.name].value);
+                const args = inputs.map(component => state.inputFields[component.name]);
                 let result = stateContext.zokratesProvider.computeWitness(stateContext.compilationResult.artifacts, args);
                 dispatch(onSuccess(result))
                 dispatchContext(setComputationResult(result));
@@ -63,14 +63,14 @@ export const Compute: React.FC = () => {
                     <p>Computes a witness for the compiled program. A witness is a valid assignment of the variables, which include the results of the computation.</p>
                     <Form onSubmit={onSubmit}>
                         {inputs.map((component, index) => {
-                            const input = state.inputFields[component.name];
+                            const inputValue = state.inputFields[component.name];
                             return (
                                 <FormGroup key={`${component.name}~${index}`}>
                                     <InputComponent 
                                         component={component} 
-                                        value={input && input.raw || ''}
-                                        onChange={(raw, value) => 
-                                            dispatch(onFieldUpdate(component.name, raw, value))
+                                        value={inputValue}
+                                        onChange={(value) => 
+                                            dispatch(onFieldUpdate(component.name, value))
                                     }/>
                                 </FormGroup>
                             );
@@ -121,7 +121,7 @@ export const Compute: React.FC = () => {
                     </code>
                 </pre>
             </>
-            } 
+            }
         </>
     );
 }

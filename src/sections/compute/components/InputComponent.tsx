@@ -1,5 +1,6 @@
 import React from 'react';
 import { Component } from '../../../common/abiTypes';
+import { ExpandableInput } from './ExpandableInput';
 import { TextInput } from './TextInput';
 
 const fromJson = (input: string) => {
@@ -12,12 +13,17 @@ const fromJson = (input: string) => {
 
 export interface InputComponentProps {
     component: Component;
-    value: string;
-    onChange: (raw: string, value: any) => void;
+    value: any;
+    onChange: (value: any) => void;
 }
 
 export const InputComponent: React.FC<InputComponentProps> = (props) => {
     const { component } = props;
+
+    const commonProps = {
+        validate: (value: string) => fromJson(value),
+        transform: (value: string) => fromJson(value) || value
+    }
 
     switch (component.type) {
         case "field":
@@ -28,13 +34,9 @@ export const InputComponent: React.FC<InputComponentProps> = (props) => {
                     validate={value => /^(true|false)$/.test(value)} 
                     transform={value => value === 'true'} />;
         case "struct":
-            return <TextInput {...props} 
-                    validate={value =>  fromJson(value)} 
-                    transform={value => fromJson(value) || value} />;
+            return <ExpandableInput {...props} {...commonProps} />;
         case "array":
-            return <TextInput {...props}
-                    validate={value =>  fromJson(value)} 
-                    transform={value => fromJson(value) || value} />;
+            return <TextInput {...props} {...commonProps} />;
         default:
             throw new Error("Unsupported component type");
     }
