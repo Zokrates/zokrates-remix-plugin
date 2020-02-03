@@ -32,9 +32,15 @@ export const InputComponent: React.FC<InputComponentProps> = (props) => {
         case "bool":
             return <TextInput {...props} 
                     validate={value => /^(true|false)$/.test(value)} 
-                    transform={value => value === 'true'} />;
-        case "struct":
-            return <ExpandableInput {...props} {...commonProps} />;
+                    transform={value => /^(true|false)$/.test(value) ? value === 'true' : value} />;
+        case "struct": {
+            let components: Component[] = component.components as Component[];
+            if (components.length > 0) {
+                return <ExpandableInput {...props} {...commonProps} />;
+            } else {
+                return <TextInput {...props} {...commonProps} />;
+            }
+        }
         case "array":
             return <TextInput {...props} {...commonProps} />;
         default:
