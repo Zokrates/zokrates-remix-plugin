@@ -1,6 +1,7 @@
 import React from 'react';
 import { Component } from '../../../common/abiTypes';
-import { ExpandableInput } from './ExpandableInput';
+import { ArrayInput } from './ArrayInput';
+import { StructInput } from './StructInput';
 import { TextInput } from './TextInput';
 
 const fromJson = (input: string) => {
@@ -35,14 +36,11 @@ export const InputComponent: React.FC<InputComponentProps> = (props) => {
                     transform={value => /^(true|false)$/.test(value) ? value === 'true' : value} />;
         case "struct": {
             let components: Component[] = component.components as Component[];
-            if (components.length > 0) {
-                return <ExpandableInput {...props} {...commonProps} />;
-            } else {
-                return <TextInput {...props} {...commonProps} />;
-            }
+            return (components.length > 0) ?
+             <StructInput {...props} {...commonProps} /> : <TextInput {...props} {...commonProps} />
         }
         case "array":
-            return <TextInput {...props} {...commonProps} />;
+            return <ArrayInput {...props} {...commonProps} />;
         default:
             throw new Error("Unsupported component type");
     }

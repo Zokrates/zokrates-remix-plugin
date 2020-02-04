@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Button, FormGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Component } from '../../../common/abiTypes';
-import { InputComponent } from './InputComponent';
 import { TextInput } from './TextInput';
 
 export interface ExpandableInputProps {
@@ -14,10 +13,9 @@ export interface ExpandableInputProps {
 
 export const ExpandableInput: React.FC<ExpandableInputProps> = (props) => {
     const [expanded, setExpanded] = useState(false);
-    const { component, value, validate, transform, onChange } = props;
+    const { component, value, validate, transform, onChange, children } = props;
 
     const Expander = <i className={`fa fa-angle-${expanded ? "up": "down"}`} style={{ cursor: "pointer" }} />;
-    const components = component.components as Component[];
 
     if (!expanded) {
         return <TextInput
@@ -48,14 +46,7 @@ export const ExpandableInput: React.FC<ExpandableInputProps> = (props) => {
                 <span id="expander" onClick={() => setExpanded(!expanded)}>{Expander}</span>
             </div>
             <div className="expandable-body">
-                {components.map((component, index) => 
-                    <FormGroup key={`${component.name}~${index}`}>
-                        <InputComponent
-                            component={component} 
-                            value={value && value[component.name]}
-                            onChange={(inner) => onChange({ ...value, [component.name]: inner })} />
-                    </FormGroup>
-                )}
+                {children}
             </div>
         </div>
     );
