@@ -36,11 +36,12 @@ export const InputComponent: React.FC<InputComponentProps> = (props) => {
                     transform={value => /^(true|false)$/.test(value) ? value === 'true' : value} />;
         case "struct": {
             let components: Component[] = component.components as Component[];
-            return (components.length > 0) ?
-             <StructInput {...props} {...commonProps} /> : <TextInput {...props} {...commonProps} />
+            let Input = components.length > 0 ? StructInput : TextInput;
+            return <Input {...props} {...commonProps} />
         }
         case "array":
-            return <ArrayInput {...props} {...commonProps} />;
+            let Input = (component.components as Component).size > 0 ? ArrayInput : TextInput;
+            return <Input {...props} {...commonProps} />;
         default:
             throw new Error("Unsupported component type");
     }

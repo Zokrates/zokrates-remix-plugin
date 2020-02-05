@@ -15,6 +15,14 @@ export interface StructInputProps {
 export const StructInput: React.FC<StructInputProps> = (props) => {
     let { value, component, onChange } = props;
     let components = component.components as Component[];
+
+    const onChangeHandler = (component: Component, inner: string, value: any) => {
+        if (typeof value === 'object') {
+            return onChange({ ...value, [component.name]: inner })
+        }
+        return onChange({ [component.name]: inner })
+    }
+    
     return (
         <ExpandableInput {...props}>
             {components.map((component, index) => 
@@ -22,7 +30,7 @@ export const StructInput: React.FC<StructInputProps> = (props) => {
                     <InputComponent
                         component={component} 
                         value={value && value[component.name]}
-                        onChange={(inner) => onChange({ ...value, [component.name]: inner })} />
+                        onChange={(inner) => onChangeHandler(component, inner, value)} />
                 </FormGroup>
             )}
         </ExpandableInput>

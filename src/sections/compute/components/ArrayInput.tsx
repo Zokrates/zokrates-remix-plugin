@@ -17,14 +17,14 @@ export const ArrayInput: React.FC<ArrayInputProps> = (props) => {
     let arrayComponent = component.components as Component;
     const components = [...Array(arrayComponent.size)].map((_, index) => {
         return { 
-            name: index.toString(),
+            name: `${component.name}[${index.toString()}]`,
             type: arrayComponent.type,
             components: arrayComponent.components
         }
     });
 
     const onChangeHandler = (index: number, inner: string, value: any) => {
-        if (!value) {
+        if (!(value instanceof Array)) {
             value = Array(arrayComponent.size - 1);
         }
         value[index] = inner;
@@ -37,7 +37,7 @@ export const ArrayInput: React.FC<ArrayInputProps> = (props) => {
                 <FormGroup key={`${component.name}~${index}`}>
                     <InputComponent
                         component={component} 
-                        value={value && value[index]}
+                        value={(value instanceof Array && value[index] != undefined) ? value[index] : ''}
                         onChange={(inner) => onChangeHandler(index, inner, value)} />
                 </FormGroup>
             )}
