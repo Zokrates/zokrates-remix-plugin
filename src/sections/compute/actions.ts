@@ -26,9 +26,9 @@ export const onError = (error: any): IComputeAction => {
     }
 }
 
-export const onFieldUpdate = (name: string, raw: string, value: any): IComputeAction => {
+export const onFieldUpdate = (name: string, value: any): IComputeAction => {
     return {
         type: 'field_update',
-        payload: { name, raw, value }
+        payload: { name, value }
     }
 }

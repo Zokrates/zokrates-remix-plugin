@@ -45,11 +45,7 @@ export function computeReducer(state: Partial<IComputeState>, action: IComputeAc
                 ...state,
                 inputFields: {
                     ...state.inputFields,
-                    [action.payload.name]: 
-                    {
-                        raw: action.payload.raw,
-                        value: action.payload.value
-                    }
+                    [action.payload.name]: action.payload.value
                 }
             }
         }

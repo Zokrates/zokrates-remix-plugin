@@ -7,6 +7,22 @@
     margin-bottom: 4rem;
 }
 
+.expandable {
+    display: block;
+    border-radius: 0.25rem !important;
+}
+
+.expandable .expandable-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.expandable .expandable-body {
+    padding: 0.5rem;
+}
+
 .footer {
     display: flex;
     align-items: center;
