@@ -33,6 +33,7 @@ export const Compile: React.FC = () => {
                 throw new Error('Location unknown');
             }
 
+            location = location.replace("browser/", "");
             let source = await remixClient.getFile(location);
 
             // we have to "preload" imports before compiling since remix plugin api returns promises
@@ -42,7 +43,7 @@ export const Compile: React.FC = () => {
                 try {
                     let artifacts = stateContext.zokratesProvider.compile(
                         source, 
-                        location.split('/')[1], 
+                        location, 
                         remixResolver.syncResolve
                     );
                     dispatch(onSuccess(artifacts));

@@ -18,30 +18,51 @@ export default class RemixResolver implements Resolver {
             if (!stdlib) {
                 let result = await this.resolve(location, path);
                 this.imports.set(result.location, result);
-                
                 await this.gatherImports(result.location, result.source)
             }
         }
     }
 
-    syncResolve = (location: string, path: string): ResolverResult => {
-        return this.imports.get(path) || null;
+    syncResolve = (currentLocation: string, importLocation: string): ResolverResult => {
+        let key: string = this.getImportPath(currentLocation, importLocation);
+        return this.imports.get(key) || null;
     }
 
-    resolve = (location: string, path: string): Promise<ResolverResult> => {
+    getImportPath = (currentLocation: string, importLocation: string) => {
+        if (!importLocation.endsWith(this.defaultExtension)) {
+            importLocation = importLocation.concat(this.defaultExtension);
+        }
+        return this.getAbsolutePath(currentLocation, importLocation);
+    }
+
+    resolve = (currentLocation: string, importLocation: string): Promise<ResolverResult> => {
         return new Promise<ResolverResult>(async (resolve, reject) => {
             try {
-                let path_ = path;
-                if (path.split('.').length < 2) {
-                    path_ = path.concat(this.defaultExtension);
-                }
-                let source = await remixClient.getFile(path_);
-                resolve({ source: source, location: path } as ResolverResult);
+                let location = this.getImportPath(currentLocation, importLocation);
+                let source = await remixClient.getFile(location);
+                resolve({ source: source, location: location } as ResolverResult);
             } catch (error) {
                 reject(error);
             }
         });
     }
+
+    getAbsolutePath = (basePath: string, relativePath: string): string => {
+        var stack = basePath.split('/');
+        var chunks = relativePath.split('/');
+        stack.pop();
+      
+        for(var i = 0; i < chunks.length; i++) {
+            if (chunks[i] == '.') {
+                continue;
+            } else if (chunks[i] == '..') {
+                stack.pop();
+            } else {
+                stack.push(chunks[i]);
+            }
+        }
+        return stack.join('/');
+      }
 }
 
 export const remixResolver = new RemixResolver();
