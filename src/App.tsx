@@ -42,25 +42,25 @@ const App: React.FC = () => {
                             <Compile />
                         </AccordionElement>
                         <AccordionElement 
+                            headerText="Compute" 
+                            iconClass="fa fa-lightbulb-o" 
+                            eventKey="1" 
+                            disabled={!state.compilationResult}>
+                            <Compute />
+                        </AccordionElement>
+                        <AccordionElement 
                             headerText="Setup" 
                             iconClass="fa fa-cog" 
-                            eventKey="1" 
+                            eventKey="2" 
                             disabled={!state.compilationResult}>
                             <Setup />
                         </AccordionElement>
                         <AccordionElement 
                             headerText="Export Verifier" 
                             iconClass="fa fa-key" 
-                            eventKey="2" 
+                            eventKey="3" 
                             disabled={!state.setupResult}>
                             <ExportVerifier />
-                        </AccordionElement>
-                        <AccordionElement 
-                            headerText="Compute" 
-                            iconClass="fa fa-lightbulb-o" 
-                            eventKey="3" 
-                            disabled={!state.compilationResult}>
-                            <Compute />
                         </AccordionElement>
                         <AccordionElement 
                             headerText="Generate Proof" 
