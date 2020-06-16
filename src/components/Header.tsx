@@ -1,9 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { remixClient } from '../remix/RemixClient';
 
 export const Header: React.FC = () => {
 
-    const style = { maxHeight: "150px" };
+    const getTheme = () => document.documentElement.style.getPropertyValue('--theme');
+    const [theme, setTheme] = useState(getTheme() || 'light');
+
+    useEffect(() => {
+        const observer = new MutationObserver(() => setTheme(getTheme()));
+        observer.observe(document.documentElement, { 
+            attributes: true, 
+            attributeFilter: ["style"] 
+        });
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
+    let style = { maxHeight: "150px" };
+    if (theme == 'dark') {
+        style = Object.assign(style, { filter: "invert(1)" });
+    }
+
     return (
         <header>
             <img className="mx-auto d-block" src="../../zokrates.svg" style={style} />
