@@ -1,11 +1,12 @@
-export type ComponentType = "field" | "bool" | "array" | "struct";
+export type ComponentType = "field" | "u" | "bool" | "array" | "struct";
 
 export interface Component {
     name?: string,
     public?: boolean;
     type: ComponentType,
     size?: number,
-    components?: Component | Array<Component>;
+    components?: any,
+    members?: Array<Component>,
 }
 
 export interface Abi {

@@ -13,8 +13,7 @@ export const compileReducer = (state: ICompileState, action: ICompileAction) => 
     switch (action.type) {
         case 'loading':
             return {
-                result: null,
-                error: '',
+                ...state,
                 isLoading: true,
             }
         case 'success':

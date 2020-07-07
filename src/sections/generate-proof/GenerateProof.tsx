@@ -8,12 +8,13 @@ import { setGenerateProofResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onCleanup, onError, onLoading, onSuccess } from './actions';
 import { generateProofReducer, IGenerateProofState } from './reducer';
+import { Proof } from 'zokrates-js';
 
 export const GenerateProof: React.FC = () => {
 
     const initialState: IGenerateProofState = {
         isLoading: false,
-        result: '',
+        result: null,
         error: ''
     }
 
@@ -23,7 +24,7 @@ export const GenerateProof: React.FC = () => {
 
     useEffect(() => {
         dispatch(onCleanup());
-        dispatchContext(setGenerateProofResult(''));
+        dispatchContext(setGenerateProofResult(null));
     }, [stateContext.compilationResult, 
         stateContext.computationResult, 
         stateContext.setupResult, 
@@ -57,14 +58,13 @@ export const GenerateProof: React.FC = () => {
     }
 
     const onDownload = () => {
-        var blob = new Blob([state.result], { type: 'text/plain;charset=utf-8' });
+        var blob = new Blob([JSON.stringify(state.result)], { type: 'text/plain;charset=utf-8' });
         saveAs(blob, 'proof.json');
     }
 
-    const getCompatibleParametersFormat = (input: string, abiv2: boolean) => {
-        const json = JSON.parse(input);
-        const proofValues = Object.values(json.proof).map(el => JSON.stringify(el)).join();
-        const inputValues = JSON.stringify(json.inputs);
+    const getCompatibleParametersFormat = (proof: Proof, abiv2: boolean) => {
+        const proofValues = Object.values(proof.proof).map(el => JSON.stringify(el)).join();
+        const inputValues = JSON.stringify(proof.inputs);
         if (abiv2) {
             return `[${proofValues}],${inputValues}`;
         }

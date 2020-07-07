@@ -1,5 +1,6 @@
 import { IActions } from './reducer';
 import { ExportVerifierResult, SetupResult } from './types';
+import { Proof } from 'zokrates-js';
 
 export const onLoaded = (provider: any): IActions => {
     return {
@@ -38,7 +39,7 @@ export const setExportVerifierResult = (result: ExportVerifierResult): IActions 
     }
 }
 
-export const setGenerateProofResult = (proof: string): IActions => {
+export const setGenerateProofResult = (proof: Proof): IActions => {
     return {
         type: 'set_generate_proof_result', 
         payload: proof

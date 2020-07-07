@@ -14,7 +14,7 @@ export interface StructInputProps {
 
 export const StructInput: React.FC<StructInputProps> = (props) => {
     let { value, component, onChange } = props;
-    let components = component.components as Component[];
+    let components = (component.components as Component).members;
 
     const onChangeHandler = (component: Component, inner: string, value: any) => {
         if (typeof value === 'object') {

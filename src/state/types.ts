@@ -1,7 +1,7 @@
-import { CompilationArtifacts, ComputationResult } from 'zokrates-js';
+import { CompilationArtifacts, ComputationResult, VerificationKey } from 'zokrates-js';
 
 export type SetupResult = {
-    verificationKey: string,
+    verificationKey: VerificationKey,
     provingKey: Uint8Array
 }
 

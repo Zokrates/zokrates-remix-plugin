@@ -18,7 +18,7 @@ export default class RemixResolver implements Resolver {
             if (!stdlib) {
                 let result = await this.resolve(location, path);
                 this.imports.set(result.location, result);
-                await this.gatherImports(result.location, result.source)
+                await this.gatherImports(result.location, result.source);
             }
         }
     }
@@ -35,16 +35,16 @@ export default class RemixResolver implements Resolver {
         return this.getAbsolutePath(currentLocation, importLocation);
     }
 
-    resolve = (currentLocation: string, importLocation: string): Promise<ResolverResult> => {
+    resolve = async (currentLocation: string, importLocation: string): Promise<ResolverResult> => {
         return new Promise<ResolverResult>(async (resolve, reject) => {
             try {
                 let location = this.getImportPath(currentLocation, importLocation);
                 let source = await remixClient.getFile(location);
-                resolve({ source: source, location: location } as ResolverResult);
-            } catch (error) {
-                reject(error);
+                resolve({ source: source, location: location })
+            } catch (e) {
+                reject(e)
             }
-        });
+        })
     }
 
     getAbsolutePath = (basePath: string, relativePath: string): string => {

@@ -1,11 +1,13 @@
+import { Proof } from "zokrates-js"
+
 export type IGenerateProofAction = {
     type: 'loading' | 'cleanup' | 'success' | 'error';
-    payload?: string;
+    payload?: any;
 }
 
 export interface IGenerateProofState {
     isLoading: boolean,
-    result: string,
+    result: Proof,
     error: string
 }
 
@@ -14,8 +16,6 @@ export function generateProofReducer(state: Partial<IGenerateProofState>, action
         case 'loading': 
         return {
             ...state,
-            result: '',
-            error: '',
             isLoading: true
         }
         case 'cleanup': {
@@ -29,11 +29,13 @@ export function generateProofReducer(state: Partial<IGenerateProofState>, action
             return { 
                 result: action.payload, 
                 error: '',
+                isLoading: false,
             }
         case 'error':
             return { 
                 error: action.payload,
-                result: '',
+                result: null,
+                isLoading: false
             }
         default:
             return state;

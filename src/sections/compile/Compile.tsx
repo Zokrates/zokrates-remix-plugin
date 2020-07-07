@@ -1,8 +1,8 @@
 import { HighlightPosition } from '@remixproject/plugin';
 import JSZip from 'jszip';
 import saveAs from 'file-saver';
-import React, { useReducer } from 'react';
-import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import React, { useReducer, useRef, useState } from 'react';
+import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip, FormGroup } from 'react-bootstrap';
 import { Alert, LoadingButton } from '../../components';
 import { remixClient } from '../../remix/RemixClient';
 import { remixResolver } from '../../remix/RemixResolver';
@@ -21,12 +21,15 @@ export const Compile: React.FC = () => {
 
     const stateContext = useStateContext();
     const dispatchContext = useDispatchContext();
-    const [state, dispatch] = useReducer(compileReducer, initialState)
+    const [state, dispatch] = useReducer(compileReducer, initialState);
+
+    const [isReleaseMode, setReleaseMode] = useState(false);
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             dispatch(onLoading());
+            remixClient.discardHighlight();
 
             let location = await remixClient.getCurrentFile();
             if (!location) {
@@ -36,19 +39,20 @@ export const Compile: React.FC = () => {
             location = location.replace("browser/", "");
             let source = await remixClient.getFile(location);
 
-            // we have to "preload" imports before compiling since remix plugin api returns promises
+            // we have to fetch imports before compiling to avoid promises
             await remixResolver.gatherImports(location, source);
 
             setTimeout((location) => {
                 try {
+                    const config = { is_release: isReleaseMode };
                     let artifacts = stateContext.zokratesProvider.compile(
                         source, 
                         location, 
-                        remixResolver.syncResolve
+                        remixResolver.syncResolve,
+                        config
                     );
                     dispatch(onSuccess(artifacts));
                     dispatchContext(setCompilationResult(artifacts, source));
-                    remixClient.discardHighlight();
                 } catch (error) {
                     highlightCompileError(error);
                     dispatch(onError(error));
@@ -100,6 +104,10 @@ export const Compile: React.FC = () => {
             <Row>
                 <Col>
                     <Form onSubmit={onSubmit}>
+                        <Form.Group controlId="releaseMode">
+                            <Form.Check type="checkbox" label="Enable optimizations" name="optimzations" checked={isReleaseMode}
+                                onChange={(e: any) => setReleaseMode(e.currentTarget.checked)} />
+                        </Form.Group>
                         <div className="d-flex justify-content-between">
                             <LoadingButton type="submit" disabled={!stateContext.isLoaded || state.isLoading}
                                 defaultText="Compile" 
@@ -123,15 +131,14 @@ export const Compile: React.FC = () => {
                     </Form>
                 </Col>
             </Row>
-
-            {state.error && 
+            {!state.isLoading && state.error && 
             <Alert variant='danger' iconClass='fa fa-exclamation-circle'>
                 <pre>
                     <code>{state.error}</code>
                 </pre>
             </Alert>
             }
-            {state.result && 
+            {!state.isLoading && state.result && 
             <Alert variant='success' iconClass='fa fa-check'>
                 Successfully compiled!
             </Alert>

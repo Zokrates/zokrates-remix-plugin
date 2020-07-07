@@ -33,7 +33,7 @@ export const ExportVerifier: React.FC = () => {
         setTimeout(() => {
             try {
                 let verifier = stateContext.zokratesProvider.exportSolidityVerifier(
-                    stateContext.setupResult.verificationKey, state.abiv2
+                    stateContext.setupResult.verificationKey, state.abiv2 ? "v2" : "v1"
                 );
                 dispatch(onSuccess(verifier));
                 dispatchContext(setExportVerifierResult({ verifier, abiv2: state.abiv2 }));

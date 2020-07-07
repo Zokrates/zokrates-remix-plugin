@@ -1,4 +1,5 @@
 import { IGenerateProofAction } from './reducer';
+import { Proof } from 'zokrates-js';
 
 export const onLoading = (): IGenerateProofAction => {
     return { 
@@ -12,7 +13,7 @@ export const onCleanup = (): IGenerateProofAction => {
     };
 }
 
-export const onSuccess = (proof: string): IGenerateProofAction => {
+export const onSuccess = (proof: Proof): IGenerateProofAction => {
     return {
         type: 'success',
         payload: proof
