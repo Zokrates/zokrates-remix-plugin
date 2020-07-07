@@ -19,7 +19,7 @@ export interface InputComponentProps {
 }
 
 export const InputComponent: React.FC<InputComponentProps> = (props) => {
-    const { component } = props;
+    let { component } = props;
 
     const commonProps = {
         validate: (value: string) => fromJson(value),
@@ -33,8 +33,10 @@ export const InputComponent: React.FC<InputComponentProps> = (props) => {
                 name: component.name,
                 type: component.type + component.components,
             } as Component;
+            const hexRegex = new RegExp(`^0x[0-9a-f]{${component.components / 4}}$`);
+
             return <TextInput {...props} component={uintComponent}
-                    validate={value => /^0x[0-9a-f]+$/.test(value)} />;
+                    validate={value => hexRegex.test(value)} />;
         case "field":
             return <TextInput {...props} 
                     validate={value => /^-?\d+$/.test(value)} />;
