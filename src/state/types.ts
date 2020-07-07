@@ -1,8 +1,8 @@
 import { CompilationArtifacts, ComputationResult } from 'zokrates-js';
 
 export type SetupResult = {
-    verificationKey: string,
-    provingKey: Uint8Array
+    vk: string,
+    pk: Uint8Array
 }
 
 export type CompilationResult = {

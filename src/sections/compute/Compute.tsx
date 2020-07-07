@@ -9,6 +9,7 @@ import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onError, onFieldUpdate, onLoading, onReset, onSuccess } from './actions';
 import { InputComponent } from './components/InputComponent';
 import { computeReducer, IComputeState } from './reducer';
+import { WA_ERROR, WA_COMPUTE } from '../../zokrates/constants';
 
 export const Compute: React.FC = () => {
 
@@ -22,9 +23,31 @@ export const Compute: React.FC = () => {
     const stateContext = useStateContext();
     const dispatchContext = useDispatchContext();
     const [state, dispatch] = useReducer(computeReducer, initialState);
+    const { zokratesWebWorker } = stateContext;
 
     const abi: Abi = JSON.parse(stateContext.compilationResult.artifacts.abi);
     const inputs = abi.inputs;
+
+    const onWorkerMessage = (e: MessageEvent) => {
+        switch (e.data.type) {
+            case WA_COMPUTE: {
+                dispatch(onSuccess(e.data.payload))
+                dispatchContext(setComputationResult(e.data.payload));
+                break;
+            }
+            case WA_ERROR: {
+                dispatch(onError(e.data.payload));
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    useEffect(() => {
+        const subscription = zokratesWebWorker.onMessage().subscribe(onWorkerMessage);
+        return () => subscription.unsubscribe();
+    }, []);
 
     useEffect(() => {
         dispatch(onReset());
@@ -38,9 +61,11 @@ export const Compute: React.FC = () => {
         setTimeout(() => {
             try {
                 const args = inputs.map(component => state.inputFields[component.name]);
-                let result = stateContext.zokratesProvider.computeWitness(stateContext.compilationResult.artifacts, args);
-                dispatch(onSuccess(result))
-                dispatchContext(setComputationResult(result));
+                let computationParams = {
+                    artifacts: stateContext.compilationResult.artifacts,
+                    args
+                }
+                zokratesWebWorker.postMessage(WA_COMPUTE, computationParams);
             } catch (error) {
                 dispatch(onError(error));
             }

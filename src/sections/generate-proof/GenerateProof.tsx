@@ -8,6 +8,7 @@ import { setGenerateProofResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onCleanup, onError, onLoading, onSuccess } from './actions';
 import { generateProofReducer, IGenerateProofState } from './reducer';
+import { WA_GENERATE_PROOF, WA_ERROR } from '../../zokrates/constants';
 
 export const GenerateProof: React.FC = () => {
 
@@ -20,6 +21,28 @@ export const GenerateProof: React.FC = () => {
     const stateContext = useStateContext();
     const dispatchContext = useDispatchContext();
     const [state, dispatch] = useReducer(generateProofReducer, initialState);
+    const { zokratesWebWorker } = stateContext;
+
+    const onWorkerMessage = (e: MessageEvent) => {
+        switch (e.data.type) {
+            case WA_GENERATE_PROOF: {
+                dispatch(onSuccess(e.data.payload));
+                dispatchContext(setGenerateProofResult(e.data.payload));
+                break;
+            }
+            case WA_ERROR: {
+                dispatch(onError(e.data.payload));
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    useEffect(() => {
+        const subscription = zokratesWebWorker.onMessage().subscribe(onWorkerMessage);
+        return () => subscription.unsubscribe();
+    }, []);
 
     useEffect(() => {
         dispatch(onCleanup());
@@ -35,13 +58,11 @@ export const GenerateProof: React.FC = () => {
 
         setTimeout(() => {
             try {
-                let proof = stateContext.zokratesProvider.generateProof(
-                    stateContext.compilationResult.artifacts.program,
-                    stateContext.computationResult.witness,
-                    stateContext.setupResult.provingKey
-                );
-                dispatch(onSuccess(proof));
-                dispatchContext(setGenerateProofResult(proof));
+                zokratesWebWorker.postMessage(WA_GENERATE_PROOF, {
+                    program: stateContext.compilationResult.artifacts.program,
+                    witness: stateContext.computationResult.witness,
+                    pk: stateContext.setupResult.pk
+                });
             } catch (error) {
                 dispatch(onError(error.toString()));
             }

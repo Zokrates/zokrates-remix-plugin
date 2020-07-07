@@ -7,6 +7,7 @@ import { setExportVerifierResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onCleanup, onError, onLoading, onSuccess, updateAbi } from './actions';
 import { exportVerifierReducer, IExportVerifierState } from './reducer';
+import { WA_EXPORT_VERIFIER, WA_ERROR } from '../../zokrates/constants';
 
 export const ExportVerifier: React.FC = () => {
     
@@ -21,6 +22,30 @@ export const ExportVerifier: React.FC = () => {
     const dispatchContext = useDispatchContext();
     const [state, dispatch] = useReducer(exportVerifierReducer, initialState);
 
+    const { zokratesWebWorker } = stateContext;
+
+    const onWorkerMessage = (e: MessageEvent) => {
+        switch (e.data.type) {
+            case WA_EXPORT_VERIFIER: {
+                const verifier = e.data.payload;
+                dispatch(onSuccess(verifier));
+                dispatchContext(setExportVerifierResult({ verifier, abiv2: state.abiv2 }));
+                break;
+            }
+            case WA_ERROR: {
+                dispatch(onError(e.data.payload));
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    useEffect(() => {
+        const subscription = zokratesWebWorker.onMessage().subscribe(onWorkerMessage);
+        return () => subscription.unsubscribe();
+    }, []);
+
     useEffect(() => {
         dispatch(onCleanup());
         dispatchContext(setExportVerifierResult(null));
@@ -32,11 +57,10 @@ export const ExportVerifier: React.FC = () => {
         
         setTimeout(() => {
             try {
-                let verifier = stateContext.zokratesProvider.exportSolidityVerifier(
-                    stateContext.setupResult.verificationKey, state.abiv2
-                );
-                dispatch(onSuccess(verifier));
-                dispatchContext(setExportVerifierResult({ verifier, abiv2: state.abiv2 }));
+                zokratesWebWorker.postMessage(WA_EXPORT_VERIFIER, {
+                    vk: stateContext.setupResult.vk,
+                    isAbiv2: state.abiv2
+                });
             } catch (error) {
                 dispatch(onError(error.toString()));
             }

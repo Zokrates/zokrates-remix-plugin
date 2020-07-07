@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
-import { Container } from 'react-bootstrap';
-import { initialize } from 'zokrates-js';
+import { Container, Spinner } from 'react-bootstrap';
 import './App.css';
-import { Accordion, AccordionElement, Footer, Header } from './components';
+import { Accordion, AccordionElement, Header } from './components';
 import { remixClient } from './remix/RemixClient';
 import { Compile } from './sections/compile/Compile';
 import { Compute } from './sections/compute/Compute';
@@ -11,6 +10,7 @@ import { GenerateProof } from './sections/generate-proof/GenerateProof';
 import { Setup } from './sections/setup/Setup';
 import { onLoaded } from './state/actions';
 import { useDispatchContext, useStateContext } from './state/Store';
+import { ZoKratesWebWorker } from './zokrates/ZoKratesWebWorker';
 
 const App: React.FC = () => {
 
@@ -18,22 +18,33 @@ const App: React.FC = () => {
     const dispatch = useDispatchContext();
 
     useEffect(() => {
+        const worker = new ZoKratesWebWorker();
         const load = async () => {
             try {
-                initialize().then((provider) => dispatch(onLoaded(provider)))
                 await remixClient.createClient();
+                setTimeout(() => dispatch(onLoaded(worker)), 1000);
             } catch(err) {
                 console.log(err)
             }
         }
         load()
+        return () => worker.terminate();
     }, [])
+
+    if (!state.isLoaded) {
+        return (
+            <div className="d-flex flex-column align-items-center justify-content-center h-100">
+                <Spinner animation="grow" variant="primary" />
+                <small className="mt-2">Connecting to Remix...</small>
+            </div>
+        );
+    }
 
     return (
         <div id="wrapper">
             <Container>
                 <Header />
-                <main role="main">
+                <main role="main" className="mb-4">
                     <Accordion>
                         <AccordionElement 
                             headerText="Compile" 
@@ -75,7 +86,6 @@ const App: React.FC = () => {
                     </Accordion>
                 </main>
             </Container>
-            <Footer isLoaded={state.isLoaded}></Footer>
         </div>
     );
 }

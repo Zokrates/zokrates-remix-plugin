@@ -1,10 +1,11 @@
 import { IActions } from './reducer';
 import { ExportVerifierResult, SetupResult } from './types';
+import { ZoKratesWebWorker } from '../zokrates/ZoKratesWebWorker';
 
-export const onLoaded = (provider: any): IActions => {
+export const onLoaded = (worker: ZoKratesWebWorker): IActions => {
     return {
         type: 'set_loaded',
-        payload: provider
+        payload: worker
     }
 }
 

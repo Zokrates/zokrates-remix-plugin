@@ -10,15 +10,8 @@ export class RemixClient {
     }
 
     getFile = async (name: string) => {
-        return new Promise<string>(async (resolve, reject) => {
-            let path = name.startsWith('./') ? name.substr(2) : name;
-            let content = await this.client.call('fileManager', 'getFile', this.getBrowserPath(path));
-            if (content) {
-                resolve(content);
-            } else {
-                reject(`Could not find "${name}"`)
-            }
-        });
+        let path = name.startsWith('./') ? name.substr(2) : name;
+        return this.client.call('fileManager', 'getFile', this.getBrowserPath(path));
     }
 
     getFolder = async() => {

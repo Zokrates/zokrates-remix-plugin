@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useReducer } from 'react';
 import { IActions, reducer } from './reducer';
 import { CompilationResult, ExportVerifierResult, SetupResult, ComputationResult } from './types';
+import { ZoKratesWebWorker } from '../zokrates/ZoKratesWebWorker';
 import { ZoKratesProvider } from 'zokrates-js';
 
 export interface IState {
     isLoaded: boolean,
+    zokratesWebWorker: ZoKratesWebWorker,
     zokratesProvider: ZoKratesProvider,
     compilationResult: CompilationResult,
     setupResult: SetupResult,
