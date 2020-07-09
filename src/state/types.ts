@@ -1,10 +1,5 @@
 import { CompilationArtifacts, ComputationResult } from 'zokrates-js';
 
-export type SetupResult = {
-    vk: string,
-    pk: Uint8Array
-}
-
 export type CompilationResult = {
     artifacts: CompilationArtifacts,
     source: string

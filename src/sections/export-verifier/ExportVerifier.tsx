@@ -59,7 +59,7 @@ export const ExportVerifier: React.FC = () => {
             try {
                 zokratesWebWorker.postMessage(WA_EXPORT_VERIFIER, {
                     vk: stateContext.setupResult.vk,
-                    isAbiv2: state.abiv2
+                    abiVersion: state.abiv2 ? "v2" : "v1"
                 });
             } catch (error) {
                 dispatch(onError(error.toString()));

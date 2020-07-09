@@ -1,6 +1,7 @@
 import { IActions } from './reducer';
-import { ExportVerifierResult, SetupResult } from './types';
+import { ExportVerifierResult } from './types';
 import { ZoKratesWebWorker } from '../zokrates/ZoKratesWebWorker';
+import { SetupKeypair } from 'zokrates-js';
 
 export const onLoaded = (worker: ZoKratesWebWorker): IActions => {
     return {
@@ -25,10 +26,10 @@ export const setComputationResult = (output: any): IActions => {
     }
 }
 
-export const setSetupResult = (result: SetupResult): IActions => {
+export const setSetupResult = (keypair: SetupKeypair): IActions => {
     return {
         type: 'set_setup_result', 
-        payload: result
+        payload: keypair
     }
 }
 

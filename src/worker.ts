@@ -38,14 +38,16 @@ initialize()
                         let keypair = zokratesProvider.setup(payload.program);
                         // @ts-ignore 
                         self.postMessage({ type: type, payload: keypair });
+                        break;
                     }
                     case WA_EXPORT_VERIFIER: {
                         let verifier = zokratesProvider.exportSolidityVerifier(
                             payload.vk, 
-                            payload.isAbiv2
+                            payload.abiVersion
                         );
                         // @ts-ignore 
                         self.postMessage({ type: type, payload: verifier });
+                        break;
                     }
                     case WA_GENERATE_PROOF: {
                         let proof = zokratesProvider.generateProof(
@@ -55,6 +57,7 @@ initialize()
                         );
                         // @ts-ignore 
                         self.postMessage({ type: type, payload: proof });
+                        break;
                     }
                     default:
                         break;

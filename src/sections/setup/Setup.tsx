@@ -5,7 +5,6 @@ import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 're
 import { Alert, LoadingButton } from '../../components';
 import { setSetupResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
-import { SetupResult } from '../../state/types';
 import { onCleanup, onError, onLoading, onSuccess } from './actions';
 import { ISetupState, setupReducer } from './reducer';
 import { WA_SETUP, WA_ERROR } from '../../zokrates/constants';
@@ -66,7 +65,7 @@ export const Setup: React.FC = () => {
 
     const onDownload = () => {
         let zip = new JSZip();
-        zip.file("verifying.key", state.result.vk);
+        zip.file("verifying.key", JSON.stringify(state.result.vk, null, 2));
         zip.file("proving.key", state.result.pk);
         zip.generateAsync({ type: "blob" }).then((content: any) => saveAs(content, "keys.zip"));
     }

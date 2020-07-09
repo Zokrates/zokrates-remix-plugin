@@ -9,12 +9,13 @@ import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onCleanup, onError, onLoading, onSuccess } from './actions';
 import { generateProofReducer, IGenerateProofState } from './reducer';
 import { WA_GENERATE_PROOF, WA_ERROR } from '../../zokrates/constants';
+import { Proof } from 'zokrates-js';
 
 export const GenerateProof: React.FC = () => {
 
     const initialState: IGenerateProofState = {
         isLoading: false,
-        result: '',
+        result: null,
         error: ''
     }
 
@@ -69,23 +70,18 @@ export const GenerateProof: React.FC = () => {
         }, 200);
     }
 
-    const onCopy = (value: string) => {
-        copy(value);
-    }
-
     const openInRemix = () => {
-        remixClient.createFile('browser/proof.json', state.result);
+        remixClient.createFile('browser/proof.json', JSON.stringify(state.result, null, 2));
     }
 
     const onDownload = () => {
-        var blob = new Blob([state.result], { type: 'text/plain;charset=utf-8' });
+        var blob = new Blob([JSON.stringify(state.result, null, 2)], { type: 'text/plain;charset=utf-8' });
         saveAs(blob, 'proof.json');
     }
 
-    const getCompatibleParametersFormat = (input: string, abiv2: boolean) => {
-        const json = JSON.parse(input);
-        const proofValues = Object.values(json.proof).map(el => JSON.stringify(el)).join();
-        const inputValues = JSON.stringify(json.inputs);
+    const getCompatibleParametersFormat = (proof: Proof, abiv2: boolean) => {
+        const proofValues = Object.values(proof.proof).map(el => JSON.stringify(el)).join();
+        const inputValues = JSON.stringify(proof.inputs);
         if (abiv2) {
             return `[${proofValues}],${inputValues}`;
         }
@@ -110,7 +106,7 @@ export const GenerateProof: React.FC = () => {
                                 isLoading={state.isLoading} />
                             <ButtonGroup>
                                 <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-output">Copy Output</Tooltip>}>
-                                    <Button disabled={!state.result} variant="light" onClick={() => onCopy(state.result)}>
+                                    <Button disabled={!state.result} variant="light" onClick={() => copy(JSON.stringify(state.result, null, 2))}>
                                         <i className="fa fa-clipboard" aria-hidden="true"></i>
                                     </Button>
                                 </OverlayTrigger>
@@ -139,7 +135,7 @@ export const GenerateProof: React.FC = () => {
                                 <FormControl aria-label="Parameters" value={result} readOnly />
                                 <InputGroup.Append>
                                     <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-parameters">Copy Parameters</Tooltip>}>
-                                        <Button disabled={!state.result} onClick={() => onCopy(result)}>
+                                        <Button disabled={!state.result} onClick={() => copy(result)}>
                                             <i className="fa fa-clipboard" aria-hidden="true"></i>
                                         </Button>
                                     </OverlayTrigger>

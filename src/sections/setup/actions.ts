@@ -1,5 +1,5 @@
 import { ISetupAction } from "./reducer";
-import { SetupResult } from "../../state/types";
+import { SetupKeypair } from "zokrates-js";
 
 export const onLoading = (): ISetupAction => {
     return {
@@ -13,7 +13,7 @@ export const onCleanup = (): ISetupAction => {
     };
 }
 
-export const onSuccess = (setupResult: SetupResult): ISetupAction => {
+export const onSuccess = (setupResult: SetupKeypair): ISetupAction => {
     return {
         type: 'success',
         payload: setupResult
