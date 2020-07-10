@@ -46,7 +46,7 @@ export const Setup: React.FC = () => {
 
     const onDownload = () => {
         let zip = new JSZip();
-        zip.file("verifying.key", JSON.stringify(state.result.verificationKey));
+        zip.file("verifying.key", JSON.stringify(state.result.verificationKey, null, 2));
         zip.file("proving.key", state.result.provingKey);
         zip.generateAsync({ type: "blob" }).then((content: any) => saveAs(content, "keys.zip"));
     }

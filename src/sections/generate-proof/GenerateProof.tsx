@@ -54,11 +54,11 @@ export const GenerateProof: React.FC = () => {
     }
 
     const openInRemix = () => {
-        remixClient.createFile('browser/proof.json', state.result);
+        remixClient.createFile('browser/proof.json', JSON.stringify(state.result, null, 2));
     }
 
     const onDownload = () => {
-        var blob = new Blob([JSON.stringify(state.result)], { type: 'text/plain;charset=utf-8' });
+        var blob = new Blob([JSON.stringify(state.result, null, 2)], { type: 'text/plain;charset=utf-8' });
         saveAs(blob, 'proof.json');
     }
 
@@ -89,7 +89,7 @@ export const GenerateProof: React.FC = () => {
                                 isLoading={state.isLoading} />
                             <ButtonGroup>
                                 <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-output">Copy Output</Tooltip>}>
-                                    <Button disabled={!state.result} variant="light" onClick={() => onCopy(state.result)}>
+                                    <Button disabled={!state.result} variant="light" onClick={() => onCopy(JSON.stringify(state.result, null, 2))}>
                                         <i className="fa fa-clipboard" aria-hidden="true"></i>
                                     </Button>
                                 </OverlayTrigger>
