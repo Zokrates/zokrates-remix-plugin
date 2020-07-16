@@ -17,6 +17,9 @@ export function hex(buffer: Uint8Array) {
 }
 
 export function getAbsolutePath(basePath: string, relativePath: string): string {
+    if (relativePath[0] !== '.')
+        return relativePath;
+        
     var stack = basePath.split('/');
     var chunks = relativePath.split('/');
     stack.pop();
@@ -35,6 +38,6 @@ export function getAbsolutePath(basePath: string, relativePath: string): string 
 
 export function getImportPath(currentLocation: string, importLocation: string) {
     let path = getAbsolutePath(currentLocation, importLocation);
-    let extension = importLocation.slice((path.lastIndexOf(".") - 1 >>> 0) + 2);
+    let extension = path.slice((path.lastIndexOf(".") - 1 >>> 0) + 2);
     return extension ? path : path.concat('.zok');
 }
