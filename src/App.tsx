@@ -11,6 +11,7 @@ import { Setup } from './sections/setup/Setup';
 import { onLoaded } from './state/actions';
 import { useDispatchContext, useStateContext } from './state/Store';
 import { ZoKratesWebWorker } from './zokrates/ZoKratesWebWorker';
+import { metadata } from 'zokrates-js';
 
 const App: React.FC = () => {
 
@@ -86,6 +87,11 @@ const App: React.FC = () => {
                     </Accordion>
                 </main>
             </Container>
+            <footer className="footer">
+                <div className="container">
+                    <div>ZoKrates: {metadata.version}</div>
+                </div>
+            </footer>
         </div>
     );
 }
