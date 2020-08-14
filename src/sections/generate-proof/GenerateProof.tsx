@@ -105,11 +105,6 @@ export const GenerateProof: React.FC = () => {
                                 iconClassName="fa fa-check" 
                                 isLoading={state.isLoading} />
                             <ButtonGroup>
-                                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-output">Copy Output</Tooltip>}>
-                                    <Button disabled={!state.result} variant="light" onClick={() => copy(JSON.stringify(state.result, null, 2))}>
-                                        <i className="fa fa-clipboard" aria-hidden="true"></i>
-                                    </Button>
-                                </OverlayTrigger>
                                 <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-remix-proof">Open in Remix Editor</Tooltip>}>
                                     <Button disabled={!state.result} variant="light" onClick={openInRemix}>
                                         <i className="fa fa-share" aria-hidden="true"></i>
