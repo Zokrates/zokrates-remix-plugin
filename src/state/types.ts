@@ -7,7 +7,7 @@ export type CompilationResult = {
 
 export type ExportVerifierResult = {
     verifier: string,
-    abiv2: boolean
+    abiVersion: string
 }
 
 export { CompilationArtifacts, ComputationResult };

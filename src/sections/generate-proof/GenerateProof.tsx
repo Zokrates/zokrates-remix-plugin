@@ -47,7 +47,7 @@ export const GenerateProof: React.FC = () => {
 
     useEffect(() => {
         dispatch(onCleanup());
-        dispatchContext(setGenerateProofResult(''));
+        dispatchContext(setGenerateProofResult(null));
     }, [stateContext.compilationResult, 
         stateContext.computationResult, 
         stateContext.setupResult, 
@@ -79,10 +79,10 @@ export const GenerateProof: React.FC = () => {
         saveAs(blob, 'proof.json');
     }
 
-    const getCompatibleParametersFormat = (proof: Proof, abiv2: boolean) => {
+    const getCompatibleParametersFormat = (proof: Proof, abiVersion: string) => {
         const proofValues = Object.values(proof.proof).map(el => JSON.stringify(el)).join();
         const inputValues = JSON.stringify(proof.inputs);
-        if (abiv2) {
+        if (abiVersion === 'v2') {
             return `[${proofValues}],${inputValues}`;
         }
         return `${proofValues},${inputValues}`;
@@ -126,7 +126,7 @@ export const GenerateProof: React.FC = () => {
                 </Col>
             </Row>
             {state.result && (() => {
-                const result = getCompatibleParametersFormat(state.result, stateContext.exportVerifierResult.abiv2);
+                const result = getCompatibleParametersFormat(state.result, stateContext.exportVerifierResult.abiVersion);
                 return (
                     <Row>
                         <Col>

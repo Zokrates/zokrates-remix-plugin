@@ -27,9 +27,9 @@ export const ExportVerifier: React.FC = () => {
     const onWorkerMessage = (e: MessageEvent) => {
         switch (e.data.type) {
             case WA_EXPORT_VERIFIER: {
-                const verifier = e.data.payload;
+                const { verifier, abiVersion } = e.data.payload;
                 dispatch(onSuccess(verifier));
-                dispatchContext(setExportVerifierResult({ verifier, abiv2: state.abiv2 }));
+                dispatchContext(setExportVerifierResult({ verifier, abiVersion }));
                 break;
             }
             case WA_ERROR: {

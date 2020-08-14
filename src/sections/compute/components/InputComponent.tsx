@@ -27,6 +27,16 @@ export const InputComponent: React.FC<InputComponentProps> = (props) => {
     }
 
     switch (component.type) {
+        case "u":
+            // TODO: remove this once abi is fixed
+            let uintComponent = {
+                name: component.name,
+                type: component.type + component.components,
+            } as Component;
+            const hexRegex = new RegExp(`^0x[0-9a-f]{${component.components / 4}}$`);
+
+            return <TextInput {...props} component={uintComponent}
+                    validate={value => hexRegex.test(value)} />;
         case "field":
             return <TextInput {...props} 
                     validate={value => /^-?\d+$/.test(value)} />;
@@ -35,12 +45,12 @@ export const InputComponent: React.FC<InputComponentProps> = (props) => {
                     validate={value => /^(true|false)$/.test(value)} 
                     transform={value => /^(true|false)$/.test(value) ? value === 'true' : value} />;
         case "struct": {
-            let components: Component[] = component.components as Component[];
-            let Input = components.length > 0 ? StructInput : TextInput;
+            let members: Component[] = component.components.members;
+            let Input = members.length > 0 ? StructInput : TextInput;
             return <Input {...props} {...commonProps} />
         }
         case "array":
-            let Input = (component.components as Component).size > 0 ? ArrayInput : TextInput;
+            let Input = component.components.size > 0 ? ArrayInput : TextInput;
             return <Input {...props} {...commonProps} />;
         default:
             throw new Error("Unsupported component type");

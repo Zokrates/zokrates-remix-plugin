@@ -1,7 +1,7 @@
 import { IActions } from './reducer';
 import { ExportVerifierResult } from './types';
 import { ZoKratesWebWorker } from '../zokrates/ZoKratesWebWorker';
-import { SetupKeypair } from 'zokrates-js';
+import { SetupKeypair, Proof, CompilationArtifacts, ComputationResult } from 'zokrates-js';
 
 export const onLoaded = (worker: ZoKratesWebWorker): IActions => {
     return {
@@ -10,7 +10,7 @@ export const onLoaded = (worker: ZoKratesWebWorker): IActions => {
     }
 }
 
-export const setCompilationResult = (artifacts: any, source: string): IActions => {
+export const setCompilationResult = (artifacts: CompilationArtifacts, source: string): IActions => {
     return {
         type: 'set_compilation_result', 
         payload: { 
@@ -19,10 +19,10 @@ export const setCompilationResult = (artifacts: any, source: string): IActions =
     }
 }
 
-export const setComputationResult = (output: any): IActions => {
+export const setComputationResult = (result: ComputationResult): IActions => {
     return {
         type: 'set_computation_result', 
-        payload: output
+        payload: result
     }
 }
 
@@ -40,7 +40,7 @@ export const setExportVerifierResult = (result: ExportVerifierResult): IActions 
     }
 }
 
-export const setGenerateProofResult = (proof: string): IActions => {
+export const setGenerateProofResult = (proof: Proof): IActions => {
     return {
         type: 'set_generate_proof_result', 
         payload: proof

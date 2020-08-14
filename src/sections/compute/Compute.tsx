@@ -51,7 +51,7 @@ export const Compute: React.FC = () => {
 
     useEffect(() => {
         dispatch(onReset());
-        dispatchContext(setComputationResult(''));
+        dispatchContext(setComputationResult(null));
     }, [stateContext.compilationResult]);
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {

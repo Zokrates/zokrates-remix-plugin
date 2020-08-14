@@ -9,7 +9,7 @@ initialize()
                 const key: string = getImportPath(location, path);
                 return imports[key] ? { source: imports[key], location: key } : null;
             };
-            return zokratesProvider.compile(source, location, importResolver);
+            return zokratesProvider.compile(source, { location, resolveCallback: importResolver });
         }
         const onAction = (action) => {
             const { type, payload } = action;
@@ -46,7 +46,7 @@ initialize()
                             payload.abiVersion
                         );
                         // @ts-ignore 
-                        self.postMessage({ type: type, payload: verifier });
+                        self.postMessage({ type: type, payload: { verifier, abiVersion: payload.abiVersion } });
                         break;
                     }
                     case WA_GENERATE_PROOF: {
