@@ -8,22 +8,46 @@ import { setGenerateProofResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
 import { onCleanup, onError, onLoading, onSuccess } from './actions';
 import { generateProofReducer, IGenerateProofState } from './reducer';
+import { WA_GENERATE_PROOF, WA_ERROR } from '../../zokrates/constants';
+import { Proof } from 'zokrates-js';
 
 export const GenerateProof: React.FC = () => {
 
     const initialState: IGenerateProofState = {
         isLoading: false,
-        result: '',
+        result: null,
         error: ''
     }
 
     const stateContext = useStateContext();
     const dispatchContext = useDispatchContext();
     const [state, dispatch] = useReducer(generateProofReducer, initialState);
+    const { zokratesWebWorker } = stateContext;
+
+    const onWorkerMessage = (e: MessageEvent) => {
+        switch (e.data.type) {
+            case WA_GENERATE_PROOF: {
+                dispatch(onSuccess(e.data.payload));
+                dispatchContext(setGenerateProofResult(e.data.payload));
+                break;
+            }
+            case WA_ERROR: {
+                dispatch(onError(e.data.payload));
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    useEffect(() => {
+        const subscription = zokratesWebWorker.onMessage().subscribe(onWorkerMessage);
+        return () => subscription.unsubscribe();
+    }, []);
 
     useEffect(() => {
         dispatch(onCleanup());
-        dispatchContext(setGenerateProofResult(''));
+        dispatchContext(setGenerateProofResult(null));
     }, [stateContext.compilationResult, 
         stateContext.computationResult, 
         stateContext.setupResult, 
@@ -35,37 +59,30 @@ export const GenerateProof: React.FC = () => {
 
         setTimeout(() => {
             try {
-                let proof = stateContext.zokratesProvider.generateProof(
-                    stateContext.compilationResult.artifacts.program,
-                    stateContext.computationResult.witness,
-                    stateContext.setupResult.provingKey
-                );
-                dispatch(onSuccess(proof));
-                dispatchContext(setGenerateProofResult(proof));
+                zokratesWebWorker.postMessage(WA_GENERATE_PROOF, {
+                    program: stateContext.compilationResult.artifacts.program,
+                    witness: stateContext.computationResult.witness,
+                    pk: stateContext.setupResult.pk
+                });
             } catch (error) {
                 dispatch(onError(error.toString()));
             }
         }, 200);
     }
 
-    const onCopy = (value: string) => {
-        copy(value);
-    }
-
     const openInRemix = () => {
-        remixClient.createFile('browser/proof.json', state.result);
+        remixClient.createFile('browser/proof.json', JSON.stringify(state.result, null, 2));
     }
 
     const onDownload = () => {
-        var blob = new Blob([state.result], { type: 'text/plain;charset=utf-8' });
+        var blob = new Blob([JSON.stringify(state.result, null, 2)], { type: 'text/plain;charset=utf-8' });
         saveAs(blob, 'proof.json');
     }
 
-    const getCompatibleParametersFormat = (input: string, abiv2: boolean) => {
-        const json = JSON.parse(input);
-        const proofValues = Object.values(json.proof).map(el => JSON.stringify(el)).join();
-        const inputValues = JSON.stringify(json.inputs);
-        if (abiv2) {
+    const getCompatibleParametersFormat = (proof: Proof, abiVersion: string) => {
+        const proofValues = Object.values(proof.proof).map(el => JSON.stringify(el)).join();
+        const inputValues = JSON.stringify(proof.inputs);
+        if (abiVersion === 'v2') {
             return `[${proofValues}],${inputValues}`;
         }
         return `${proofValues},${inputValues}`;
@@ -89,7 +106,7 @@ export const GenerateProof: React.FC = () => {
                                 isLoading={state.isLoading} />
                             <ButtonGroup>
                                 <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-output">Copy Output</Tooltip>}>
-                                    <Button disabled={!state.result} variant="light" onClick={() => onCopy(state.result)}>
+                                    <Button disabled={!state.result} variant="light" onClick={() => copy(JSON.stringify(state.result, null, 2))}>
                                         <i className="fa fa-clipboard" aria-hidden="true"></i>
                                     </Button>
                                 </OverlayTrigger>
@@ -109,7 +126,7 @@ export const GenerateProof: React.FC = () => {
                 </Col>
             </Row>
             {state.result && (() => {
-                const result = getCompatibleParametersFormat(state.result, stateContext.exportVerifierResult.abiv2);
+                const result = getCompatibleParametersFormat(state.result, stateContext.exportVerifierResult.abiVersion);
                 return (
                     <Row>
                         <Col>
@@ -118,7 +135,7 @@ export const GenerateProof: React.FC = () => {
                                 <FormControl aria-label="Parameters" value={result} readOnly />
                                 <InputGroup.Append>
                                     <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-copy-parameters">Copy Parameters</Tooltip>}>
-                                        <Button disabled={!state.result} onClick={() => onCopy(result)}>
+                                        <Button disabled={!state.result} onClick={() => copy(result)}>
                                             <i className="fa fa-clipboard" aria-hidden="true"></i>
                                         </Button>
                                     </OverlayTrigger>

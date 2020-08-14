@@ -39,7 +39,8 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
                 onChange={onChangeHandler}
                 placeholder={component.type}
                 isValid={validate && isValid}
-                isInvalid={value && !isValid} />
+                isInvalid={value && !isValid}
+                style={{ paddingRight: "30px" }} />
             {append && 
             <InputGroup.Append>
                 {append}

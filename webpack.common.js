@@ -2,7 +2,7 @@ const path = require('path');
 const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-module.exports = {
+const appConfig = {
     entry: './index.tsx',
     module: {
         rules: [
@@ -47,3 +47,37 @@ module.exports = {
         })
     ]
 }
+
+const workerConfig = {
+    entry: "./src/worker.ts",
+    target: "webworker",
+    module: {
+        rules: [
+            {
+                test: /\.tsx?$/,
+                exclude: "/node_modules/",
+                loader: "ts-loader"
+            },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "babel-loader",
+                options: {
+                    'plugins': [
+                        '@babel/plugin-proposal-class-properties',
+                        '@babel/plugin-syntax-dynamic-import'
+                    ]
+                }
+            },
+        ]
+    },
+    resolve: {
+        extensions: ['.ts', '.js', '.wasm']
+    },
+    output: {
+        filename: 'worker.js',
+        path: path.resolve(__dirname, 'dist/'),
+    }
+  };
+
+  module.exports = [appConfig, workerConfig];
