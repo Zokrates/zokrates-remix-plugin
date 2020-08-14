@@ -1,7 +1,7 @@
 const merge = require('webpack-merge');
-const common = require("./webpack.common.js");
+let [appConfig, workerConfig] = require("./webpack.common.js");
 
-module.exports = merge(common, {
+appConfig = merge(appConfig, {
     mode: 'development',
     devtool: "source-map",
     devServer: {
@@ -12,3 +12,9 @@ module.exports = merge(common, {
         host: 'localhost'
     },
 });
+
+workerConfig = merge(workerConfig, {
+    mode: 'development'
+});
+
+module.exports = [appConfig, workerConfig];

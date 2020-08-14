@@ -17,7 +17,7 @@ export const reducer = (state: IState, action: IActions) => {
             return { 
                 ...state, 
                 isLoaded: true,
-                zokratesProvider: action.payload
+                zokratesWebWorker: action.payload
             };
         case 'set_compilation_result':
             return {

@@ -5,9 +5,9 @@ import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip } from 're
 import { Alert, LoadingButton } from '../../components';
 import { setSetupResult } from '../../state/actions';
 import { useDispatchContext, useStateContext } from '../../state/Store';
-import { SetupResult } from '../../state/types';
 import { onCleanup, onError, onLoading, onSuccess } from './actions';
 import { ISetupState, setupReducer } from './reducer';
+import { WA_SETUP, WA_ERROR } from '../../zokrates/constants';
 
 export const Setup: React.FC = () => {
 
@@ -19,7 +19,29 @@ export const Setup: React.FC = () => {
 
     const stateContext = useStateContext();
     const dispatchContext = useDispatchContext();
-    const [state, dispatch] = useReducer(setupReducer, initialState)
+    const [state, dispatch] = useReducer(setupReducer, initialState);
+    const { zokratesWebWorker } = stateContext;
+
+    const onWorkerMessage = (e: MessageEvent) => {
+        switch (e.data.type) {
+            case WA_SETUP: {
+                dispatch(onSuccess(e.data.payload));
+                dispatchContext(setSetupResult(e.data.payload));
+                break;
+            }
+            case WA_ERROR: {
+                dispatch(onError(e.data.payload));
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    useEffect(() => {
+        const subscription = zokratesWebWorker.onMessage().subscribe(onWorkerMessage);
+        return () => subscription.unsubscribe();
+    }, []);
 
     useEffect(() => {
         dispatch(onCleanup());
@@ -32,12 +54,9 @@ export const Setup: React.FC = () => {
 
         setTimeout(() => {
             try {
-                let keypair = stateContext.zokratesProvider.setup(stateContext.compilationResult.artifacts.program);
-                let setupResult: SetupResult = {
-                    verificationKey: keypair.vk, provingKey: keypair.pk
-                }
-                dispatch(onSuccess(setupResult));
-                dispatchContext(setSetupResult(setupResult));
+                zokratesWebWorker.postMessage(WA_SETUP, {
+                    program: stateContext.compilationResult.artifacts.program
+                });
             } catch (error) {
                 dispatch(onError(error.toString()));
             }
@@ -46,8 +65,8 @@ export const Setup: React.FC = () => {
 
     const onDownload = () => {
         let zip = new JSZip();
-        zip.file("verifying.key", state.result.verificationKey);
-        zip.file("proving.key", state.result.provingKey);
+        zip.file("verifying.key", JSON.stringify(state.result.vk, null, 2));
+        zip.file("proving.key", state.result.pk);
         zip.generateAsync({ type: "blob" }).then((content: any) => saveAs(content, "keys.zip"));
     }
     

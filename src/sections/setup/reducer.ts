@@ -1,13 +1,13 @@
-import { SetupResult } from "../../state/types";
+import { SetupKeypair } from "zokrates-js";
 
 export type ISetupAction = {
     type: 'loading' | 'cleanup' | 'success' | 'error';
-    payload?: SetupResult | string;
+    payload?: SetupKeypair;
 }
 
 export interface ISetupState {
     isLoading: boolean,
-    result: SetupResult,
+    result: SetupKeypair,
     error: string
 }
 

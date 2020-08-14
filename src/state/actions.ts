@@ -1,14 +1,16 @@
 import { IActions } from './reducer';
-import { ExportVerifierResult, SetupResult } from './types';
+import { ExportVerifierResult } from './types';
+import { ZoKratesWebWorker } from '../zokrates/ZoKratesWebWorker';
+import { SetupKeypair, Proof, CompilationArtifacts, ComputationResult } from 'zokrates-js';
 
-export const onLoaded = (provider: any): IActions => {
+export const onLoaded = (worker: ZoKratesWebWorker): IActions => {
     return {
         type: 'set_loaded',
-        payload: provider
+        payload: worker
     }
 }
 
-export const setCompilationResult = (artifacts: any, source: string): IActions => {
+export const setCompilationResult = (artifacts: CompilationArtifacts, source: string): IActions => {
     return {
         type: 'set_compilation_result', 
         payload: { 
@@ -17,17 +19,17 @@ export const setCompilationResult = (artifacts: any, source: string): IActions =
     }
 }
 
-export const setComputationResult = (output: any): IActions => {
+export const setComputationResult = (result: ComputationResult): IActions => {
     return {
         type: 'set_computation_result', 
-        payload: output
+        payload: result
     }
 }
 
-export const setSetupResult = (result: SetupResult): IActions => {
+export const setSetupResult = (keypair: SetupKeypair): IActions => {
     return {
         type: 'set_setup_result', 
-        payload: result
+        payload: keypair
     }
 }
 
@@ -38,7 +40,7 @@ export const setExportVerifierResult = (result: ExportVerifierResult): IActions 
     }
 }
 
-export const setGenerateProofResult = (proof: string): IActions => {
+export const setGenerateProofResult = (proof: Proof): IActions => {
     return {
         type: 'set_generate_proof_result', 
         payload: proof
