@@ -72,7 +72,7 @@ export const ExportVerifier: React.FC = () => {
     }
 
     const onDownload = () => {
-        var blob = new Blob([state.result], { type: 'text/plain;charset=utf-8' });
+        let blob = new Blob([state.result], { type: 'text/plain;charset=utf-8' });
         saveAs(blob, 'verifier.sol');
     }
 

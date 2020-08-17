@@ -24,10 +24,10 @@ export class RemixClient {
 
     createFile = async (name: string, content: string) => {
         try {
-            await this.client.call('fileManager', 'setFile', name, content)
-            await this.client.call('fileManager', 'switchFile', name)
+            await this.client.call('fileManager', 'setFile', name, content);
+            await this.client.call('fileManager', 'switchFile', name);
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
@@ -56,4 +56,4 @@ export class RemixClient {
     }
 }
 
-export const remixClient = new RemixClient()
+export const remixClient = new RemixClient();

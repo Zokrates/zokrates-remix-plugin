@@ -4,7 +4,7 @@ import { Component } from '../../../common/abiTypes';
 
 export interface TextInputProps {
     component: Component;
-    value: any,
+    value: any;
     append?: any;
     validate?: (value: string) => boolean;
     transform?: (value: string) => any;

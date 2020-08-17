@@ -77,7 +77,7 @@ export const Compute: React.FC = () => {
     }
 
     const onDownload = () => {
-        var blob = new Blob([state.result.witness], { type: 'text/plain;charset=utf-8' });
+        let blob = new Blob([state.result.witness], { type: 'text/plain;charset=utf-8' });
         saveAs(blob, "witness");
     }
 

@@ -3,6 +3,7 @@ import { FormGroup } from 'react-bootstrap';
 import { Component } from '../../../common/abiTypes';
 import { ExpandableInput } from './ExpandableInput';
 import { InputComponent } from './InputComponent';
+import { TextInput } from './TextInput';
 
 export interface StructInputProps {
     component: Component;
@@ -21,6 +22,10 @@ export const StructInput: React.FC<StructInputProps> = (props) => {
             return onChange({ ...value, [component.name]: inner })
         }
         return onChange({ [component.name]: inner })
+    }
+
+    if (components.length === 0) {
+        return <TextInput { ...props } />;
     }
     
     return (
