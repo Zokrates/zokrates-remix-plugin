@@ -3,12 +3,13 @@ import { Component } from '../../../common/abiTypes';
 import { ArrayInput } from './ArrayInput';
 import { StructInput } from './StructInput';
 import { TextInput } from './TextInput';
+import jsonschema from 'jsonschema';
 
 const fromJson = (input: string) => {
     try {
         return JSON.parse(input);
     } catch (_) {
-        return false;
+        return input;
     }
 }
 
@@ -18,41 +19,77 @@ export interface InputComponentProps {
     onChange: (value: any) => void;
 }
 
+const createValidationSchema = (component: Component) => {
+    switch (component.type) {
+        case 'field': {
+            return { 
+                type: 'string', 
+                pattern: /^-?\d+$/, 
+                required: true 
+            };
+        }
+        case 'u': {
+            return { 
+                type: 'string', 
+                pattern: new RegExp(`^0x[0-9a-f]{${component.components / 4}}$`), 
+                required: true 
+            };
+        }
+        case 'bool': {
+            return { 
+                type: 'boolean', 
+                required: true 
+            };
+        }
+        case 'array': {
+            return { 
+                type: 'array',
+                minItems: component.components.size, 
+                maxItems: component.components.size,
+                items: createValidationSchema(component.components),
+                required: true
+            }
+        }
+        case 'struct': {
+            return { 
+                type: 'object',
+                properties: component.components.members.reduce((result: any, component: Component) => {
+                    result[component.name] = createValidationSchema(component);
+                    return result;
+                }, {}),
+                required: true
+            }
+        }
+    }
+}
+
+const createValidator = (component: Component, transform?: (value: string) => any) => {
+    return (value: string) => jsonschema.validate(
+        transform ? transform(value) : value, createValidationSchema(component)).valid
+}
+
 export const InputComponent: React.FC<InputComponentProps> = (props) => {
     const { component } = props;
-
-    const commonProps = {
-        validate: (value: string) => fromJson(value),
-        transform: (value: string) => fromJson(value) || value
-    }
-
     switch (component.type) {
-        case "u":
-            // TODO: remove this once abi is fixed
-            let uintComponent = {
-                name: component.name,
-                type: component.type + component.components,
-            } as Component;
-            const hexRegex = new RegExp(`^0x[0-9a-f]{${component.components / 4}}$`);
-
-            return <TextInput {...props} component={uintComponent}
-                    validate={value => hexRegex.test(value)} />;
-        case "field":
+        case 'u':
             return <TextInput {...props} 
-                    validate={value => /^-?\d+$/.test(value)} />;
-        case "bool":
+                component={{ ...component, type: component.type + component.components }} 
+                validate={createValidator(component)} />;
+        case 'field':
+            return <TextInput {...props} validate={createValidator(component)} />;
+        case 'bool':
             return <TextInput {...props} 
-                    validate={value => /^(true|false)$/.test(value)} 
-                    transform={value => /^(true|false)$/.test(value) ? value === 'true' : value} />;
-        case "struct": {
-            let members: Component[] = component.components.members;
-            let Input = members.length > 0 ? StructInput : TextInput;
-            return <Input {...props} {...commonProps} />
-        }
-        case "array":
-            let Input = component.components.size > 0 ? ArrayInput : TextInput;
-            return <Input {...props} {...commonProps} />;
+                transform={(value) => fromJson(value)}
+                validate={createValidator(component, (value) => fromJson(value))} />;
+        case 'struct':
+            return <StructInput {...props}
+                transform={(value) => fromJson(value)}
+                validate={createValidator(component, (value) => fromJson(value))} />
+        case 'array':
+            return <ArrayInput {...props}
+                transform={(value) => fromJson(value)}
+                validate={createValidator(component, (value) => fromJson(value))} />;
         default:
-            throw new Error("Unsupported component type");
+            throw new Error('Unsupported component type');
     }
 }
