@@ -5,9 +5,9 @@ import { Header } from './Header';
 import { LoadingButton } from './LoadingButton';
 
 export {
-     Alert, 
-     Header, 
-     Accordion, 
-     AccordionElement, 
-     LoadingButton 
+     Alert,
+     Header,
+     Accordion,
+     AccordionElement,
+     LoadingButton
 };

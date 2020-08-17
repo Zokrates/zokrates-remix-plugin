@@ -37,7 +37,7 @@ export const ArrayInput: React.FC<ArrayInputProps> = (props) => {
                 <FormGroup key={`${component.name}~${index}`}>
                     <InputComponent
                         component={component} 
-                        value={(value instanceof Array && value[index] != undefined) ? value[index] : ''}
+                        value={(value instanceof Array && value[index] !== undefined) ? value[index] : ''}
                         onChange={(inner) => onChangeHandler(index, inner, value)} />
                 </FormGroup>
             )}

@@ -7,7 +7,9 @@
     "dev": "webpack-dev-server --open --config webpack.dev.js",
     "build": "npm install && rimraf dist && webpack --config webpack.prod.js",
     "serve": "serve -l 10000 dist/",
-    "start": "npm run build && npm run serve"
+    "start": "npm run build && npm run serve",
+    "tslint": "tslint -c tslint.json -p tsconfig.json",
+    "tslint:fix": "tslint --fix src/**/*.{ts,js}"
   },
   "keywords": [
     "zokrates",
@@ -46,6 +48,7 @@
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.0.0",
     "ts-loader": "^6.0.4",
+    "tslint": "^6.1.3",
     "typescript": "^3.5.3",
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.7",

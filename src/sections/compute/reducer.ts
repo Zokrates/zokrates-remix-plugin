@@ -1,7 +1,7 @@
 export type IComputeAction = {
     type: 'loading' | 'success' | 'error' | 'reset' | 'field_update';
     payload?: any;
-}
+};
 
 export interface IComputeState {
     isLoading: boolean;
@@ -18,28 +18,28 @@ export function computeReducer(state: Partial<IComputeState>, action: IComputeAc
                 result: '',
                 error: '',
                 isLoading: true,
-            }
+            };
         case 'success':
-            return { 
-                ...state, 
-                result: action.payload, 
+            return {
+                ...state,
+                result: action.payload,
                 error: '',
                 isLoading: false,
-            }
+            };
         case 'error':
-            return { 
-                ...state, 
+            return {
+                ...state,
                 error: action.payload,
                 result: null,
                 isLoading: false,
-            }
+            };
         case 'reset':
             return {
                 result: null,
                 error: '',
                 isLoading: false,
                 inputFields: {}
-            }
+            };
         case 'field_update': {
             return {
                 ...state,
@@ -47,7 +47,7 @@ export function computeReducer(state: Partial<IComputeState>, action: IComputeAc
                     ...state.inputFields,
                     [action.payload.name]: action.payload.value
                 }
-            }
+            };
         }
         default:
             return state;

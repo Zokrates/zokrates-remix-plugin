@@ -3,7 +3,7 @@ import { remixClient } from './RemixClient';
 import { getImportPath } from '../common/utils';
 
 export interface Imports {
-    [location: string]: string
+    [location: string]: string;
 }
 
 export default class RemixResolver implements Resolver {
@@ -12,8 +12,8 @@ export default class RemixResolver implements Resolver {
     private reserved: Array<string> = ['ecc/', 'signature/', 'hashes/', 'utils/'];
 
     prefetchImports = async (location: string, source: string) => {
-        var regex = /^\s*(?:import|from)\s*[\'\"]([^\'\"]+)[\'\"]/gm;
-        var match: any;
+        let regex = /^\s*(?:import|from)\s*[\'\"]([^\'\"]+)[\'\"]/gm;
+        let match: any;
 
         while (match = regex.exec(source)) {
             let path: string = match[1];
@@ -21,11 +21,11 @@ export default class RemixResolver implements Resolver {
 
             if (!stdlib) {
                 let result = await this.resolve(location, path);
-                this.imports = { 
-                    ...this.imports, 
+                this.imports = {
+                    ...this.imports,
                     [result.location]: result.source
                 };
-                await this.prefetchImports(result.location, result.source)
+                await this.prefetchImports(result.location, result.source);
             }
         }
     }

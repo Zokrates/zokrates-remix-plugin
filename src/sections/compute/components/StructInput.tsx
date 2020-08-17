@@ -24,7 +24,7 @@ export const StructInput: React.FC<StructInputProps> = (props) => {
         return onChange({ [component.name]: inner })
     }
 
-    if (components.length == 0) {
+    if (components.length === 0) {
         return <TextInput { ...props } />;
     }
     

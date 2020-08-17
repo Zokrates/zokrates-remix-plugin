@@ -91,21 +91,21 @@ export const Compile: React.FC = () => {
     }
 
     const highlightCompileError = (error: string) => {
-        var match = /\b(\d+):(\d+)\b/.exec(error);
+        const match = /\b(\d+):(\d+)\b/.exec(error);
         if (!match) {
             return;
         }
 
-        var line = Number(match[1]) - 1;
-        var column = Number(match[2]);
+        const line = Number(match[1]) - 1;
+        const column = Number(match[2]);
 
-        var highlightPosition: HighlightPosition = {
+        const highlightPosition: HighlightPosition = {
             start: { line, column },
             end: { line, column },
         }
 
         try {
-            let file: string = error.split(':')[0];
+            const file: string = error.split(':')[0];
             if (file) {
                 remixClient.switchFile(file);
                 remixClient.highlight(highlightPosition, file, '#ff7675');

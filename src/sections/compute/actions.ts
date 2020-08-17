@@ -1,34 +1,34 @@
-import { IComputeAction } from "./reducer";
+import { IComputeAction } from './reducer';
 
 export const onLoading = (): IComputeAction => {
-    return { 
-        type: 'loading' 
+    return {
+        type: 'loading'
     };
-}
+};
 
 export const onReset = (): IComputeAction => {
-    return { 
+    return {
         type: 'reset'
     };
-}
+};
 
 export const onSuccess = (result: any): IComputeAction => {
     return {
         type: 'success',
         payload: result
-    }
-}
+    };
+};
 
 export const onError = (error: any): IComputeAction => {
     return {
         type: 'error',
         payload: error.toString()
-    }
-}
+    };
+};
 
 export const onFieldUpdate = (name: string, value: any): IComputeAction => {
     return {
         type: 'field_update',
         payload: { name, value }
-    }
-}
+    };
+};
