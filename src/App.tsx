@@ -45,7 +45,7 @@ const App: React.FC = () => {
         <div id="wrapper">
             <Container>
                 <Header />
-                <main role="main" className="mb-4">
+                <main role="main" className="mb-5">
                     <Accordion>
                         <AccordionElement 
                             headerText="Compile" 
