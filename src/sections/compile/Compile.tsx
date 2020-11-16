@@ -69,6 +69,9 @@ export const Compile: React.FC = () => {
 
       location = location.replace("browser/", "");
       let source = await remixClient.getFile(location);
+      if (!source) {
+        throw new Error("Invalid source");
+      }
 
       // we have to "prefetch" imports to avoid promises
       await remixResolver.prefetchImports(location, source);
