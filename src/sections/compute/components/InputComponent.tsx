@@ -28,10 +28,24 @@ const createValidationSchema = (component: Component) => {
         required: true,
       };
     }
-    case "u": {
+    case "u8": {
       return {
         type: "string",
-        pattern: new RegExp(`^0x[0-9a-f]{${component.components / 4}}$`),
+        pattern: new RegExp(`^0x[0-9a-f]{2}$`),
+        required: true,
+      };
+    }
+    case "u16": {
+      return {
+        type: "string",
+        pattern: new RegExp(`^0x[0-9a-f]{4}$`),
+        required: true,
+      };
+    }
+    case "u32": {
+      return {
+        type: "string",
+        pattern: new RegExp(`^0x[0-9a-f]{8}$`),
         required: true,
       };
     }
@@ -80,17 +94,12 @@ const createValidator = (
 export const InputComponent: React.FC<InputComponentProps> = (props) => {
   const { component } = props;
   switch (component.type) {
-    case "u":
-      return (
-        <TextInput
-          {...props}
-          component={{
-            ...component,
-            type: component.type + component.components,
-          }}
-          validate={createValidator(component)}
-        />
-      );
+    case "u8":
+      return <TextInput {...props} validate={createValidator(component)} />;
+    case "u16":
+      return <TextInput {...props} validate={createValidator(component)} />;
+    case "u32":
+      return <TextInput {...props} validate={createValidator(component)} />;
     case "field":
       return <TextInput {...props} validate={createValidator(component)} />;
     case "bool":
