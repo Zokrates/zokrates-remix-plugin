@@ -1,7 +1,7 @@
-import { ResolverResult } from 'zokrates-js';
+import { ResolverResult } from "zokrates-js";
 
 interface Resolver {
-    resolve(location: string, path: string): Promise<ResolverResult>;
+  resolve(location: string, path: string): Promise<ResolverResult>;
 }
 
 export { Resolver, ResolverResult };
