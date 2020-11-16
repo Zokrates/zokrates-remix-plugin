@@ -96,7 +96,7 @@ const App: React.FC = () => {
       <footer className="footer">
         <div className="container">
           <div>
-            ZoKrates:
+            <span className="mr-1">ZoKrates:</span>
             <a
               target="_blank"
               href={`https://github.com/Zokrates/ZoKrates/tree/${metadata.version}`}
