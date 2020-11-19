@@ -95,13 +95,21 @@ const App: React.FC = () => {
       </Container>
       <footer className="footer">
         <div className="container">
-          <div>
-            <span className="mr-1">ZoKrates:</span>
+          <div className="space-between">
+            <span>
+              <span className="mr-1">ZoKrates:</span>
+              <a
+                target="_blank"
+                href={`https://github.com/Zokrates/ZoKrates/tree/${metadata.version}`}
+              >
+                {metadata.version}
+              </a>
+            </span>
             <a
               target="_blank"
-              href={`https://github.com/Zokrates/ZoKrates/tree/${metadata.version}`}
+              href="https://github.com/Shard-Labs/zokrates-remix-plugin/issues"
             >
-              {metadata.version}
+              Report issues
             </a>
           </div>
         </div>

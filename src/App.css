@@ -1,68 +1,73 @@
 .row + .row {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 #root {
-    height: 100vh;
+  height: 100vh;
 }
 
 .expandable {
-    display: block;
-    border-radius: 0.25rem !important;
+  display: block;
+  border-radius: 0.25rem !important;
 }
 
 .expandable .expandable-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-    padding: 0.25rem 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0.5rem;
 }
 
 .expandable .expandable-body {
-    padding: 0.5rem;
+  padding: 0.5rem;
 }
 
 .footer {
-    display: flex;
-    align-items: center;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
-    background: var(--light);
-    z-index: 999;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  background: var(--light);
+  z-index: 999;
 }
 
 .alert {
-    padding: 0.5rem;
-    font-weight: bold;
-    font-size: 0.8rem;
-    margin-bottom: 0rem !important;
-    white-space: pre-line;
+  padding: 0.5rem;
+  font-weight: bold;
+  font-size: 0.8rem;
+  margin-bottom: 0rem !important;
+  white-space: pre-line;
 }
 
 .alert > pre {
-    font-family: monospace;
-    color: var(--white);
-    margin: 0;
-    font-size: 0.8rem;
+  font-family: monospace;
+  color: var(--white);
+  margin: 0;
+  font-size: 0.8rem;
 }
 
 .pointer {
-    cursor: pointer !important;
+  cursor: pointer !important;
 }
 
 .default-cursor {
-    cursor: default !important;
+  cursor: default !important;
 }
 
 .accordion > .card > .card-header {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .btn-overflow {
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    white-space: pre;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
 }
