@@ -16,6 +16,10 @@ const appConfig = {
                 use: ['style-loader', 'css-loader'],
             },
             {
+                test: /\.(png|jpe?g|svg)$/i,
+                use: ['file-loader'],
+            },
+            {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: "babel-loader",

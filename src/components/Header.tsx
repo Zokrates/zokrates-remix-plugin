@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { remixClient } from "../remix/RemixClient";
+const Logo = require("../../zokrates.svg").default as string;
 
 export const Header: React.FC = () => {
   const getTheme = () =>
@@ -24,7 +25,7 @@ export const Header: React.FC = () => {
 
   return (
     <header>
-      <img className="mx-auto d-block" src="../../zokrates.svg" style={style} />
+      <img className="mx-auto d-block" src={Logo} style={style} />
       <p>
         <a href="https://github.com/Zokrates/ZoKrates" target="_blank">
           ZoKrates
