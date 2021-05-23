@@ -49,6 +49,13 @@ const createValidationSchema = (component: Component) => {
         required: true,
       };
     }
+    case "u64": {
+      return {
+        type: "string",
+        pattern: new RegExp(`^0x[0-9a-f]{16}$`),
+        required: true,
+      };
+    }
     case "bool": {
       return {
         type: "boolean",
@@ -94,14 +101,6 @@ const createValidator = (
 export const InputComponent: React.FC<InputComponentProps> = (props) => {
   const { component } = props;
   switch (component.type) {
-    case "u8":
-      return <TextInput {...props} validate={createValidator(component)} />;
-    case "u16":
-      return <TextInput {...props} validate={createValidator(component)} />;
-    case "u32":
-      return <TextInput {...props} validate={createValidator(component)} />;
-    case "field":
-      return <TextInput {...props} validate={createValidator(component)} />;
     case "bool":
       return (
         <TextInput
@@ -127,6 +126,6 @@ export const InputComponent: React.FC<InputComponentProps> = (props) => {
         />
       );
     default:
-      throw new Error("Unsupported component type");
+      return <TextInput {...props} validate={createValidator(component)} />;
   }
 };

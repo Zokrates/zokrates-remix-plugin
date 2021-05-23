@@ -56,7 +56,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
         placeholder={component.type}
         isValid={validate && isValid}
         isInvalid={value && !isValid}
-        style={{ paddingRight: "30px" }}
+        className="pr-4"
       />
       {append && <InputGroup.Append>{append}</InputGroup.Append>}
     </InputGroup>

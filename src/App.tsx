@@ -107,7 +107,7 @@ const App: React.FC = () => {
             </span>
             <a
               target="_blank"
-              href="https://github.com/Shard-Labs/zokrates-remix-plugin/issues"
+              href="https://github.com/Zokrates/zokrates-remix-plugin/issues"
             >
               Report issues
             </a>
