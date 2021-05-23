@@ -17,7 +17,10 @@ const appConfig = {
             },
             {
                 test: /\.(png|jpe?g|svg)$/i,
-                use: ['file-loader'],
+                loader: 'file-loader',
+                options: {
+                  name: '[path][name].[ext]',
+                },
             },
             {
                 test: /\.js$/,
