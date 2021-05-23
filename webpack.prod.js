@@ -3,10 +3,16 @@ let [appConfig, workerConfig] = require("./webpack.common.js");
 
 appConfig = merge(appConfig, {
     mode: 'production',
+    output: {
+        publicPath: "/zokrates-remix-plugin/"
+    }
 });
 
 workerConfig = merge(workerConfig, {
-    mode: 'production'
+    mode: 'production',
+    output: {
+        publicPath: "/zokrates-remix-plugin/"
+    }
 });
 
 module.exports = [appConfig, workerConfig];

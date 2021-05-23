@@ -77,6 +77,7 @@ const workerConfig = {
     output: {
         filename: 'worker.js',
         path: path.resolve(__dirname, 'dist/'),
+        publicPath: "/"
     }
   };
 
