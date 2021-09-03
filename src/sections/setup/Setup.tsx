@@ -1,16 +1,11 @@
-import { saveAs } from "file-saver";
-import JSZip from "jszip";
 import React, { useEffect, useReducer } from "react";
 import {
-  Button,
-  ButtonGroup,
   Col,
   Form,
-  OverlayTrigger,
   Row,
-  Tooltip,
 } from "react-bootstrap";
 import { Alert, LoadingButton } from "../../components";
+import { remixClient } from "../../remix/RemixClient";
 import { setSetupResult } from "../../state/actions";
 import { useDispatchContext, useStateContext } from "../../state/Store";
 import { onCleanup, onError, onLoading, onSuccess } from "./actions";
@@ -34,6 +29,10 @@ export const Setup: React.FC = () => {
       case WA_SETUP: {
         dispatch(onSuccess(e.data.payload));
         dispatchContext(setSetupResult(e.data.payload));
+        remixClient.createFile(
+          "browser/verification_key.json",
+          JSON.stringify(e.data.payload.vk, null, 2)
+        );
         break;
       }
       case WA_ERROR: {
@@ -72,15 +71,6 @@ export const Setup: React.FC = () => {
     }, 200);
   };
 
-  const onDownload = () => {
-    let zip = new JSZip();
-    zip.file("verifying.key", JSON.stringify(state.result.vk, null, 2));
-    zip.file("proving.key", state.result.pk);
-    zip
-      .generateAsync({ type: "blob" })
-      .then((content: any) => saveAs(content, "keys.zip"));
-  };
-
   return (
     <>
       <Row>
@@ -99,22 +89,6 @@ export const Setup: React.FC = () => {
                 iconClassName="fa fa-cog"
                 isLoading={state.isLoading}
               />
-              <ButtonGroup>
-                <OverlayTrigger
-                  placement="top"
-                  overlay={
-                    <Tooltip id="tooltip-download-keys">Download Keys</Tooltip>
-                  }
-                >
-                  <Button
-                    disabled={!state.result}
-                    variant="light"
-                    onClick={onDownload}
-                  >
-                    <i className="fa fa-download" aria-hidden="true"></i>
-                  </Button>
-                </OverlayTrigger>
-              </ButtonGroup>
             </div>
           </Form>
         </Col>

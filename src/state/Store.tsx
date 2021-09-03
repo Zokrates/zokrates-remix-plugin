@@ -2,7 +2,6 @@ import React, { createContext, useContext, useReducer } from "react";
 import { IActions, reducer } from "./reducer";
 import {
   CompilationResult,
-  ExportVerifierResult,
   ComputationResult,
 } from "./types";
 import { ZoKratesWebWorker } from "../zokrates/ZoKratesWebWorker";
@@ -15,7 +14,6 @@ export interface IState {
   compilationResult: CompilationResult;
   setupResult: SetupKeypair;
   computationResult: ComputationResult;
-  exportVerifierResult: ExportVerifierResult;
   generateProofResult: string;
 }
 
@@ -24,8 +22,7 @@ const initialState = {
   compilationResult: null,
   setupResult: null,
   computationResult: null,
-  exportVerifierResult: null,
-  generateProofResult: "",
+  generateProofResult: null,
 } as IState;
 
 const StateContext = createContext<Partial<IState>>(initialState);

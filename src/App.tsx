@@ -21,7 +21,7 @@ const App: React.FC = () => {
     const worker = new ZoKratesWebWorker();
     const load = async () => {
       try {
-        await remixClient.createClient();
+        await remixClient.onload();
         setTimeout(() => dispatch(onLoaded(worker)), 1000);
       } catch (err) {
         console.log(err);
@@ -35,7 +35,7 @@ const App: React.FC = () => {
     return (
       <div className="d-flex flex-column align-items-center justify-content-center h-100">
         <Spinner animation="grow" variant="primary" />
-        <small className="mt-2">Connecting to Remix...</small>
+        <small className="mt-2">Initializing...</small>
       </div>
     );
   }
@@ -44,7 +44,7 @@ const App: React.FC = () => {
     <div id="wrapper">
       <Container>
         <Header />
-        <main role="main" className="mb-5">
+        <main role="main" className="pb-5">
           <Accordion>
             <AccordionElement
               headerText="Compile"
@@ -70,25 +70,24 @@ const App: React.FC = () => {
               <Setup />
             </AccordionElement>
             <AccordionElement
-              headerText="Export Verifier"
-              iconClass="fa fa-key"
-              eventKey="3"
-              disabled={!state.setupResult}
-            >
-              <ExportVerifier />
-            </AccordionElement>
-            <AccordionElement
               headerText="Generate Proof"
               iconClass="fa fa-check"
-              eventKey="4"
+              eventKey="3"
               disabled={
                 !state.compilationResult ||
                 !state.computationResult ||
-                !state.setupResult ||
-                !state.exportVerifierResult
+                !state.setupResult
               }
             >
               <GenerateProof />
+            </AccordionElement>
+            <AccordionElement
+              headerText="Export Verifier"
+              iconClass="fa fa-key"
+              eventKey="4"
+              disabled={!state.setupResult}
+            >
+              <ExportVerifier />
             </AccordionElement>
           </Accordion>
         </main>

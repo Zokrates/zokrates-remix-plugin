@@ -1,4 +1,3 @@
-import { saveAs } from "file-saver";
 import React, { useEffect, useReducer } from "react";
 import {
   Button,
@@ -90,15 +89,8 @@ export const Compute: React.FC = () => {
     }, 200);
   };
 
-  const openInRemix = () => {
+  const openInEditor = () => {
     remixClient.createFile("browser/witness", state.result.witness);
-  };
-
-  const onDownload = () => {
-    let blob = new Blob([state.result.witness], {
-      type: "text/plain;charset=utf-8",
-    });
-    saveAs(blob, "witness");
   };
 
   return (
@@ -139,30 +131,16 @@ export const Compute: React.FC = () => {
                   placement="top"
                   overlay={
                     <Tooltip id="tooltip-remix-witness">
-                      Open in Remix Editor
+                      Show Witness in Editor
                     </Tooltip>
                   }
                 >
                   <Button
                     disabled={!state.result}
                     variant="light"
-                    onClick={openInRemix}
+                    onClick={openInEditor}
                   >
                     <i className="fa fa-share" aria-hidden="true"></i>
-                  </Button>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  placement="top"
-                  overlay={
-                    <Tooltip id="tooltip-download-witness">Download</Tooltip>
-                  }
-                >
-                  <Button
-                    disabled={!state.result}
-                    variant="light"
-                    onClick={onDownload}
-                  >
-                    <i className="fa fa-download" aria-hidden="true"></i>
                   </Button>
                 </OverlayTrigger>
               </ButtonGroup>

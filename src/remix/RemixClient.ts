@@ -1,22 +1,19 @@
-import {
-  Api,
-  createIframeClient,
-  HighlightPosition,
-  PluginClient,
-  RemixApi,
-} from "@remixproject/plugin";
+import { PluginClient } from "@remixproject/plugin";
+import { HighlightPosition } from "@remixproject/plugin-api";
+import { createClient } from "@remixproject/plugin-webview";
+
 import Example from "./example";
 
-export class RemixClient {
-  private client: PluginClient<any> = createIframeClient<Api, RemixApi>();
+export class RemixClient extends PluginClient {
 
-  createClient = () => {
-    return this.client.onload();
-  };
+  constructor() {
+    super();
+    createClient(this);
+  }
 
   getFile = async (name: string) => {
     let path = name.startsWith("./") ? name.substr(2) : name;
-    return this.client.call(
+    return this.call(
       "fileManager",
       "getFile",
       this.getBrowserPath(path)
@@ -24,17 +21,17 @@ export class RemixClient {
   };
 
   getFolder = async () => {
-    return this.client.call("fileManager", "getFolder", "/browser");
+    return this.call("fileManager", "getFolder", "/browser");
   };
 
   getCurrentFile = async () => {
-    return this.client.call("fileManager", "getCurrentFile");
+    return this.call("fileManager", "getCurrentFile");
   };
 
   createFile = async (name: string, content: string) => {
     try {
-      await this.client.call("fileManager", "setFile", name, content);
-      await this.client.call("fileManager", "switchFile", name);
+      await this.call("fileManager", "setFile", name, content);
+      await this.call("fileManager", "switchFile", name);
     } catch (err) {
       console.log(err);
     }
@@ -45,7 +42,7 @@ export class RemixClient {
     file: string,
     color: string
   ) => {
-    await this.client.call(
+    await this.call(
       "editor",
       "highlight",
       position,
@@ -55,7 +52,7 @@ export class RemixClient {
   };
 
   discardHighlight = async () => {
-    await this.client.call("editor", "discardHighlight");
+    await this.call("editor", "discardHighlight");
   };
 
   createExample = () => {
@@ -64,7 +61,7 @@ export class RemixClient {
   };
 
   switchFile = async (file: string) => {
-    await this.client.call(
+    await this.call(
       "fileManager",
       "switchFile",
       this.getBrowserPath(file)

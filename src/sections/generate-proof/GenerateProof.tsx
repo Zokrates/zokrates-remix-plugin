@@ -1,5 +1,4 @@
 import copy from "copy-to-clipboard";
-import { saveAs } from "file-saver";
 import React, { useEffect, useReducer } from "react";
 import {
   Button,
@@ -39,6 +38,10 @@ export const GenerateProof: React.FC = () => {
       case WA_GENERATE_PROOF: {
         dispatch(onSuccess(e.data.payload));
         dispatchContext(setGenerateProofResult(e.data.payload));
+        remixClient.createFile(
+          "browser/proof.json",
+          JSON.stringify(e.data.payload, null, 2)
+        );
         break;
       }
       case WA_ERROR: {
@@ -64,7 +67,6 @@ export const GenerateProof: React.FC = () => {
     stateContext.compilationResult,
     stateContext.computationResult,
     stateContext.setupResult,
-    stateContext.exportVerifierResult,
   ]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -84,29 +86,12 @@ export const GenerateProof: React.FC = () => {
     }, 200);
   };
 
-  const openInRemix = () => {
-    remixClient.createFile(
-      "browser/proof.json",
-      JSON.stringify(state.result, null, 2)
-    );
-  };
-
-  const onDownload = () => {
-    var blob = new Blob([JSON.stringify(state.result, null, 2)], {
-      type: "text/plain;charset=utf-8",
-    });
-    saveAs(blob, "proof.json");
-  };
-
-  const getCompatibleParametersFormat = (proof: Proof, abiVersion: string) => {
+  const getCompatibleParametersFormat = (proof: Proof) => {
     const proofValues = Object.values(proof.proof)
       .map((el) => JSON.stringify(el))
       .join();
     const inputValues = JSON.stringify(proof.inputs);
-    if (abiVersion === "v2") {
-      return `[${proofValues}],${inputValues}`;
-    }
-    return `${proofValues},${inputValues}`;
+    return `[${proofValues}],${inputValues}`;
   };
 
   return (
@@ -133,38 +118,6 @@ export const GenerateProof: React.FC = () => {
                 iconClassName="fa fa-check"
                 isLoading={state.isLoading}
               />
-              <ButtonGroup>
-                <OverlayTrigger
-                  placement="top"
-                  overlay={
-                    <Tooltip id="tooltip-remix-proof">
-                      Open in Remix Editor
-                    </Tooltip>
-                  }
-                >
-                  <Button
-                    disabled={!state.result}
-                    variant="light"
-                    onClick={openInRemix}
-                  >
-                    <i className="fa fa-share" aria-hidden="true"></i>
-                  </Button>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  placement="top"
-                  overlay={
-                    <Tooltip id="tooltip-download-proof">Download</Tooltip>
-                  }
-                >
-                  <Button
-                    disabled={!state.result}
-                    variant="light"
-                    onClick={onDownload}
-                  >
-                    <i className="fa fa-download" aria-hidden="true"></i>
-                  </Button>
-                </OverlayTrigger>
-              </ButtonGroup>
             </div>
           </Form>
         </Col>
@@ -172,13 +125,12 @@ export const GenerateProof: React.FC = () => {
       {state.result &&
         (() => {
           const result = getCompatibleParametersFormat(
-            state.result,
-            stateContext.exportVerifierResult.abiVersion
+            state.result
           );
           return (
             <Row>
               <Col>
-                <FormLabel>Remix compatible parameters:</FormLabel>
+                <FormLabel>Verifier inputs:</FormLabel>
                 <InputGroup>
                   <FormControl
                     aria-label="Parameters"

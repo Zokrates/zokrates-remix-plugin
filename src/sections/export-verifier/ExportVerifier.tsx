@@ -1,32 +1,24 @@
-import { saveAs } from "file-saver";
 import React, { useEffect, useReducer } from "react";
 import {
-  Button,
-  ButtonGroup,
   Col,
   Form,
-  OverlayTrigger,
   Row,
-  Tooltip,
 } from "react-bootstrap";
 import { Alert, LoadingButton } from "../../components";
 import { remixClient } from "../../remix/RemixClient";
-import { setExportVerifierResult } from "../../state/actions";
-import { useDispatchContext, useStateContext } from "../../state/Store";
-import { onCleanup, onError, onLoading, onSuccess, updateAbi } from "./actions";
+import { useStateContext } from "../../state/Store";
+import { onCleanup, onError, onLoading, onSuccess } from "./actions";
 import { exportVerifierReducer, IExportVerifierState } from "./reducer";
 import { WA_EXPORT_VERIFIER, WA_ERROR } from "../../zokrates/constants";
 
 export const ExportVerifier: React.FC = () => {
   const initialState: IExportVerifierState = {
     isLoading: false,
-    abiv2: false,
-    result: null,
+    exported: false,
     error: "",
   };
 
   const stateContext = useStateContext();
-  const dispatchContext = useDispatchContext();
   const [state, dispatch] = useReducer(exportVerifierReducer, initialState);
 
   const { zokratesWebWorker } = stateContext;
@@ -34,9 +26,9 @@ export const ExportVerifier: React.FC = () => {
   const onWorkerMessage = (e: MessageEvent) => {
     switch (e.data.type) {
       case WA_EXPORT_VERIFIER: {
-        const { verifier, abiVersion } = e.data.payload;
-        dispatch(onSuccess(verifier));
-        dispatchContext(setExportVerifierResult({ verifier, abiVersion }));
+        const { verifier } = e.data.payload;
+        dispatch(onSuccess());
+        remixClient.createFile("browser/verifier.sol", verifier);
         break;
       }
       case WA_ERROR: {
@@ -57,7 +49,6 @@ export const ExportVerifier: React.FC = () => {
 
   useEffect(() => {
     dispatch(onCleanup());
-    dispatchContext(setExportVerifierResult(null));
   }, [stateContext.setupResult]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -68,21 +59,11 @@ export const ExportVerifier: React.FC = () => {
       try {
         zokratesWebWorker.postMessage(WA_EXPORT_VERIFIER, {
           vk: stateContext.setupResult.vk,
-          abiVersion: state.abiv2 ? "v2" : "v1",
         });
       } catch (error) {
         dispatch(onError(error.toString()));
       }
     }, 200);
-  };
-
-  const openInRemix = () => {
-    remixClient.createFile("browser/verifier.sol", state.result);
-  };
-
-  const onDownload = () => {
-    let blob = new Blob([state.result], { type: "text/plain;charset=utf-8" });
-    saveAs(blob, "verifier.sol");
   };
 
   return (
@@ -95,17 +76,6 @@ export const ExportVerifier: React.FC = () => {
             compiled program.
           </p>
           <Form onSubmit={onSubmit}>
-            <Form.Group controlId="abi">
-              <Form.Check
-                type="checkbox"
-                label="Use ABI v2"
-                name="abiv2"
-                checked={state.abiv2}
-                onChange={(event: any) => {
-                  dispatch(updateAbi(event.currentTarget.checked));
-                }}
-              />
-            </Form.Group>
             <div className="d-flex justify-content-between">
               <LoadingButton
                 type="submit"
@@ -115,38 +85,6 @@ export const ExportVerifier: React.FC = () => {
                 iconClassName="fa fa-key"
                 isLoading={state.isLoading}
               />
-              <ButtonGroup>
-                <OverlayTrigger
-                  placement="top"
-                  overlay={
-                    <Tooltip id="tooltip-remix-verifier">
-                      Open in Remix Editor
-                    </Tooltip>
-                  }
-                >
-                  <Button
-                    disabled={!state.result}
-                    variant="light"
-                    onClick={openInRemix}
-                  >
-                    <i className="fa fa-share" aria-hidden="true"></i>
-                  </Button>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  placement="top"
-                  overlay={
-                    <Tooltip id="tooltip-download-verifier">Download</Tooltip>
-                  }
-                >
-                  <Button
-                    disabled={!state.result}
-                    variant="light"
-                    onClick={onDownload}
-                  >
-                    <i className="fa fa-download" aria-hidden="true"></i>
-                  </Button>
-                </OverlayTrigger>
-              </ButtonGroup>
             </div>
           </Form>
         </Col>
@@ -158,9 +96,9 @@ export const ExportVerifier: React.FC = () => {
           </pre>
         </Alert>
       )}
-      {state.result && (
+      {state.exported && (
         <Alert variant="success" iconClass="fa fa-check">
-          Solidity verifier generated!
+          Solidity verifier exported!
         </Alert>
       )}
     </>

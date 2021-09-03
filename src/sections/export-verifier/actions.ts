@@ -12,10 +12,9 @@ export const onCleanup = (): IExportVerifierAction => {
   };
 };
 
-export const onSuccess = (verifierCode: string): IExportVerifierAction => {
+export const onSuccess = (): IExportVerifierAction => {
   return {
     type: "success",
-    payload: verifierCode,
   };
 };
 
@@ -24,12 +23,5 @@ export const onError = (error: any): IExportVerifierAction => {
   return {
     type: "error",
     payload: error.toString(),
-  };
-};
-
-export const updateAbi = (value: boolean): IExportVerifierAction => {
-  return {
-    type: "update_abiv2",
-    payload: value,
   };
 };

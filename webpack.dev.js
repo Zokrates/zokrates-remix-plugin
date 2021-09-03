@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 let [appConfig, workerConfig] = require("./webpack.common.js");
 
 appConfig = merge(appConfig, {
@@ -6,7 +6,6 @@ appConfig = merge(appConfig, {
     devtool: "source-map",
     devServer: {
         port: '10000',
-        disableHostCheck: true,
         https: true,
         hot: true,
         host: 'localhost'

@@ -6,7 +6,6 @@ export type IActions = {
     | "set_compilation_result"
     | "set_computation_result"
     | "set_setup_result"
-    | "set_export_verifier_result"
     | "set_generate_proof_result";
 
   payload?: any;
@@ -34,11 +33,6 @@ export const reducer = (state: IState, action: IActions) => {
       return {
         ...state,
         setupResult: action.payload,
-      };
-    case "set_export_verifier_result":
-      return {
-        ...state,
-        exportVerifierResult: action.payload,
       };
     case "set_generate_proof_result":
       return {

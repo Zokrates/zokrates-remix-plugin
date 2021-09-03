@@ -1,9 +1,11 @@
 const path = require('path');
-const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const appConfig = {
     entry: './index.tsx',
+    experiments: {
+        asyncWebAssembly: true,
+    },
     module: {
         rules: [
             {
@@ -44,11 +46,6 @@ const appConfig = {
         publicPath: "/"
     },
     plugins: [
-        new CopyPlugin({
-            patterns: [
-                { from: path.resolve(__dirname, "public") }
-            ]
-        }),
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, 'public', 'index.html'),
         })
@@ -58,6 +55,9 @@ const appConfig = {
 const workerConfig = {
     entry: "./src/worker.ts",
     target: "webworker",
+    experiments: {
+        asyncWebAssembly: true,
+    },
     module: {
         rules: [
             {

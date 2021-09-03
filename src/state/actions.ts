@@ -1,5 +1,4 @@
 import { IActions } from "./reducer";
-import { ExportVerifierResult } from "./types";
 import { ZoKratesWebWorker } from "../zokrates/ZoKratesWebWorker";
 import {
   SetupKeypair,
@@ -39,15 +38,6 @@ export const setSetupResult = (keypair: SetupKeypair): IActions => {
   return {
     type: "set_setup_result",
     payload: keypair,
-  };
-};
-
-export const setExportVerifierResult = (
-  result: ExportVerifierResult
-): IActions => {
-  return {
-    type: "set_export_verifier_result",
-    payload: result,
   };
 };
 

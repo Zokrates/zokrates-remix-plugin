@@ -1,13 +1,12 @@
 export type IExportVerifierAction = {
-  type: "loading" | "cleanup" | "update_abiv2" | "success" | "error";
+  type: "loading" | "cleanup" | "success" | "error";
   field?: string;
   payload?: any;
 };
 
 export interface IExportVerifierState {
   isLoading: boolean;
-  abiv2: boolean;
-  result: string;
+  exported: boolean;
   error: string;
 }
 
@@ -19,35 +18,30 @@ export function exportVerifierReducer(
     case "loading":
       return {
         ...state,
-        result: "",
+        exported: false,
         error: "",
         isLoading: true,
       };
     case "cleanup": {
       return {
         ...state,
-        result: "",
+        exported: false,
         error: "",
         isLoading: false,
       };
     }
-    case "update_abiv2":
-      return {
-        ...state,
-        abiv2: action.payload,
-      };
     case "success":
       return {
         ...state,
-        result: action.payload,
+        exported: true,
         error: "",
         isLoading: false,
       };
     case "error":
       return {
         ...state,
+        exported: false,
         error: action.payload,
-        result: null,
         isLoading: false,
       };
     default:

@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 let [appConfig, workerConfig] = require("./webpack.common.js");
 
 appConfig = merge(appConfig, {

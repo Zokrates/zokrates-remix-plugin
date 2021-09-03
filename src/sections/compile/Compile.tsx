@@ -1,6 +1,4 @@
-import { HighlightPosition } from "@remixproject/plugin";
-import JSZip from "jszip";
-import saveAs from "file-saver";
+import { HighlightPosition } from "@remixproject/plugin-api";
 import React, { useReducer, useEffect } from "react";
 import {
   Button,
@@ -93,17 +91,8 @@ export const Compile: React.FC = () => {
     }
   };
 
-  const openInRemix = () => {
+  const openInEditor = () => {
     remixClient.createFile("browser/abi.json", state.result.abi);
-  };
-
-  const onDownload = () => {
-    let zip = new JSZip();
-    zip.file("out", state.result.program);
-    zip.file("abi.json", state.result.abi);
-    zip
-      .generateAsync({ type: "blob" })
-      .then((content: any) => saveAs(content, "output.zip"));
   };
 
   const highlightCompileError = (error: string) => {
@@ -153,25 +142,9 @@ export const Compile: React.FC = () => {
                   <Button
                     disabled={!state.result}
                     variant="light"
-                    onClick={openInRemix}
+                    onClick={openInEditor}
                   >
                     <i className="fa fa-share" aria-hidden="true"></i>
-                  </Button>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  placement="top"
-                  overlay={
-                    <Tooltip id="tooltip-download-program">
-                      Download Artifacts
-                    </Tooltip>
-                  }
-                >
-                  <Button
-                    disabled={!state.result}
-                    variant="light"
-                    onClick={onDownload}
-                  >
-                    <i className="fa fa-download" aria-hidden="true"></i>
                   </Button>
                 </OverlayTrigger>
               </ButtonGroup>

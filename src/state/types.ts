@@ -5,9 +5,4 @@ export type CompilationResult = {
   source: string;
 };
 
-export type ExportVerifierResult = {
-  verifier: string;
-  abiVersion: string;
-};
-
 export { CompilationArtifacts, ComputationResult };

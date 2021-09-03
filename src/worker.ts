@@ -58,8 +58,7 @@ initialize()
           }
           case WA_EXPORT_VERIFIER: {
             let verifier = zokratesProvider.exportSolidityVerifier(
-              payload.vk,
-              payload.abiVersion
+              payload.vk
             );
             // @ts-ignore
             self.postMessage({
