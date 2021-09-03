@@ -8,7 +8,15 @@ export interface Imports {
 
 export default class RemixResolver implements Resolver {
   imports: Imports = {};
-  private reserved: Array<string> = ["ecc/", "signature/", "hashes/", "utils/"];
+  
+  private reserved: Array<string> = [
+    "^EMBED$", 
+    "^ecc\/.*", 
+    "^signature\/.*", 
+    "^hashes\/.*", 
+    "^utils\/.*", 
+    "^field(\.zok)?$"
+  ];
 
   prefetchImports = async (location: string, source: string) => {
     let regex = /^\s*(?:import|from)\s*[\'\"]([^\'\"]+)[\'\"]/gm;
@@ -16,7 +24,7 @@ export default class RemixResolver implements Resolver {
 
     while ((match = regex.exec(source))) {
       let path: string = match[1];
-      let stdlib = this.reserved.some((r) => path.startsWith(r));
+      let stdlib = this.reserved.some((r) => path.match(r));
 
       if (!stdlib) {
         let result = await this.resolve(location, path);
