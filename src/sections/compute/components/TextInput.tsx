@@ -32,7 +32,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   return (
     <InputGroup size="sm">
       <InputGroup.Prepend>
-        {component.public != undefined && !component.public && (
+        {component.public !== undefined && !component.public && (
           <OverlayTrigger
             key={component.name}
             placement="top"

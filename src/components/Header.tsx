@@ -19,7 +19,7 @@ export const Header: React.FC = () => {
   }, []);
 
   let style = { maxHeight: "150px" };
-  if (theme == "dark") {
+  if (theme === "dark") {
     style = Object.assign(style, { filter: "invert(1)" });
   }
 

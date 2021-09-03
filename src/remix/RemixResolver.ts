@@ -27,7 +27,7 @@ export default class RemixResolver implements Resolver {
         await this.prefetchImports(result.location, result.source);
       }
     }
-  };
+  }
 
   resolve = (
     currentLocation: string,
@@ -42,7 +42,7 @@ export default class RemixResolver implements Resolver {
         reject(error);
       }
     });
-  };
+  }
 }
 
 export const remixResolver = new RemixResolver();

@@ -40,8 +40,9 @@ export const Compile: React.FC = () => {
         break;
       }
       case WA_ERROR: {
-        highlightCompileError(e.data.payload.toString());
-        dispatch(onError(e.data.payload));
+        if (e.data.payload.type !== WA_COMPILE) break;
+        highlightCompileError(e.data.payload.error);
+        dispatch(onError(e.data.payload.error));
         break;
       }
       default:

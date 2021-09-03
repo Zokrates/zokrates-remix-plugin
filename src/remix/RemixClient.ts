@@ -18,15 +18,15 @@ export class RemixClient extends PluginClient {
       "getFile",
       this.getBrowserPath(path)
     );
-  };
+  }
 
   getFolder = async () => {
     return this.call("fileManager", "getFolder", "/browser");
-  };
+  }
 
   getCurrentFile = async () => {
     return this.call("fileManager", "getCurrentFile");
-  };
+  }
 
   createFile = async (name: string, content: string) => {
     try {
@@ -35,7 +35,7 @@ export class RemixClient extends PluginClient {
     } catch (err) {
       console.log(err);
     }
-  };
+  }
 
   highlight = async (
     position: HighlightPosition,
@@ -49,16 +49,16 @@ export class RemixClient extends PluginClient {
       this.getBrowserPath(file),
       color
     );
-  };
+  }
 
   discardHighlight = async () => {
     await this.call("editor", "discardHighlight");
-  };
+  }
 
   createExample = () => {
     const { name, content } = Example;
     this.createFile(name, content);
-  };
+  }
 
   switchFile = async (file: string) => {
     await this.call(
@@ -66,14 +66,14 @@ export class RemixClient extends PluginClient {
       "switchFile",
       this.getBrowserPath(file)
     );
-  };
+  }
 
   private getBrowserPath = (path: string) => {
     if (path.startsWith("browser/")) {
       return path;
     }
     return `browser/${path}`;
-  };
+  }
 }
 
 export const remixClient = new RemixClient();

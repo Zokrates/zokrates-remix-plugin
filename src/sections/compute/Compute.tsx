@@ -49,7 +49,8 @@ export const Compute: React.FC = () => {
         break;
       }
       case WA_ERROR: {
-        dispatch(onError(e.data.payload));
+        if (e.data.payload.type !== WA_COMPUTE) break;
+        dispatch(onError(e.data.payload.error));
         break;
       }
       default:
@@ -150,7 +151,7 @@ export const Compute: React.FC = () => {
       </Row>
       {state.error && (
         <Alert variant="danger" iconClass="fa fa-exclamation-circle">
-          <pre>
+          <pre style={{ whiteSpace: "normal" }}>
             <code>{state.error}</code>
           </pre>
         </Alert>

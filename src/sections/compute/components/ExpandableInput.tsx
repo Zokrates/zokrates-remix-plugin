@@ -47,7 +47,7 @@ export const ExpandableInput: React.FC<ExpandableInputProps> = (props) => {
     <div className="expandable border">
       <div className="expandable-header bg-light border-bottom">
         <span className="text-muted">
-          {component.public != undefined && !component.public && (
+          {component.public !== undefined && !component.public && (
             <OverlayTrigger
               placement="top"
               overlay={

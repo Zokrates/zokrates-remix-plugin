@@ -2,7 +2,6 @@ import copy from "copy-to-clipboard";
 import React, { useEffect, useReducer } from "react";
 import {
   Button,
-  ButtonGroup,
   Col,
   Form,
   FormControl,
@@ -45,7 +44,8 @@ export const GenerateProof: React.FC = () => {
         break;
       }
       case WA_ERROR: {
-        dispatch(onError(e.data.payload));
+        if (e.data.payload.type !== WA_GENERATE_PROOF) break;
+        dispatch(onError(e.data.payload.error));
         break;
       }
       default:
@@ -141,8 +141,8 @@ export const GenerateProof: React.FC = () => {
                     <OverlayTrigger
                       placement="top"
                       overlay={
-                        <Tooltip id="tooltip-copy-parameters">
-                          Copy Parameters
+                        <Tooltip id="tooltip-copy-verifier-inputs">
+                          Copy
                         </Tooltip>
                       }
                     >

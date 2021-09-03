@@ -36,7 +36,8 @@ export const Setup: React.FC = () => {
         break;
       }
       case WA_ERROR: {
-        dispatch(onError(e.data.payload));
+        if (e.data.payload.type !== WA_SETUP) break;
+        dispatch(onError(e.data.payload.error));
         break;
       }
       default:

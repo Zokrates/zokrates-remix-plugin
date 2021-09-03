@@ -82,7 +82,7 @@ initialize()
         }
       } catch (err) {
         // @ts-ignore
-        self.postMessage({ type: WA_ERROR, payload: err });
+        self.postMessage({ type: WA_ERROR, payload: { error: err, type } });
       }
     };
     self.addEventListener("message", (ev) => onAction(ev.data));
