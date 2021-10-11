@@ -9,24 +9,13 @@ export interface Imports {
 export default class RemixResolver implements Resolver {
   imports: Imports = {};
   
-  private reserved: Array<string> = [
-    "^EMBED$", 
-    "^ecc\/.*", 
-    "^signature\/.*", 
-    "^hashes\/.*", 
-    "^utils\/.*", 
-    "^field(\.zok)?$"
-  ];
-
   prefetchImports = async (location: string, source: string) => {
     let regex = /^\s*(?:import|from)\s*[\'\"]([^\'\"]+)[\'\"]/gm;
     let match: any;
 
     while ((match = regex.exec(source))) {
       let path: string = match[1];
-      let stdlib = this.reserved.some((r) => path.match(r));
-
-      if (!stdlib) {
+      if (path.startsWith(".")) {
         let result = await this.resolve(location, path);
         this.imports = {
           ...this.imports,
@@ -45,7 +34,7 @@ export default class RemixResolver implements Resolver {
       try {
         let location = getImportPath(currentLocation, importLocation);
         let source = await remixClient.getFile(location);
-        resolve({ source: source, location: location } as ResolverResult);
+        resolve({ source, location } as ResolverResult);
       } catch (error) {
         reject(error);
       }
