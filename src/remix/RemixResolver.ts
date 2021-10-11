@@ -17,11 +17,13 @@ export default class RemixResolver implements Resolver {
       let path: string = match[1];
       if (path.startsWith(".")) {
         let result = await this.resolve(location, path);
-        this.imports = {
-          ...this.imports,
-          [result.location]: result.source,
-        };
-        await this.prefetchImports(result.location, result.source);
+        if (!this.imports[result.location]) {
+          this.imports = {
+            ...this.imports,
+            [result.location]: result.source,
+          };
+          await this.prefetchImports(result.location, result.source);
+        }
       }
     }
   }
