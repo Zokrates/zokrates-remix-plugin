@@ -8,7 +8,7 @@ export interface Imports {
 
 export default class RemixResolver implements Resolver {
   imports: Imports = {};
-  
+
   prefetchImports = async (location: string, source: string) => {
     let regex = /^\s*(?:import|from)\s*[\'\"]([^\'\"]+)[\'\"]/gm;
     let match: any;

@@ -19,7 +19,7 @@ export function setupReducer(
     case "loading":
       return {
         ...state,
-        result: "",
+        result: null,
         error: "",
         isLoading: true,
       };

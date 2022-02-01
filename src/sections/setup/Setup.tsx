@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   Col,
   Form,
@@ -24,7 +24,10 @@ export const Setup: React.FC = () => {
   const [state, dispatch] = useReducer(setupReducer, initialState);
   const { zokratesWebWorker } = stateContext;
 
+  const [showWarning, setShowWarning] = useState(false);
+
   const onWorkerMessage = (e: MessageEvent) => {
+    setShowWarning(false);
     switch (e.data.type) {
       case WA_SETUP: {
         dispatch(onSuccess(e.data.payload));
@@ -66,6 +69,7 @@ export const Setup: React.FC = () => {
         zokratesWebWorker.postMessage(WA_SETUP, {
           program: stateContext.compilationResult.artifacts.program,
         });
+        setTimeout(() => setShowWarning(true), 10000);
       } catch (error) {
         dispatch(onError(error.toString()));
       }
@@ -94,6 +98,10 @@ export const Setup: React.FC = () => {
           </Form>
         </Col>
       </Row>
+      {state.isLoading && showWarning && (<Alert variant="warning" iconClass="fa fa-exclamation-circle">
+          This may take a while. Please wait...
+      </Alert>
+      )}
       {state.error && (
         <Alert variant="danger" iconClass="fa fa-exclamation-circle">
           <pre>
