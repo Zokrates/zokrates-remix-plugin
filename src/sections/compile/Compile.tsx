@@ -93,7 +93,7 @@ export const Compile: React.FC = () => {
   };
 
   const openInEditor = () => {
-    remixClient.createFile("browser/abi.json", state.result.abi);
+    remixClient.createFile("browser/abi.json", JSON.stringify(state.result.abi, null, 2));
   };
 
   const highlightCompileError = (error: string) => {

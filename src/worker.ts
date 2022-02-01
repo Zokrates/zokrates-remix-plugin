@@ -63,7 +63,7 @@ initialize()
             // @ts-ignore
             self.postMessage({
               type: type,
-              payload: { verifier, abiVersion: payload.abiVersion },
+              payload: { verifier },
             });
             break;
           }

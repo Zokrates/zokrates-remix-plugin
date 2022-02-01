@@ -38,7 +38,7 @@ export const Compute: React.FC = () => {
   const [state, dispatch] = useReducer(computeReducer, initialState);
   const { zokratesWebWorker } = stateContext;
 
-  const abi: Abi = JSON.parse(stateContext.compilationResult.artifacts.abi);
+  const abi: Abi = stateContext.compilationResult.artifacts.abi;
   const inputs = abi.inputs;
 
   const onWorkerMessage = (e: MessageEvent) => {

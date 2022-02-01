@@ -6,6 +6,9 @@ const appConfig = {
     experiments: {
         asyncWebAssembly: true,
     },
+    ignoreWarnings: [
+        (_warning) => true,
+    ],
     module: {
         rules: [
             {
@@ -58,6 +61,9 @@ const workerConfig = {
     experiments: {
         asyncWebAssembly: true,
     },
+    ignoreWarnings: [
+        (_warning) => true,
+    ],
     module: {
         rules: [
             {
