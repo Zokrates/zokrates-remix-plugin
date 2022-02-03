@@ -24,35 +24,35 @@ const createValidationSchema = (component: Component) => {
     case "field": {
       return {
         type: "string",
-        pattern: /^-?\d+$/,
+        pattern: /^\d+$/,
         required: true,
       };
     }
     case "u8": {
       return {
         type: "string",
-        pattern: new RegExp(`^0x[0-9a-f]{2}$`),
+        pattern: new RegExp(`^(\\d+|0x[0-9a-fA-F]{1,2})$`),
         required: true,
       };
     }
     case "u16": {
       return {
         type: "string",
-        pattern: new RegExp(`^0x[0-9a-f]{4}$`),
+        pattern: new RegExp(`^(\\d+|0x[0-9a-fA-F]{1,4})$`),
         required: true,
       };
     }
     case "u32": {
       return {
         type: "string",
-        pattern: new RegExp(`^0x[0-9a-f]{8}$`),
+        pattern: new RegExp(`^(\\d+|0x[0-9a-fA-F]{1,8})$`),
         required: true,
       };
     }
     case "u64": {
       return {
         type: "string",
-        pattern: new RegExp(`^0x[0-9a-f]{16}$`),
+        pattern: new RegExp(`^(\\d+|0x[0-9a-fA-F]{1,16})$`),
         required: true,
       };
     }
