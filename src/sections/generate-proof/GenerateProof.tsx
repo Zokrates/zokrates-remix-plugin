@@ -90,8 +90,12 @@ export const GenerateProof: React.FC = () => {
     const proofValues = Object.values(proof.proof)
       .map((el) => JSON.stringify(el))
       .join();
-    const inputValues = JSON.stringify(proof.inputs);
-    return `[${proofValues}],${inputValues}`;
+    
+    let fmt = `[${proofValues}]`;
+    if (proof.inputs && proof.inputs.length > 0) {
+        fmt += `,${JSON.stringify(proof.inputs)}`;
+    }
+    return fmt;
   };
 
   return (
