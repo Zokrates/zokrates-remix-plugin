@@ -3,6 +3,7 @@ import { getImportPath } from "./common/utils";
 import {
   WA_COMPILE,
   WA_SETUP,
+  WA_UNIVERSAL_SETUP,
   WA_COMPUTE,
   WA_EXPORT_VERIFIER,
   WA_GENERATE_PROOF,
@@ -11,29 +12,30 @@ import {
 
 initialize()
   .then((zokratesProvider: ZoKratesProvider) => {
-    const onCompile = (source: string, location: string, imports: object) => {
-      const importResolver = (
-        location: string,
-        path: string
-      ): ResolverResult => {
-        const key: string = getImportPath(location, path);
-        return imports[key] ? { source: imports[key], location: key } : null;
-      };
-      return zokratesProvider.compile(source, {
-        location,
-        resolveCallback: importResolver,
-      });
-    };
     const onAction = (action) => {
       const { type, payload } = action;
+      const provider = payload.options
+        ? zokratesProvider.withOptions(payload.options)
+        : zokratesProvider;
       try {
         switch (type) {
           case WA_COMPILE: {
-            let artifacts = onCompile(
-              payload.source,
-              payload.location,
-              payload.imports
-            );
+            const { location, source, imports } = payload;
+            const importResolver = (
+              location: string,
+              path: string
+            ): ResolverResult => {
+              const key: string = getImportPath(location, path);
+              return imports[key]
+                ? { source: imports[key], location: key }
+                : null;
+            };
+
+            const artifacts = provider.compile(source, {
+              location,
+              resolveCallback: importResolver,
+            });
+
             // @ts-ignore
             self.postMessage({
               type: type,
@@ -42,7 +44,7 @@ initialize()
             break;
           }
           case WA_COMPUTE: {
-            let computationResult = zokratesProvider.computeWitness(
+            let computationResult = provider.computeWitness(
               payload.artifacts,
               payload.args
             );
@@ -51,15 +53,21 @@ initialize()
             break;
           }
           case WA_SETUP: {
-            let keypair = zokratesProvider.setup(payload.program);
+            let keypair = payload.srs
+              ? provider.setupWithSrs(payload.srs, payload.program)
+              : provider.setup(payload.program);
             // @ts-ignore
             self.postMessage({ type: type, payload: keypair });
             break;
           }
+          case WA_UNIVERSAL_SETUP: {
+            let srs = provider.universalSetup(payload.size);
+            // @ts-ignore
+            self.postMessage({ type: type, payload: srs });
+            break;
+          }
           case WA_EXPORT_VERIFIER: {
-            let verifier = zokratesProvider.exportSolidityVerifier(
-              payload.vk
-            );
+            let verifier = provider.exportSolidityVerifier(payload.vk);
             // @ts-ignore
             self.postMessage({
               type: type,
@@ -68,7 +76,7 @@ initialize()
             break;
           }
           case WA_GENERATE_PROOF: {
-            let proof = zokratesProvider.generateProof(
+            let proof = provider.generateProof(
               payload.program,
               payload.witness,
               payload.pk

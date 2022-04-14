@@ -1,17 +1,18 @@
 import React, { createContext, useContext, useReducer } from "react";
 import { IActions, reducer } from "./reducer";
-import {
-  CompilationResult,
-  ComputationResult,
-} from "./types";
+import { CompilationResult, ComputationResult } from "./types";
 import { ZoKratesWebWorker } from "../zokrates/ZoKratesWebWorker";
-import { ZoKratesProvider, SetupKeypair } from "zokrates-js";
+import { SetupKeypair } from "zokrates-js";
+
+export type Scheme = "g16" | "gm17" | "marlin";
+export type Curve = "bn128" | "bls12_381" | "bls12_377" | "bw6_761";
 
 export interface IState {
   isLoaded: boolean;
+  options: { curve: Curve; scheme: Scheme };
   zokratesWebWorker: ZoKratesWebWorker;
-  zokratesProvider: ZoKratesProvider;
   compilationResult: CompilationResult;
+  universalSetupResult: Uint8Array;
   setupResult: SetupKeypair;
   computationResult: ComputationResult;
   generateProofResult: string;
@@ -19,6 +20,11 @@ export interface IState {
 
 const initialState = {
   isLoaded: false,
+  options: {
+    scheme: "g16",
+    curve: "bn128",
+  },
+  universalSetupResult: null,
   compilationResult: null,
   setupResult: null,
   computationResult: null,

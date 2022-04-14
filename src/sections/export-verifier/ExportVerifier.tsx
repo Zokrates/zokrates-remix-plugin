@@ -1,9 +1,5 @@
 import React, { useEffect, useReducer } from "react";
-import {
-  Col,
-  Form,
-  Row,
-} from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import { Alert, LoadingButton } from "../../components";
 import { remixClient } from "../../remix/RemixClient";
 import { useStateContext } from "../../state/Store";
@@ -60,6 +56,7 @@ export const ExportVerifier: React.FC = () => {
       try {
         zokratesWebWorker.postMessage(WA_EXPORT_VERIFIER, {
           vk: stateContext.setupResult.vk,
+          options: stateContext.options,
         });
       } catch (error) {
         dispatch(onError(error.toString()));
@@ -92,9 +89,7 @@ export const ExportVerifier: React.FC = () => {
       </Row>
       {state.error && (
         <Alert variant="danger" iconClass="fa fa-exclamation-circle">
-          <pre>
-            <code>{state.error}</code>
-          </pre>
+          {state.error}
         </Alert>
       )}
       {state.exported && (

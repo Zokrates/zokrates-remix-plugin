@@ -82,6 +82,7 @@ export const Compute: React.FC = () => {
         let computationParams = {
           artifacts: stateContext.compilationResult.artifacts,
           args,
+          options: stateContext.options,
         };
         zokratesWebWorker.postMessage(WA_COMPUTE, computationParams);
       } catch (error) {
@@ -151,9 +152,7 @@ export const Compute: React.FC = () => {
       </Row>
       {state.error && (
         <Alert variant="danger" iconClass="fa fa-exclamation-circle">
-          <pre style={{ whiteSpace: "normal" }}>
-            <code>{state.error}</code>
-          </pre>
+          {state.error}
         </Alert>
       )}
       {state.result && (
@@ -161,7 +160,7 @@ export const Compute: React.FC = () => {
           <Alert variant="success" iconClass="fa fa-check">
             Computed successfully!
           </Alert>
-          <pre className="bg-light p-2 mt-3 mb-0">
+          <pre className="bg-dark p-2 mt-3 mb-0">
             <code>{state.result.output}</code>
           </pre>
         </>

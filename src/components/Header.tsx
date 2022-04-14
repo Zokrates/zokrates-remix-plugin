@@ -32,7 +32,7 @@ export const Header: React.FC = () => {
         </a>{" "}
         is a toolbox for zkSNARKs on Ethereum. It helps you use verifiable
         computation in your DApp, from the specification of your program in a
-        high level language to generating proofs of computation to verifying
+        high level language to generating proofs of computation and verifying
         those proofs in Solidity. Get started by creating an{" "}
         <a href="#" onClick={remixClient.createExample}>
           example

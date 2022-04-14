@@ -81,6 +81,7 @@ export const Compile: React.FC = () => {
             source,
             location,
             imports: remixResolver.imports,
+            options: stateContext.options,
           };
           zokratesWebWorker.postMessage(WA_COMPILE, payload);
         },
@@ -93,7 +94,10 @@ export const Compile: React.FC = () => {
   };
 
   const openInEditor = () => {
-    remixClient.createFile("browser/abi.json", JSON.stringify(state.result.abi, null, 2));
+    remixClient.createFile(
+      "browser/abi.json",
+      JSON.stringify(state.result.abi, null, 2)
+    );
   };
 
   const highlightCompileError = (error: string) => {

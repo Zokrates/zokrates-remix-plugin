@@ -79,6 +79,7 @@ export const GenerateProof: React.FC = () => {
           program: stateContext.compilationResult.artifacts.program,
           witness: stateContext.computationResult.witness,
           pk: stateContext.setupResult.pk,
+          options: stateContext.options,
         });
       } catch (error) {
         dispatch(onError(error.toString()));
@@ -90,10 +91,10 @@ export const GenerateProof: React.FC = () => {
     const proofValues = Object.values(proof.proof)
       .map((el) => JSON.stringify(el))
       .join();
-    
+
     let fmt = `[${proofValues}]`;
     if (proof.inputs && proof.inputs.length > 0) {
-        fmt += `,${JSON.stringify(proof.inputs)}`;
+      fmt += `,${JSON.stringify(proof.inputs)}`;
     }
     return fmt;
   };
@@ -128,9 +129,7 @@ export const GenerateProof: React.FC = () => {
       </Row>
       {state.result &&
         (() => {
-          const result = getCompatibleParametersFormat(
-            state.result
-          );
+          const result = getCompatibleParametersFormat(state.result);
           return (
             <Row>
               <Col>
@@ -165,9 +164,7 @@ export const GenerateProof: React.FC = () => {
         })()}
       {state.error && (
         <Alert variant="danger" iconClass="fa fa-exclamation-circle">
-          <pre>
-            <code>{state.error}</code>
-          </pre>
+          {state.error}
         </Alert>
       )}
       {state.result && (

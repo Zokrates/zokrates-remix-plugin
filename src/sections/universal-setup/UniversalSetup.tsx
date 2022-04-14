@@ -1,15 +1,14 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { Alert, LoadingButton } from "../../components";
-import { remixClient } from "../../remix/RemixClient";
-import { setSetupResult } from "../../state/actions";
+import { setUniversalSetupResult } from "../../state/actions";
 import { useDispatchContext, useStateContext } from "../../state/Store";
-import { onCleanup, onError, onLoading, onSuccess } from "./actions";
-import { ISetupState, setupReducer } from "./reducer";
-import { WA_SETUP, WA_ERROR } from "../../zokrates/constants";
+import { onError, onLoading, onSuccess } from "./actions";
+import { IUniversalSetupState, universalSetupReducer } from "./reducer";
+import { WA_ERROR, WA_UNIVERSAL_SETUP } from "../../zokrates/constants";
 
-export const Setup: React.FC = () => {
-  const initialState: ISetupState = {
+export const UniversalSetup: React.FC = () => {
+  const initialState: IUniversalSetupState = {
     isLoading: false,
     result: null,
     error: "",
@@ -17,25 +16,22 @@ export const Setup: React.FC = () => {
 
   const stateContext = useStateContext();
   const dispatchContext = useDispatchContext();
-  const [state, dispatch] = useReducer(setupReducer, initialState);
+  const [state, dispatch] = useReducer(universalSetupReducer, initialState);
   const { zokratesWebWorker } = stateContext;
 
   const [showWarning, setShowWarning] = useState(false);
+  const [maxPolynomialDegree, setMaxPolynomialDegree] = useState(4);
 
   const onWorkerMessage = (e: MessageEvent) => {
     setShowWarning(false);
     switch (e.data.type) {
-      case WA_SETUP: {
+      case WA_UNIVERSAL_SETUP: {
         dispatch(onSuccess(e.data.payload));
-        dispatchContext(setSetupResult(e.data.payload));
-        remixClient.createFile(
-          "browser/verification_key.json",
-          JSON.stringify(e.data.payload.vk, null, 2)
-        );
+        dispatchContext(setUniversalSetupResult(e.data.payload));
         break;
       }
       case WA_ERROR: {
-        if (e.data.payload.type !== WA_SETUP) break;
+        if (e.data.payload.type !== WA_UNIVERSAL_SETUP) break;
         dispatch(onError(e.data.payload.error));
         break;
       }
@@ -51,23 +47,14 @@ export const Setup: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
-    setShowWarning(false);
-    dispatch(onCleanup());
-    dispatchContext(setSetupResult(null));
-  }, [stateContext.compilationResult, stateContext.options.scheme]);
-
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(onLoading());
 
     setTimeout(() => {
       try {
-        zokratesWebWorker.postMessage(WA_SETUP, {
-          srs:
-            stateContext.options.scheme === "marlin" &&
-            stateContext.universalSetupResult,
-          program: stateContext.compilationResult.artifacts.program,
+        zokratesWebWorker.postMessage(WA_UNIVERSAL_SETUP, {
+          size: maxPolynomialDegree,
           options: stateContext.options,
         });
         setTimeout(() => setShowWarning(true), 10000);
@@ -81,27 +68,30 @@ export const Setup: React.FC = () => {
     <>
       <Row>
         <Col>
-          <p>
-            Creates a proving key and a verification key. &nbsp;
-            {["g16", "gm17"].includes(stateContext.options.scheme) && (
-              <span>
-                These keys are derived from a source of randomness, commonly
-                referred to as “toxic waste”.
-              </span>
-            )}
-            {stateContext.options.scheme === "marlin" && (
-              <span>
-                These keys are derived from the universal public parameters.
-              </span>
-            )}
-          </p>
+          <p>Performs the universal phase of a trusted setup.</p>
           <Form onSubmit={onSubmit}>
+            <Form.Group>
+              <Form.Label>
+                Max polynomial degree (2^{maxPolynomialDegree})
+              </Form.Label>
+              <Form.Control
+                type="range"
+                min={1}
+                max={21}
+                value={maxPolynomialDegree}
+                onChange={(e) =>
+                  setMaxPolynomialDegree(parseInt(e.currentTarget.value))
+                }
+              />
+            </Form.Group>
             <div className="d-flex justify-content-between">
               <LoadingButton
                 type="submit"
-                disabled={!stateContext.compilationResult || state.isLoading}
-                defaultText="Run Setup"
-                loadingText="Running setup..."
+                disabled={
+                  stateContext.options.scheme !== "marlin" || state.isLoading
+                }
+                defaultText="Run Universal Setup"
+                loadingText="Running universal setup..."
                 iconClassName="fa fa-cog"
                 isLoading={state.isLoading}
               />
@@ -121,7 +111,7 @@ export const Setup: React.FC = () => {
       )}
       {state.result && (
         <Alert variant="success" iconClass="fa fa-check">
-          Setup completed!
+          Universal setup completed!
         </Alert>
       )}
     </>

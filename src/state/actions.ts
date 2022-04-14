@@ -14,6 +14,13 @@ export const onLoaded = (worker: ZoKratesWebWorker): IActions => {
   };
 };
 
+export const setScheme = (scheme: string): IActions => {
+  return {
+    type: "set_scheme",
+    payload: scheme,
+  };
+};
+
 export const setCompilationResult = (
   artifacts: CompilationArtifacts,
   source: string
@@ -38,6 +45,13 @@ export const setSetupResult = (keypair: SetupKeypair): IActions => {
   return {
     type: "set_setup_result",
     payload: keypair,
+  };
+};
+
+export const setUniversalSetupResult = (srs: Uint8Array): IActions => {
+  return {
+    type: "set_universal_setup_result",
+    payload: srs,
   };
 };
 
