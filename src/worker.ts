@@ -81,8 +81,9 @@ initialize()
               payload.witness,
               payload.pk
             );
+            let params = provider.utils.formatProof(proof);
             // @ts-ignore
-            self.postMessage({ type: type, payload: proof });
+            self.postMessage({ type: type, payload: { proof, params } });
             break;
           }
           default:

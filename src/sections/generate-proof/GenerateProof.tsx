@@ -18,7 +18,6 @@ import { useDispatchContext, useStateContext } from "../../state/Store";
 import { onCleanup, onError, onLoading, onSuccess } from "./actions";
 import { generateProofReducer, IGenerateProofState } from "./reducer";
 import { WA_GENERATE_PROOF, WA_ERROR } from "../../zokrates/constants";
-import { Proof } from "zokrates-js";
 
 export const GenerateProof: React.FC = () => {
   const initialState: IGenerateProofState = {
@@ -36,10 +35,10 @@ export const GenerateProof: React.FC = () => {
     switch (e.data.type) {
       case WA_GENERATE_PROOF: {
         dispatch(onSuccess(e.data.payload));
-        dispatchContext(setGenerateProofResult(e.data.payload));
+        dispatchContext(setGenerateProofResult(e.data.payload.proof));
         remixClient.createFile(
           "browser/proof.json",
-          JSON.stringify(e.data.payload, null, 2)
+          JSON.stringify(e.data.payload.proof, null, 2)
         );
         break;
       }
@@ -87,18 +86,6 @@ export const GenerateProof: React.FC = () => {
     }, 200);
   };
 
-  const getCompatibleParametersFormat = (proof: Proof) => {
-    const proofValues = Object.values(proof.proof)
-      .map((el) => JSON.stringify(el))
-      .join();
-
-    let fmt = `[${proofValues}]`;
-    if (proof.inputs && proof.inputs.length > 0) {
-      fmt += `,${JSON.stringify(proof.inputs)}`;
-    }
-    return fmt;
-  };
-
   return (
     <>
       <Row>
@@ -129,7 +116,9 @@ export const GenerateProof: React.FC = () => {
       </Row>
       {state.result &&
         (() => {
-          const result = getCompatibleParametersFormat(state.result);
+          const params = state.result.params
+            .map((p) => JSON.stringify(p))
+            .join(",");
           return (
             <Row>
               <Col>
@@ -137,7 +126,7 @@ export const GenerateProof: React.FC = () => {
                 <InputGroup>
                   <FormControl
                     aria-label="Parameters"
-                    value={result}
+                    value={params}
                     readOnly
                   />
                   <InputGroup.Append>
@@ -151,7 +140,7 @@ export const GenerateProof: React.FC = () => {
                     >
                       <Button
                         disabled={!state.result}
-                        onClick={() => copy(result)}
+                        onClick={() => copy(params)}
                       >
                         <i className="fa fa-clipboard" aria-hidden="true"></i>
                       </Button>
