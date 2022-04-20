@@ -20,7 +20,7 @@ export const UniversalSetup: React.FC = () => {
   const { zokratesWebWorker } = stateContext;
 
   const [showWarning, setShowWarning] = useState(false);
-  const [maxPolynomialDegree, setMaxPolynomialDegree] = useState(4);
+  const [maxPolynomialDegree, setMaxPolynomialDegree] = useState(17);
 
   const onWorkerMessage = (e: MessageEvent) => {
     setShowWarning(false);
