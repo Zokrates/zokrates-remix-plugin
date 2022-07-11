@@ -1,4 +1,13 @@
-export type ComponentType = "field" | "u8" | "u16" | "u32" | "u64" | "bool" | "array" | "struct";
+export type ComponentType =
+  | "field"
+  | "u8"
+  | "u16"
+  | "u32"
+  | "u64"
+  | "bool"
+  | "array"
+  | "tuple"
+  | "struct";
 
 export interface Component {
   name?: string;
