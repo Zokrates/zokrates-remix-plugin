@@ -3,7 +3,8 @@ import { Component } from "../../../common/abiTypes";
 import { ArrayInput } from "./ArrayInput";
 import { StructInput } from "./StructInput";
 import { TextInput } from "./TextInput";
-import jsonschema from "jsonschema";
+import jsonschema, { Schema } from "jsonschema";
+import { TupleInput } from "./TupleInput";
 
 const fromJson = (input: string) => {
   try {
@@ -19,7 +20,7 @@ export interface InputComponentProps {
   onChange: (value: any) => void;
 }
 
-const createValidationSchema = (component: Component) => {
+const createValidationSchema = (component: Component): Schema => {
   switch (component.type) {
     case "field": {
       return {
@@ -62,6 +63,16 @@ const createValidationSchema = (component: Component) => {
         required: true,
       };
     }
+    case "tuple":
+      return {
+        type: "array",
+        minItems: component.components.elements.length,
+        maxItems: component.components.elements.length,
+        items: component.components.elements.map((e: any) =>
+          createValidationSchema(e)
+        ),
+        required: true,
+      };
     case "array": {
       return {
         type: "array",
@@ -112,6 +123,14 @@ export const InputComponent: React.FC<InputComponentProps> = (props) => {
     case "struct":
       return (
         <StructInput
+          {...props}
+          transform={(value) => fromJson(value)}
+          validate={createValidator(component, (value) => fromJson(value))}
+        />
+      );
+    case "tuple":
+      return (
+        <TupleInput
           {...props}
           transform={(value) => fromJson(value)}
           validate={createValidator(component, (value) => fromJson(value))}
