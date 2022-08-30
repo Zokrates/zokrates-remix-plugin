@@ -2,14 +2,11 @@ import React, { createContext, useContext, useReducer } from "react";
 import { IActions, reducer } from "./reducer";
 import { CompilationResult, ComputationResult } from "./types";
 import { ZoKratesWebWorker } from "../zokrates/ZoKratesWebWorker";
-import { SetupKeypair } from "zokrates-js";
-
-export type Scheme = "g16" | "gm17" | "marlin";
-export type Curve = "bn128" | "bls12_381" | "bls12_377" | "bw6_761";
+import { SetupKeypair, Options } from "zokrates-js";
 
 export interface IState {
   isLoaded: boolean;
-  options: { curve: Curve; scheme: Scheme };
+  options: Options;
   zokratesWebWorker: ZoKratesWebWorker;
   compilationResult: CompilationResult;
   universalSetupResult: Uint8Array;
@@ -21,6 +18,7 @@ export interface IState {
 const initialState = {
   isLoaded: false,
   options: {
+    backend: "ark",
     scheme: "g16",
     curve: "bn128",
   },
