@@ -3,10 +3,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const appConfig = {
   entry: "./index.tsx",
-  experiments: {
-    syncWebAssembly: true,
-  },
-  ignoreWarnings: [(_warning) => true],
   module: {
     rules: [
       {
@@ -39,10 +35,10 @@ const appConfig = {
     ],
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js", ".css", ".wasm"],
+    extensions: [".ts", ".tsx", ".js", ".css"],
   },
   output: {
-    filename: "[name].[hash].js",
+    filename: "[name].[fullhash].js",
     path: path.resolve(__dirname, "dist/"),
     publicPath: "/",
   },
@@ -56,10 +52,6 @@ const appConfig = {
 const workerConfig = {
   entry: "./src/worker.ts",
   target: "webworker",
-  experiments: {
-    syncWebAssembly: true,
-  },
-  ignoreWarnings: [(_warning) => true],
   module: {
     rules: [
       {
@@ -81,7 +73,7 @@ const workerConfig = {
     ],
   },
   resolve: {
-    extensions: [".ts", ".js", ".wasm"],
+    extensions: [".ts", ".js"],
   },
   output: {
     filename: "worker.js",

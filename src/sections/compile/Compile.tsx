@@ -166,7 +166,10 @@ export const Compile: React.FC = () => {
       )}
       {state.result && (
         <Alert variant="success" iconClass="fa fa-check">
-          Successfully compiled!
+          <div className="d-flex flex-column">
+            <div>Compiled successfully!</div>
+            <div>({state.result.constraintCount} constraints)</div>
+          </div>
         </Alert>
       )}
     </>
