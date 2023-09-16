@@ -59,7 +59,7 @@ const App: React.FC = () => {
         <main role="main" className="pb-5">
           <Accordion>
             <AccordionElement
-              headerText="Univeral Setup"
+              headerText="Universal Setup"
               iconClass="fa fa-globe"
               eventKey="0"
               disabled={state.options.scheme !== "marlin"}
